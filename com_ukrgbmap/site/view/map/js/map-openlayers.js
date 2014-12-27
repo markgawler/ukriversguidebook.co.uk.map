@@ -31,7 +31,7 @@ window.addEvent("domready", function() {
     });
 
 	var osmlayer = new OpenLayers.Layer.OSM( "Open Street Map");
-	//var osmap = new OpenLayers.Layer.OpenSpace("OS Openspace",key, {});
+	var osmap = new OpenLayers.Layer.OpenSpace("OS Openspace",key, {});
 
 	//  Marker styles
     var markerSize = {
@@ -61,8 +61,8 @@ window.addEvent("domready", function() {
         visibility : false
     });
 
-	//map.addLayers([osmap,vectorLayer,otherVectorLayer]);	// OS Open Space
-	map.addLayers([osmlayer,vectorLayer,otherVectorLayer]); // Open Street Map
+	map.addLayers([osmap,vectorLayer,otherVectorLayer]);	// OS Open Space
+	//map.addLayers([osmlayer,vectorLayer,otherVectorLayer]); // Open Street Map
     map.addControl(new OpenLayers.Control.LayerSwitcher());
 
     // make markers selectable (popups)

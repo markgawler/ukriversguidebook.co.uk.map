@@ -22,7 +22,7 @@ class plgContentUkrgbMap extends JPlugin {
 	 */
 	public function onContentPrepare($context, &$article, &$params, $page = 0)
 	{		
-		
+
 		if (isset($article->id))
 		{
 			$model = new UkrgbmapModelMap;
@@ -33,7 +33,7 @@ class plgContentUkrgbMap extends JPlugin {
 				JHtml::_('behavior.framework');
 				JHtml::_('script', 'http://openlayers.org/api/OpenLayers.js');
 				JHtml::_('script', 'libraries/ukrgbgeo/proj4js/proj4js-compressed.js');
-				//JHtml::_('script', 'components/com_ukrgbmap/view/map/js/OpenSpace.js');
+				JHtml::_('script', 'components/com_ukrgbmap/view/map/js/OpenSpace.js');
 				JHtml::_('script', 'components/com_ukrgbmap/view/map/js/map-openlayers.js');
 				JHtml::_('stylesheet','components/com_ukrgbmap/view/map/css/map.css');
 				
@@ -59,6 +59,8 @@ class plgContentUkrgbMap extends JPlugin {
 	
 	public function onContentAfterSave($context, $article, $isNew)
 	{
+
+		//if ($context == 'com_content.article')
 		
 		if ($context == 'com_content.form')
 		{	
@@ -67,4 +69,3 @@ class plgContentUkrgbMap extends JPlugin {
 		}				
 	}
 }
-?>
