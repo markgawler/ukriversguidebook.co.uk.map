@@ -25,7 +25,6 @@ class plgContentUkrgbMap extends JPlugin {
 
 		if (isset($article->id) and $context == 'com_content.article')
 		{
-			var_dump($context);
 			$model = new UkrgbmapModelMap;
 			$mapid = $model->getMapIdforArticle($article->id);
 			
