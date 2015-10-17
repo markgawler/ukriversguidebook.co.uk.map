@@ -48,7 +48,7 @@ class plgContentUkrgbMap extends JPlugin {
 						'url' => JURI::base() . 'index.php?option=com_ukrgbmap&tmpl=raw&format=json',
 						'mapdata' => $model->getMapParameters($mapid)));
 				
-				$document = &JFactory::getDocument();
+				$document = JFactory::getDocument();
 				$document->addScriptDeclaration('var params = ' .$mapData.';');
 				
 				$pattern = '/{map}/i'; 
