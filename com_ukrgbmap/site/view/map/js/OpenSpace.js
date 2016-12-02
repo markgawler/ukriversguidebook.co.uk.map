@@ -17,13 +17,13 @@ OpenLayers.Layer.OpenSpace = OpenLayers.Class(OpenLayers.Layer.WMS, {
      * options - {Object} Hashtable of extra options to tag onto the layer
      * 
      * Stolen from:
-     * http://trac.osgeo.org/openlayers/browser/sandbox/edgemaster/openlayers/lib/OpenLayers/Layer/OpenSpace.js
+     * https://trac.osgeo.org/openlayers/browser/sandbox/edgemaster/openlayers/lib/OpenLayers/Layer/OpenSpace.js
      */
     initialize: function(name, apikey, options) {
         options = OpenLayers.Util.extend({
-            attribution: "&copy; Crown Copyright and database right 2012. All rights reserved. <a target='_blank' href='http://openspace.ordnancesurvey.co.uk/openspace/developeragreement.html#enduserlicense'>End User License Agreement</a>",
+            attribution: "&copy; Crown Copyright and database right 2016. All rights reserved. <a target='_blank' href='https://openspace.ordnancesurvey.co.uk/openspace/developeragreement.html#enduserlicense'>End User License Agreement</a>",
             maxExtent: new OpenLayers.Bounds(0, 0, 800000, 1300000),
-            resolutions: [2500, 1000, 500, 200, 100, 50, 25, 10, 5, 2, 1],
+            resolutions: [2500, 1000, 500, 200, 100, 50, 25, 10, 5, 4, 2.5, 2, 1],
             units: "m",
             projection: new OpenLayers.Projection("EPSG:27700")
         }, options);
@@ -32,7 +32,7 @@ OpenLayers.Layer.OpenSpace = OpenLayers.Class(OpenLayers.Layer.WMS, {
             "KEY": apikey
         };
         
-        url = "http://openspace.ordnancesurvey.co.uk/osmapapi/ts";
+        url = "https://openspace.ordnancesurvey.co.uk/osmapapi/ts";
         var newArguments = [name, url, params, options];
         OpenLayers.Layer.WMS.prototype.initialize.apply(this, newArguments);
     },
@@ -68,7 +68,7 @@ OpenLayers.Layer.OpenSpace = OpenLayers.Class(OpenLayers.Layer.WMS, {
         // OpenLayers.Layer.Grid calls this function if the zoom level changes
         
         res = this.map.getResolution();
-        if(res > 2) {
+        if((res > 2) && (res != 4)) {
             tileSize = new OpenLayers.Size(200,200);
         } else {
             tileSize = new OpenLayers.Size(250,250);

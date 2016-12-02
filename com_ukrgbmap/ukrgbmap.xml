@@ -6,11 +6,11 @@
 	<creationDate>December 2013</creationDate>
 	<author>Mark Gawler</author>
 	<authorEmail>markg@wler.co.uk</authorEmail>
-	<authorUrl>http://www.example.org</authorUrl>
+	<authorUrl>http://www.ukrgb.co.uk</authorUrl>
 	<copyright>Copyright Info</copyright>
 	<license>License Info</license>
 	<!-- The version string is recorded in the components table -->
-	<version>0.1.0</version>
+	<version>0.1.1</version>
 	<description>The UKRGB Map Joomal Extention.</description>
 
 

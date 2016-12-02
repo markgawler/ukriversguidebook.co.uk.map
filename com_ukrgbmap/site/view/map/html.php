@@ -14,7 +14,7 @@ class UkrgbmapViewMapHtml extends JViewHtml
 		$mapParameters = $model->getMapParameters($mapId);
 
 		JHtml::_('behavior.framework');
-		JHtml::_('script', 'http://openlayers.org/api/OpenLayers.js');
+		JHtml::_('script', 'https://openlayers.org/api/OpenLayers.js');
 		JHtml::_('script', 'libraries/ukrgb/proj4js/proj4js-compressed.js');
 		//JHtml::_('script', 'components/com_ukrgbmap/view/map/js/OpenSpace.js');
 		JHtml::_('script', 'components/com_ukrgbmap/view/map/js/map-openlayers.js');
