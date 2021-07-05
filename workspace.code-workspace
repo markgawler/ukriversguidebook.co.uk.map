@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "ukrgb-river-app"
+		},
+		{
+			"path": "com_ukrgbmap"
+		},
+		{
+			"path": "docker"
+		},
+		{
+			"path": "plg_ukrgbmap"
+		}
+	]
+}
