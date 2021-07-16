@@ -30,7 +30,7 @@ class plgContentUkrgbMap extends JPlugin {
 			
 			if (isset($mapid)){
 				
-				JHtml::_('behavior.framework');
+				/* JHtml::_('behavior.framework');
 				JHtml::_('script', 'https://openlayers.org/api/OpenLayers.js');
 				JHtml::_('script', 'libraries/ukrgbgeo/proj4js/proj4js-compressed.js');
 				JHtml::_('script', 'components/com_ukrgbmap/view/map/js/OpenSpace.js');
@@ -47,10 +47,12 @@ class plgContentUkrgbMap extends JPlugin {
 				$mapData = json_encode(array(
 						'url' => JURI::base() . 'index.php?option=com_ukrgbmap&tmpl=raw&format=json',
 						'mapdata' => $model->getMapParameters($mapid)));
+
 				
 				$document = JFactory::getDocument();
 				$document->addScriptDeclaration('var params = ' .$mapData.';');
-				
+				*/
+				$mapDiv = '<div id="app"></div>';
 				$pattern = '/{map}/i'; 
 				$article->text = preg_replace($pattern, $mapDiv, $article->text);
 			}
