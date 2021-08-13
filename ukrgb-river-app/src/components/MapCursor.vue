@@ -51,9 +51,10 @@ export default {
 
 <style>
 .wrapper {
+  font-size: 8pt;
   display: grid;
   grid-gap: 2px;
-  grid-template-columns: 13.5em 10em;
+  grid-template-columns: 20em 15em;
 }
 
 .box {
@@ -68,6 +69,5 @@ export default {
   color: #fff;
   border-radius: 2px;
   padding: 1px;
-  font-size: 8pt;
 }
 </style>
