@@ -16,8 +16,9 @@ cd com_ukrgbmap || exit
 zip -qr ../packagefiles/com_ukrgbmap .
 
 echo "Plugin Creating Zip..."
-cd ../plg_ukrgbmap || exit
-zip -qr ../packagefiles/plg_ukrgbmap .
+#cd ../plg_ukrgbmap || exit
+#zip -qr ../packagefiles/plg_ukrgbmap .
+"$PROJECT_ROOT"/tools/build-plugin-package.sh
 
 echo "Library Creating Zip..."
 cd ../lib_ukrgbgeo || exit

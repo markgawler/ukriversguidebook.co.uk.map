@@ -22,37 +22,38 @@ class plgContentUkrgbMap extends JPlugin {
 	 */
 	public function onContentPrepare($context, &$article, &$params, $page = 0)
 	{		
-
+		$app_js = "";
+		$chunk_vendors_js = "";
+		$app_css = "";
+		$chunk_vendors_css = "";
 		if (isset($article->id) and $context == 'com_content.article')
 		{
 			$model = new UkrgbmapModelMap;
 			$mapid = $model->getMapIdforArticle($article->id);
 			
 			if (isset($mapid)){
-				
-				/* JHtml::_('behavior.framework');
-				JHtml::_('script', 'https://openlayers.org/api/OpenLayers.js');
-				JHtml::_('script', 'libraries/ukrgbgeo/proj4js/proj4js-compressed.js');
-				JHtml::_('script', 'components/com_ukrgbmap/view/map/js/OpenSpace.js');
-				JHtml::_('script', 'components/com_ukrgbmap/view/map/js/map-openlayers.js');
-				JHtml::_('stylesheet','components/com_ukrgbmap/view/map/css/map.css');
-				
-				$mapDiv = '<div id="map" class="ukrgbmap"></div>
-				<form class="ukrgbmapgr form-inline">
-				<label>OS Grid Ref: </label><input class="input-small uneditable-input" type="text" id="GridRef" readonly>
-				<label>WGS84 Lat: </label><input class="input-mini uneditable-input" type="text" id="Lat"  readonly>
-				<label>Lng: </label><input class="input-mini uneditable-input" type="text" id="Lng" readonly>
-				</form>';
 	
 				$mapData = json_encode(array(
-						'url' => JURI::base() . 'index.php?option=com_ukrgbmap&tmpl=raw&format=json',
+						//'url' => JURI::base() . 'index.php?option=com_ukrgbmap&tmpl=raw&format=json',
 						'mapdata' => $model->getMapParameters($mapid)));
 
-				
+				/** @var JDocumentHtml $document */
 				$document = JFactory::getDocument();
-				$document->addScriptDeclaration('var params = ' .$mapData.';');
-				*/
-				$mapDiv = '<div id="app"></div>';
+
+                $document->addScriptDeclaration('var params = ' .$mapData.';');
+
+                // Preload resources
+                $document->addHeadLink('components/com_ukrgbmap/view/map/js/app.' . $app_js . '.js', 'preload', 'rel', array('as' => 'script'));
+                $document->addHeadLink('components/com_ukrgbmap/view/map/js/chunk-vendors.' . $chunk_vendors_js . '.js', 'preload', 'rel', array('as' => 'script'));
+                $document->addHeadLink('components/com_ukrgbmap/view/map/css/app.' . $app_css . '.css', 'preload', 'rel', array('as' => 'style'));
+                $document->addHeadLink('components/com_ukrgbmap/view/map/css/chunk-vendors.' . $chunk_vendors_css . '.css', 'preload', 'rel', array('as' => 'style'));
+
+				// Load resources
+				JHtml::_('stylesheet','components/com_ukrgbmap/view/map/css/app.' . $app_css . '.css');
+				JHtml::_('stylesheet','components/com_ukrgbmap/view/map/css/chunk-vendors.' . $chunk_vendors_css . '.css');
+
+                /** @noinspection HtmlUnknownTarget */
+                $mapDiv = '<div id="app"></div><script src="components/com_ukrgbmap/view/map/js/chunk-vendors.' . $chunk_vendors_js . '.js"></script><script src="components/com_ukrgbmap/view/map/js/app.' . $app_js . '.js"></script>';
 				$pattern = '/{map}/i'; 
 				$article->text = preg_replace($pattern, $mapDiv, $article->text);
 			}
