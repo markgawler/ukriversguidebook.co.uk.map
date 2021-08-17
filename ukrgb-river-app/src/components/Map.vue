@@ -1,13 +1,13 @@
 <template>
   <div class='mapcontainer' id='map'></div>
   <MapCursor v-bind:poss='{ lat, lng }' />
+
 </template>
 
 <script>
 import 'leaflet/dist/leaflet.css'
 import MapCursor from './MapCursor'
 import L from 'leaflet'
-import proj4 from 'proj4'
 import 'proj4leaflet'
 
 // Fix for marker not appearing
@@ -28,6 +28,7 @@ export default {
     center: Object
   },
   data: () => ({
+    // mouse cursor
     lat: 0,
     lng: 0
   }),
@@ -89,22 +90,17 @@ export default {
         }
       )
 
-      // Transform coordinates .
-      var transformCoords = (arr) => {
-        return proj4('EPSG:27700', 'EPSG:4326', arr).reverse()
-      }
-
       // Initialize the map.
       var mapOptions = {
         crs: crs,
         layers: [road, outdoor, leisure],
         minZoom: 0,
         maxZoom: maxZoom,
-        center: transformCoords([this.center.n, this.center.e]),
-        zoom: 7,
+        center: [this.center.n, this.center.e],
+        zoom: 0,
         maxBounds: [
-          transformCoords([-238375.0, 0.0]),
-          transformCoords([900000.0, 1376256.0])
+          [49.562026923812304, -10.83428466254654],
+          [61.93445135313357, 7.548212515441139]
         ],
         attributionControl: true
       }
@@ -143,7 +139,9 @@ export default {
     }
   },
   mounted () {
-    this.createMap()
+    this.$nextTick(() => {
+      this.createMap()
+    })
   }
 }
 </script>

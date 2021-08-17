@@ -13,9 +13,28 @@ export default {
     Map
   },
   data: () => ({
-    n: 416741,
-    e: 91769
-  })
+    n: 0,
+    e: 0
+  }),
+  methods: {
+    readGlobal () {
+      let mapData = null
+      console.log(window.mapParams)
+      if (window.mapParams === undefined) {
+        console.log('Undefined')
+      } else {
+        console.log('Defined')
+        mapData = window.mapParams.mapdata
+        console.log(mapData)
+        this.n = parseFloat(mapData.n_lat)
+        this.e = parseFloat(mapData.e_lng)
+        console.log(this.n, this.e)
+      }
+    }
+  },
+  mounted () {
+    this.readGlobal()
+  }
 }
 </script>
 
