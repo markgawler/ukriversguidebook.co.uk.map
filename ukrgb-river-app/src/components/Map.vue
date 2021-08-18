@@ -25,7 +25,8 @@ export default {
   },
   props: {
     authenticated: Boolean,
-    center: Object
+    center: Object,
+    initialBounds: Array
   },
   data: () => ({
     // mouse cursor
@@ -34,6 +35,8 @@ export default {
   }),
   methods: {
     createMap () {
+      console.log('initialBounds:', this.initialBounds)
+
       const apiKey = 'P1UMHqoffDhreNwEh2xsZKnS02fRf5d8'
       const serviceUrl = 'https://api.os.uk/maps/raster/v1/zxy'
       const year = new Date().getFullYear()
@@ -96,8 +99,8 @@ export default {
         layers: [road, outdoor, leisure],
         minZoom: 0,
         maxZoom: maxZoom,
-        center: [this.center.n, this.center.e],
-        zoom: 0,
+        // center: [this.center.n, this.center.e],
+        // zoom: 0,
         maxBounds: [
           [49.562026923812304, -10.83428466254654],
           [61.93445135313357, 7.548212515441139]
@@ -129,6 +132,8 @@ export default {
       L.marker([54.42, -2.98])
         .addTo(map)
         .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
+
+      map.fitBounds(this.initialBounds)
 
       map.on('mousemove', (e) => {
         this.lng = e.latlng.lng

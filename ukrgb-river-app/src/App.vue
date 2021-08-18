@@ -1,6 +1,6 @@
 <template>
 <div>
-  <Map v-bind:authenticated="false" v-bind:center={n,e} />
+  <Map v-bind:authenticated="false" v-bind:center={n,e} v-bind:initialBounds=initialBounds />
 </div>
 </template>
 
@@ -14,7 +14,8 @@ export default {
   },
   data: () => ({
     n: 0,
-    e: 0
+    e: 0,
+    initialBounds: []
   }),
   methods: {
     readGlobal () {
@@ -28,7 +29,10 @@ export default {
         console.log(mapData)
         this.n = parseFloat(mapData.n_lat)
         this.e = parseFloat(mapData.e_lng)
-        console.log(this.n, this.e)
+        this.initialBounds = [
+          [parseFloat(mapData.n_lat), parseFloat(mapData.w_lng)],
+          [parseFloat(mapData.s_lat), parseFloat(mapData.e_lng)]
+        ]
       }
     }
   },

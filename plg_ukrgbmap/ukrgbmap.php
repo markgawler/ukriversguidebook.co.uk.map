@@ -32,7 +32,7 @@ class plgContentUkrgbMap extends JPlugin {
 			$mapid = $model->getMapIdforArticle($article->id);
 			
 			if (isset($mapid)){
-	
+
 				$mapData = json_encode(array(
 						//'url' => JURI::base() . 'index.php?option=com_ukrgbmap&tmpl=raw&format=json',
 						'mapdata' => $model->getMapParameters($mapid)));
@@ -40,7 +40,7 @@ class plgContentUkrgbMap extends JPlugin {
 				/** @var JDocumentHtml $document */
 				$document = JFactory::getDocument();
 
-                $document->addScriptDeclaration('var params = ' .$mapData.';');
+                $document->addScriptDeclaration('var window.mapParams = ' .$mapData.';');
 
                 // Preload resources
                 $document->addHeadLink('components/com_ukrgbmap/view/map/js/app.' . $app_js . '.js', 'preload', 'rel', array('as' => 'script'));
