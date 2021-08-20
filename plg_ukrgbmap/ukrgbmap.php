@@ -34,13 +34,14 @@ class plgContentUkrgbMap extends JPlugin {
 			if (isset($mapid)){
 
 				$mapData = json_encode(array(
-						//'url' => JURI::base() . 'index.php?option=com_ukrgbmap&tmpl=raw&format=json',
+						'url' => JURI::base() . 'index.php?option=com_ukrgbmap&tmpl=raw&format=json',
 						'mapdata' => $model->getMapParameters($mapid)));
 
 				/** @var JDocumentHtml $document */
 				$document = JFactory::getDocument();
 
-                $document->addScriptDeclaration('var window.mapParams = ' .$mapData.';');
+				// Map parameters passed ina global variable
+                $document->addScriptDeclaration('window.mapParams = ' .$mapData.';');
 
                 // Preload resources
                 $document->addHeadLink('components/com_ukrgbmap/view/map/js/app.' . $app_js . '.js', 'preload', 'rel', array('as' => 'script'));

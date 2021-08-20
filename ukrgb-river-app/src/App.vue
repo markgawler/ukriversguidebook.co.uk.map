@@ -1,6 +1,6 @@
 <template>
 <div>
-  <Map v-bind:authenticated="false" v-bind:center={n,e} v-bind:initialBounds=initialBounds />
+  <Map v-bind:authenticated="false" v-bind:initialBounds=initialBounds v-bind:mapId=mapId v-bind:callback=callback />
 </div>
 </template>
 
@@ -13,30 +13,25 @@ export default {
     Map
   },
   data: () => ({
-    n: 0,
-    e: 0,
-    initialBounds: []
+    initialBounds: [],
+    mapId: 0,
+    callback: ''
   }),
   methods: {
     readGlobal () {
       let mapData = null
-      console.log(window.mapParams)
-      if (window.mapParams === undefined) {
-        console.log('Undefined')
-      } else {
-        console.log('Defined')
+      if (window.mapParams !== undefined) {
         mapData = window.mapParams.mapdata
-        console.log(mapData)
-        this.n = parseFloat(mapData.n_lat)
-        this.e = parseFloat(mapData.e_lng)
         this.initialBounds = [
           [parseFloat(mapData.n_lat), parseFloat(mapData.w_lng)],
           [parseFloat(mapData.s_lat), parseFloat(mapData.e_lng)]
         ]
+        this.mapId = parseInt(mapData.aid)
+        this.callback = window.mapParams.url
       }
     }
   },
-  mounted () {
+  created () {
     this.readGlobal()
   }
 }

@@ -9,6 +9,7 @@
     "buildpackages": "../tools/build-packages.sh"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "core-js": "^3.16.1",
     "leaflet": "^1.7.1",
     "proj4leaflet": "^1.0.2",

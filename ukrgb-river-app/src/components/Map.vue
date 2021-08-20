@@ -1,7 +1,9 @@
 <template>
   <div class='mapcontainer' id='map'></div>
   <MapCursor v-bind:poss='{ lat, lng }' />
-
+  <div>
+      Callback URL: {{ callback }}
+  </div>
 </template>
 
 <script>
@@ -25,18 +27,31 @@ export default {
   },
   props: {
     authenticated: Boolean,
-    center: Object,
-    initialBounds: Array
+    initialBounds: Array,
+    callback: String,
+    mapId: Number
   },
   data: () => ({
     // mouse cursor
     lat: 0,
-    lng: 0
+    lng: 0,
+    map: Object,
+    points: Array
   }),
+  watch: {
+    points () {
+      console.log('update')
+      for (const p of this.points) {
+        console.log('Point: ', p)
+        console.log('X:', p.X, ' Y:', p.Y)
+        L.marker([p.Y, p.X])
+          .addTo(this.map)
+          .bindPopup(p.description)
+      }
+    }
+  },
   methods: {
     createMap () {
-      console.log('initialBounds:', this.initialBounds)
-
       const apiKey = 'P1UMHqoffDhreNwEh2xsZKnS02fRf5d8'
       const serviceUrl = 'https://api.os.uk/maps/raster/v1/zxy'
       const year = new Date().getFullYear()
@@ -99,8 +114,6 @@ export default {
         layers: [road, outdoor, leisure],
         minZoom: 0,
         maxZoom: maxZoom,
-        // center: [this.center.n, this.center.e],
-        // zoom: 0,
         maxBounds: [
           [49.562026923812304, -10.83428466254654],
           [61.93445135313357, 7.548212515441139]
@@ -127,26 +140,49 @@ export default {
         }
       })
 
-      var map = L.map('map', mapOptions)
-      map.addControl(new LogoControl())
+      this.map = L.map('map', mapOptions)
+      this.map.addControl(new LogoControl())
       L.marker([54.42, -2.98])
-        .addTo(map)
+        .addTo(this.map)
         .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
 
-      map.fitBounds(this.initialBounds)
+      this.map.fitBounds(this.initialBounds)
 
-      map.on('mousemove', (e) => {
+      this.map.on('mousemove', (e) => {
         this.lng = e.latlng.lng
         this.lat = e.latlng.lat
       })
 
-      L.control.layers(baseMaps, overlayMaps).addTo(map)
+      L.control.layers(baseMaps, overlayMaps).addTo(this.map)
+    },
+    loadMapPointData () {
+      const axios = require('axios')
+
+      // Make a request for the map points for a given map
+      axios.get(this.callback, {
+        params: {
+          task: 'mappoint',
+          guideid: this.mapId
+        }
+      })
+        .then(response => {
+          // handle success
+          this.points = response.data
+        })
+        .catch(error => {
+          // handle error
+          console.log(error)
+        })
+        .then(() => {
+          // always executed
+        })
     }
   },
   mounted () {
-    this.$nextTick(() => {
-      this.createMap()
-    })
+    this.createMap()
+    // this.$nextTick(() => {
+    this.loadMapPointData()
+    // })
   }
 }
 </script>
