@@ -1,9 +1,6 @@
 <template>
   <div class='mapcontainer' id='map'></div>
   <MapCursor v-bind:poss='{ lat, lng }' />
-  <div>
-      Callback URL: {{ callback }}
-  </div>
 </template>
 
 <script>
@@ -35,15 +32,13 @@ export default {
     // mouse cursor
     lat: 0,
     lng: 0,
-    map: Object,
-    points: Array
+    map: Object, // the map
+    points: Array // the markers belonging to this map
   }),
   watch: {
     points () {
       console.log('update')
       for (const p of this.points) {
-        console.log('Point: ', p)
-        console.log('X:', p.X, ' Y:', p.Y)
         L.marker([p.Y, p.X])
           .addTo(this.map)
           .bindPopup(p.description)
@@ -73,14 +68,12 @@ export default {
         '+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +towgs84=446.448,-125.157,542.06,0.15,0.247,0.842,-20.489 +units=m +no_defs',
         {
           resolutions: [
-            896.0, 448.0, 224.0, 112.0, 56.0, 28.0, 14.0, 7.0, 3.5, 1.75, 0.875,
-            0.4375, 0.21875, 0.109375
+            896.0, 448.0, 224.0, 112.0, 56.0, 28.0, 14.0, 7.0, 3.5, 1.75, 0.875, 0.4375, 0.21875, 0.109375
           ],
           origin: [-238375.0, 1376256.0]
         }
       )
-      const attribution =
-        'Contains OS data &copy; Crown copyright and database rights ' + year
+      const attribution = 'Contains OS data &copy; Crown copyright and database rights ' + year
 
       // Instantiate a tile layer object for the Leisure style (displayed at zoom levels 0-9).
       var leisure = L.tileLayer(
@@ -180,9 +173,7 @@ export default {
   },
   mounted () {
     this.createMap()
-    // this.$nextTick(() => {
     this.loadMapPointData()
-    // })
   }
 }
 </script>
