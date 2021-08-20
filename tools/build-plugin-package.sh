@@ -2,6 +2,7 @@
 
 PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." &> /dev/null && pwd )"
 temp_dir=$(mktemp -d)
+cd "$PROJECT_ROOT" || exit
 
 CSS=$PROJECT_ROOT/ukrgb-river-app/dist/css/
 JS=$PROJECT_ROOT/ukrgb-river-app/dist/js/
@@ -48,7 +49,7 @@ function set_var_value
 }
 
 # copy the plugin files
-rsync -av --exclude=".idea" "$plugin_dir" "$temp_dir"
+rsync -a --exclude=".idea" "$plugin_dir" "$temp_dir"
 
 res=$(get_ids "$CSS" "css")
 app=${res%% *}
@@ -68,3 +69,4 @@ set_var_value "chunk_vendors_js" "$chunk" "$plugin_file"
 cd "$temp_dir" || exit
 zip -qr "$PROJECT_ROOT/packagefiles/plg_ukrgbmap" .
 rm -rf "$temp_dir"
+cd "$PROJECT_ROOT" || exit
