@@ -1,6 +1,9 @@
 <template>
 <div>
-  <Map v-bind:authenticated="false" v-bind:initialBounds=initialBounds v-bind:mapId=mapId v-bind:callback=callback />
+  <div>
+    Authenticated: {{ authenticated }}
+  </div>
+  <Map v-bind:authenticated=authenticated v-bind:initialBounds=initialBounds v-bind:mapId=mapId v-bind:callback=callback />
 </div>
 </template>
 
@@ -15,7 +18,8 @@ export default {
   data: () => ({
     initialBounds: [],
     mapId: 0,
-    callback: ''
+    callback: '',
+    authenticated: false
   }),
   methods: {
     readGlobal () {
@@ -28,11 +32,51 @@ export default {
         ]
         this.mapId = parseInt(mapData.aid)
         this.callback = window.mapParams.url
+        this.userId = 0
+        /*  this.userId = parseInt(window.mapParams.userId)
+
+        if (this.userId !== 0) {
+          this.authenticated = true
+          this.userId = parseInt(mapData.userId)
+        } else {
+          this.authenticated = false
+          this.userId = 0
+        }
+        console.log('UserId', this.userId) */
       }
+    },
+    checkAuthStatus () {
+      const axios = require('axios')
+      console.log('Check Auth')
+      // Make a request for the map points for a given map
+      axios.get(this.callback, {
+        params: {
+          task: 'authenticate',
+          userid: this.userId
+        }
+      })
+        .then(response => {
+          // handle success
+          console.log('Auth responce', response)
+          if (response.data.userid !== 0) {
+            this.authenticated = true
+          } else {
+            this.authenticated = false
+          }
+          console.log('API Userid: ', response.data.userid)
+        })
+        .catch(error => {
+          this.authenticated = false
+          console.log(error)
+        })
+        .then(() => {
+          // always executed
+        })
     }
   },
   created () {
     this.readGlobal()
+    this.checkAuthStatus()
   }
 }
 </script>

@@ -8,6 +8,7 @@
 
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
+use Joomla\CMS\Factory;
 require_once JPATH_SITE . '/components/com_ukrgbmap/model/map.php';
 require_once JPATH_SITE . '/components/com_ukrgbmap/model/mappoint.php';
 
@@ -32,10 +33,15 @@ class plgContentUkrgbMap extends JPlugin {
 			$mapid = $model->getMapIdforArticle($article->id);
 			
 			if (isset($mapid)){
+			    $userId = Factory::getUser()->id;
+
 
 				$mapData = json_encode(array(
 						'url' => JURI::base() . 'index.php?option=com_ukrgbmap&tmpl=raw&format=json',
-						'mapdata' => $model->getMapParameters($mapid)));
+						'mapdata' => $model->getMapParameters($mapid),
+                        'userId' => $userId
+                    )
+                );
 
 				/** @var JDocumentHtml $document */
 				$document = JFactory::getDocument();
