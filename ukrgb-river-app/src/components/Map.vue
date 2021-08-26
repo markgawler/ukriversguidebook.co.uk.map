@@ -51,12 +51,18 @@ export default {
       const c = this.getMapConfig(this.authenticated)
       this.leisure.options.maxZoom = c.maxZoomLeisure
       this.road.options.minZoom = c.minZoomRoad
-      toRaw(this.map).setMaxZoom(c.maxZoom)
+      this.road.options.maxZoom = c.maxZoom
+      // toRaw(this.map).setMaxZoom(c.maxZoom) // todo: is this needed?
+
+      toRaw(this.map).removeLayer(this.road)
+      toRaw(this.map).removeLayer(this.leisure)
+      toRaw(this.map).addLayer(this.road)
+      toRaw(this.map).addLayer(this.leisure)
     }
   },
   methods: {
-    getMapConfig (authenticated) {
-      if (authenticated) {
+    getMapConfig (premium) {
+      if (premium) {
         return {
           maxZoom: 13,
           maxZoomLeisure: 9,
@@ -70,12 +76,38 @@ export default {
         }
       }
     },
-    createMap () {
+    getLayer (layerType, premium) {
+      const config = this.getMapConfig(premium)
+      let minZoom = 0
+      let maxZoom = config.maxZoom
+
+      switch (layerType) {
+        case 'Road':
+          minZoom = config.minZoomRoad
+          break
+        case 'Leisure':
+          maxZoom = config.maxZoomLeisure
+          break
+        default:
+          console.log('Invalid layer type: ', layerType)
+          return null
+      }
+
+      const year = new Date().getFullYear()
       const apiKey = 'P1UMHqoffDhreNwEh2xsZKnS02fRf5d8'
       const serviceUrl = 'https://api.os.uk/maps/raster/v1/zxy'
-      const year = new Date().getFullYear()
-
-      const config = this.getMapConfig(this.authenticated)
+      const attribution = 'Contains OS data &copy; Crown copyright and database rights ' + year
+      return L.tileLayer(
+        serviceUrl + '/' + layerType + '_27700/{z}/{x}/{y}.png?key=' + apiKey,
+        {
+          minZoom: minZoom,
+          maxZoom: maxZoom,
+          attribution: attribution
+        }
+      )
+    },
+    createMap () {
+      const premium = this.authenticated
 
       // Setup the EPSG:27700 (British National Grid) projection.
       var crs = new L.Proj.CRS(
@@ -88,32 +120,18 @@ export default {
           origin: [-238375.0, 1376256.0]
         }
       )
-      const attribution = 'Contains OS data &copy; Crown copyright and database rights ' + year
 
       // Instantiate a tile layer object for the Leisure style (displayed at zoom levels 0-9).
-      this.leisure = L.tileLayer(
-        serviceUrl + '/Leisure_27700/{z}/{x}/{y}.png?key=' + apiKey,
-        {
-          maxZoom: config.maxZoomLeisure,
-          attribution: attribution
-        }
-      )
+      this.leisure = this.getLayer('Leisure', premium)
 
       // Instantiate a tile layer object for the Road style (displayed at zoom levels 10-13).
-      this.road = L.tileLayer(
-        serviceUrl + '/Road_27700/{z}/{x}/{y}.png?key=' + apiKey,
-        {
-          minZoom: config.minZoomRoad,
-          attribution: attribution
-        }
-      )
+      this.road = this.getLayer('Road', premium)
 
       // Initialize the map.
       const mapOptions = {
         crs: crs,
         layers: [this.road, this.leisure],
         minZoom: 0,
-        maxZoom: config.maxZoom,
         maxBounds: [
           [49.562026923812304, -10.83428466254654],
           [61.93445135313357, 7.548212515441139]
