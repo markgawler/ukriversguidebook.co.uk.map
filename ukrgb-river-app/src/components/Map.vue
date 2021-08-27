@@ -1,7 +1,7 @@
 <template>
   <div class='mapcontainer' id='map'></div>
   <MapCursor v-bind:poss='{ lat, lng }' />
-  <div>Auth: {{ authenticated }}</div>
+  <div>Premium: {{ premium }}</div>
 </template>
 
 <script>
@@ -25,7 +25,7 @@ export default {
     MapCursor
   },
   props: {
-    authenticated: Boolean,
+    premium: Boolean,
     initialBounds: Array,
     callback: String,
     mapId: Number
@@ -37,7 +37,8 @@ export default {
     map: Object, // the map
     road: Object, // road layer
     leisure: Object, // leasure layer
-    points: Array // the markers belonging to this map
+    points: Array, // the markers belonging to this map
+    initialised: Boolean //
   }),
   watch: {
     points () {
@@ -47,12 +48,11 @@ export default {
           .bindPopup(p.description)
       }
     },
-    authenticated () {
-      const c = this.getMapConfig(this.authenticated)
+    premium () {
+      const c = this.getMapConfig(this.premium)
       this.leisure.options.maxZoom = c.maxZoomLeisure
       this.road.options.minZoom = c.minZoomRoad
       this.road.options.maxZoom = c.maxZoom
-      // toRaw(this.map).setMaxZoom(c.maxZoom) // todo: is this needed?
 
       toRaw(this.map).removeLayer(this.road)
       toRaw(this.map).removeLayer(this.leisure)
@@ -107,7 +107,7 @@ export default {
       )
     },
     createMap () {
-      const premium = this.authenticated
+      const premium = this.premium
 
       // Setup the EPSG:27700 (British National Grid) projection.
       var crs = new L.Proj.CRS(
@@ -170,15 +170,12 @@ export default {
         }
       })
         .then(response => {
-          // handle success
+          // success
           this.points = response.data
         })
         .catch(error => {
-          // handle error
+          // error
           console.log(error)
-        })
-        .then(() => {
-          // always executed
         })
     }
   },

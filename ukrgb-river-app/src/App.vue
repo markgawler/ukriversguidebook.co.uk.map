@@ -3,7 +3,7 @@
   <div>
     Authenticated: {{ authenticated }}
   </div>
-  <Map v-bind:authenticated=authenticated v-bind:initialBounds=initialBounds v-bind:mapId=mapId v-bind:callback=callback />
+  <Map v-bind:premium=authenticated v-bind:initialBounds=initialBounds v-bind:mapId=mapId v-bind:callback=callback />
 </div>
 </template>
 
@@ -57,12 +57,8 @@ export default {
       })
         .then(response => {
           // handle success
-          console.log('Auth responce', response)
-          if (response.data.userid !== 0) {
-            this.authenticated = true
-          } else {
-            this.authenticated = false
-          }
+          console.log('Auth response', response)
+          this.authenticated = response.data.userid !== 0
           console.log('API Userid: ', response.data.userid)
         })
         .catch(error => {
