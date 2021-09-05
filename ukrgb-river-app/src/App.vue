@@ -1,7 +1,6 @@
 <template>
 <div>
   <div>
-    Authenticated: {{ authenticated }}
   </div>
   <Map v-bind:premium=authenticated v-bind:accessToken=accessToken v-bind:initialBounds=initialBounds v-bind:mapId=mapId v-bind:callbackURL=callbackURL />
 </div>

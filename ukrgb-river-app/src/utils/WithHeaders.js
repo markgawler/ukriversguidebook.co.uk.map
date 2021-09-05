@@ -58,10 +58,6 @@ L.TileLayerWithHeaders = L.TileLayer.extend({
   }
 })
 
-L.tileLayer.withHeaders = function (url, options, headers, abort) {
-  return new L.TileLayerWithHeaders(url, options, headers, abort)
-}
-
 export function withHeaders (url, options, headers, abort) {
   return new L.TileLayerWithHeaders(url, options, headers, abort)
 }

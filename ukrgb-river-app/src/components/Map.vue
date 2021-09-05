@@ -1,8 +1,6 @@
 <template>
   <div class='mapcontainer' id='map'></div>
   <MapCursor v-bind:poss='{ lat, lng }' />
-  <div>Premium: {{ premium }}</div>
-  <div>accessToken: {{ accessToken }}</div>
 </template>
 
 <script>
@@ -12,7 +10,7 @@ import L from 'leaflet'
 import 'proj4leaflet'
 import { toRaw } from 'vue'
 import '../utils/GridRefUtils'
-import { withHeaders } from '../utils/index'
+import { withHeaders } from '../utils/WithHeaders'
 
 // Fix for marker not appearing
 delete L.Icon.Default.prototype._getIconUrl
