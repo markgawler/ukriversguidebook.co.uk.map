@@ -9,12 +9,10 @@ class UkrgbmapModelAuthenticate extends JModelItem
      */
     public function getAccessToken()
     {
-
         $app = JFactory::getApplication();
         $params = $app->getParams();
         $apiKey = $params->get('api_key');
         $apiSecret = $params->get('api_secret');
-        //die();
 
         $ch = curl_init('https://api.os.uk/oauth2/token/v1');
         curl_setopt($ch, CURLOPT_POST, true);

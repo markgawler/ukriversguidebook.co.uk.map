@@ -22,11 +22,10 @@ export default {
     authenticated: false,
     accessToken: '',
     tokenExpiresIn: 0 // Inital length of validity of access token (seconds)
-
   }),
   watch: {
     accessToken () {
-      this.refreshAccessToken(this.tokenExpiresIn - 30)
+      this.refreshTokenTimeout(this.tokenExpiresIn - 30)
     }
   },
   methods: {
@@ -43,23 +42,24 @@ export default {
         this.userId = 0
       }
     },
-    async refreshAccessToken (inSeconds) {
+    async refreshTokenTimeout (inSeconds) {
+      // Access Token has been update sleep until time to refresh the token again
       const sleep = function (x) { return new Promise(resolve => setTimeout(resolve, x * 1000)) }
       await sleep(inSeconds)
-      this.checkAuthStatus()
+      this.getAccessToken()
     },
-    checkAuthStatus () {
+    getAccessToken () {
+      // Get the access token and the users authentication status (logged in or not)
       const axios = require('axios')
       console.log('Check Auth')
       axios.get(this.callbackURL, {
         params: {
-          task: 'authenticate',
-          userid: this.userId
+          task: 'authenticate'
         }
       })
         .then(response => {
           console.log('Auth response', response)
-          this.authenticated = response.data.userId !== 0 // TODO this dosnt catch null id correctly
+          this.authenticated = response.data.userId > 0 // Authenticated user if userId > 0
           this.tokenExpiresIn = response.data.expiresIn
           this.accessToken = response.data.accessToken
         })
@@ -71,7 +71,7 @@ export default {
   },
   created () {
     this.readGlobal()
-    this.checkAuthStatus()
+    this.getAccessToken()
   }
 }
 </script>
