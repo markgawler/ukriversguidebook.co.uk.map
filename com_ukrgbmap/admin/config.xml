@@ -1,15 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <config>
-	<fieldset name="component" label="UKRGB Map Component"
-		description="Maps">
+	<fieldset name="component" label="Map"
+		description="OS Data Hub project credentials">
+		<field name="api_key" type="text"
+			   default=""
+			   label="API Key"
+			   description="OS API key"
+			   size="60"
+			   maxlength="60"
+			   class="inputbox span4 small">
+		</field>
+		<field name="api_secret" type="text"
+			   default=""
+			   label="API Secret"
+			   description="OS API key"
+			   size="60"
+			   maxlength="60"
+			   class="inputbox span4 small">
+		</field>
 	</fieldset>
+
 	<fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC"
 		label="JCONFIG_PERMISSIONS_LABEL">
 		<field name="rules" type="rules" component="com_ukrgbmap" filter="rules"
 			validate="rules" label="JCONFIG_PERMISSIONS_LABEL" section="component" />
+
+
+
 	</fieldset>
-
-
-
 </config>

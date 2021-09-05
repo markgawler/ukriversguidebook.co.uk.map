@@ -13,9 +13,6 @@ defined('_JEXEC') or die('Restricted access');
 // Load classes
 JLoader::registerPrefix('Ukrgbmap', JPATH_COMPONENT);
 
-//Load plugins
-//JPluginHelper::importPlugin('ukrgbmap');
-
 // Application
 $app = JFactory::getApplication();
 

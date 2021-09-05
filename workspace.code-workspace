@@ -14,6 +14,26 @@
 		},
 		{
 			"path": "tools"
+		},
+		{
+			"path": "leaflet-header"
 		}
-	]
+	],
+	"settings": {
+		"sqltools.connections": [
+			{
+				"mysqlOptions": {
+					"authProtocol": "default"
+				},
+				"previewLimit": 50,
+				"server": "172.18.0.2",
+				"port": 3306,
+				"driver": "MySQL",
+				"name": "Joomla DB",
+				"database": "joomla",
+				"username": "root",
+				"password": "example"
+			}
+		]
+	}
 }

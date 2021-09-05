@@ -30,11 +30,10 @@ class plgContentUkrgbMap extends JPlugin {
 		if (isset($article->id) and $context == 'com_content.article')
 		{
 			$model = new UkrgbmapModelMap;
-			$mapid = $model->getMapIdforArticle($article->id);
+			$mapid = $model->getMapIdForArticle($article->id);
 			
 			if (isset($mapid)){
 			    $userId = Factory::getUser()->id;
-
 
 				$mapData = json_encode(array(
 						'url' => JURI::base() . 'index.php?option=com_ukrgbmap&tmpl=raw&format=json',
@@ -69,9 +68,6 @@ class plgContentUkrgbMap extends JPlugin {
 	
 	public function onContentAfterSave($context, $article, $isNew)
 	{
-
-		//if ($context == 'com_content.article')
-		
 		if ($context == 'com_content.form')
 		{	
 			$model = new UkrgbmapModelMappoint;

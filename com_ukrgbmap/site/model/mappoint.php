@@ -110,7 +110,7 @@ class UkrgbmapModelMappoint extends JModelBase
 
 			// Add the map or Update the boundaries.
 			$mapmodel = new UkrgbmapModelMap();
-			if ($mapmodel->getMapIdforArticle($articleId) == null)
+			if ($mapmodel->getMapIdForArticle($articleId) == null)
 			{
 				$mapmodel->addMap(0,$swDest,$neDest,$articleId);
 			} else {

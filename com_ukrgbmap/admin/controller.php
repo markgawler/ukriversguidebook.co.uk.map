@@ -21,7 +21,7 @@ class UkrgbmapController extends JControllerLegacy
 	/**
 	 * @var		string	The default view.
 	 */
-	protected $default_view = 'eventmanager';
+	protected $default_view = 'main';
 
 	/**
 	 * Method to display a view.

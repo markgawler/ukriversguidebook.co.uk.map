@@ -11,6 +11,8 @@ class UkrgbmapModelMap extends JModelBase
 	 * Map Type:
 	 * 0 - everything
 	 * 10 - retail outlets.
+     *
+     * @since 1.0
 	 */
 	public function getMapParameters($mapid)
 	{
@@ -32,7 +34,7 @@ class UkrgbmapModelMap extends JModelBase
 		return $data;
 	}
 
-	public function getMapIdforArticle($articleid)
+	public function getMapIdForArticle($articleId)
 	{
 		/*
 		 * Get the Map ID for the article, null is returned if no map found
@@ -41,7 +43,7 @@ class UkrgbmapModelMap extends JModelBase
 		$query = $db->getQuery(true);
 		$query->select(array('id'));
 		$query->from('#__ukrgb_maps');
-		$query->where($db->quoteName('articleid') .' = '. $db->Quote($articleid));
+		$query->where($db->quoteName('articleid') .' = '. $db->Quote($articleId));
 
 		$db->setQuery($query);
 		try {
@@ -115,6 +117,5 @@ class UkrgbmapModelMap extends JModelBase
 			error_log($e);
 		}
 	}
-
 }
 

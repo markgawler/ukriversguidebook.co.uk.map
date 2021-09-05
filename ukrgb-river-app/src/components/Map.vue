@@ -2,6 +2,7 @@
   <div class='mapcontainer' id='map'></div>
   <MapCursor v-bind:poss='{ lat, lng }' />
   <div>Premium: {{ premium }}</div>
+  <div>accessToken: {{ accessToken }}</div>
 </template>
 
 <script>
@@ -10,6 +11,8 @@ import MapCursor from './MapCursor'
 import L from 'leaflet'
 import 'proj4leaflet'
 import { toRaw } from 'vue'
+import '../utils/GridRefUtils'
+import { withHeaders } from '../utils/index'
 
 // Fix for marker not appearing
 delete L.Icon.Default.prototype._getIconUrl
@@ -27,7 +30,8 @@ export default {
   props: {
     premium: Boolean,
     initialBounds: Array,
-    callback: String,
+    callbackURL: String,
+    accessToken: String,
     mapId: Number
   },
   data: () => ({
@@ -38,26 +42,47 @@ export default {
     road: Object, // road layer
     leisure: Object, // leasure layer
     points: Array, // the markers belonging to this map
-    initialised: Boolean //
+    initialised: false // True when map created followin recipt of access token
   }),
   watch: {
     points () {
-      for (const p of this.points) {
-        L.marker([p.Y, p.X])
-          .addTo(toRaw(this.map)) // toRaw resolves Vue 3 proxy issue with complex object
-          .bindPopup(p.description)
+      if (this.initialised) {
+        this.addPoints()
       }
     },
     premium () {
-      const c = this.getMapConfig(this.premium)
-      this.leisure.options.maxZoom = c.maxZoomLeisure
-      this.road.options.minZoom = c.minZoomRoad
-      this.road.options.maxZoom = c.maxZoom
-
-      toRaw(this.map).removeLayer(this.road)
-      toRaw(this.map).removeLayer(this.leisure)
-      toRaw(this.map).addLayer(this.road)
-      toRaw(this.map).addLayer(this.leisure)
+      if (this.initialised) {
+        const c = this.getMapConfig(this.premium)
+        this.leisure.options.maxZoom = c.maxZoomLeisure
+        this.road.options.minZoom = c.minZoomRoad
+        this.road.options.maxZoom = c.maxZoom
+        toRaw(this.map).removeLayer(this.road)
+        toRaw(this.map).removeLayer(this.leisure)
+        toRaw(this.map).addLayer(this.road)
+        toRaw(this.map).addLayer(this.leisure)
+      }
+    },
+    accessToken () {
+      // On receipt of the first Access Token create the Map, otherwise update
+      // the Autherisation header with the new Access Token.
+      if (this.initialised) {
+        // Update the Access Token in the Autherisation headder of all the layers (with headders)
+        const header = [
+          { header: 'Authorization', value: 'Bearer ' + this.accessToken }
+        ]
+        toRaw(this.map).eachLayer(function (layer) {
+          if ('headers' in layer) {
+            layer.headers = header
+          }
+        })
+      } else {
+        // Create the Map on receipt of an Access Token.
+        this.createMap()
+        this.initialised = true
+        if (this.points.length > 0) {
+          this.addPoints()
+        }
+      }
     }
   },
   methods: {
@@ -94,16 +119,18 @@ export default {
       }
 
       const year = new Date().getFullYear()
-      const apiKey = 'P1UMHqoffDhreNwEh2xsZKnS02fRf5d8'
       const serviceUrl = 'https://api.os.uk/maps/raster/v1/zxy'
       const attribution = 'Contains OS data &copy; Crown copyright and database rights ' + year
-      return L.tileLayer(
-        serviceUrl + '/' + layerType + '_27700/{z}/{x}/{y}.png?key=' + apiKey,
+      return withHeaders(
+        serviceUrl + '/' + layerType + '_27700/{z}/{x}/{y}.png',
         {
           minZoom: minZoom,
           maxZoom: maxZoom,
           attribution: attribution
-        }
+        },
+        [
+          { header: 'Authorization', value: 'Bearer ' + this.accessToken }
+        ]
       )
     },
     createMap () {
@@ -163,7 +190,7 @@ export default {
       const axios = require('axios')
 
       // Make a request for the map points for a given map
-      axios.get(this.callback, {
+      axios.get(this.callbackURL, {
         params: {
           task: 'mappoint',
           guideid: this.mapId
@@ -177,10 +204,16 @@ export default {
           // error
           console.log(error)
         })
+    },
+    addPoints () {
+      for (const p of this.points) {
+        L.marker([p.Y, p.X])
+          .addTo(toRaw(this.map)) // toRaw resolves Vue 3 proxy issue with complex object
+          .bindPopup(p.description)
+      }
     }
   },
   mounted () {
-    this.createMap()
     this.loadMapPointData()
   }
 }
