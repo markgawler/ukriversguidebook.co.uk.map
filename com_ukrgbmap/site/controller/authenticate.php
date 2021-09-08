@@ -14,9 +14,8 @@ class UkrgbmapControllerAuthenticate extends JControllerBase
 
         echo json_encode(array(
             'userId' => $user->id,
-            'accessToken' => $accessToken->access_token,
-            'expiresIn' => $accessToken->expires_in,
-            'issuedAt'=> $accessToken->issued_at));
+            'accessToken' => $accessToken->accessToken,
+            'expiresIn' => $accessToken->expiresIn));
 	}
 
 }

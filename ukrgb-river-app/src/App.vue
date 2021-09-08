@@ -24,7 +24,7 @@ export default {
   }),
   watch: {
     accessToken () {
-      this.refreshTokenTimeout(this.tokenExpiresIn - 30)
+      this.refreshTokenTimeout(this.tokenExpiresIn - 10)
     }
   },
   methods: {
@@ -50,14 +50,13 @@ export default {
     getAccessToken () {
       // Get the access token and the users authentication status (logged in or not)
       const axios = require('axios')
-      console.log('Check Auth')
       axios.get(this.callbackURL, {
         params: {
           task: 'authenticate'
         }
       })
         .then(response => {
-          console.log('Auth response', response)
+          // console.log('Auth response', response)
           this.authenticated = response.data.userId > 0 // Authenticated user if userId > 0
           this.tokenExpiresIn = response.data.expiresIn
           this.accessToken = response.data.accessToken
