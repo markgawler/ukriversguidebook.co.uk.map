@@ -52,7 +52,8 @@ export default {
       const axios = require('axios')
       axios.get(this.callbackURL, {
         params: {
-          task: 'authenticate'
+          task: 'authenticate',
+          cb: Date.now()
         }
       })
         .then(response => {

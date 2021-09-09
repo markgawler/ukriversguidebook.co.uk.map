@@ -23,6 +23,7 @@ class UkrgbmapControllerMappoint extends JControllerBase
 			}
 
 		}
+        JFactory::getApplication()->close(); // TODO: fix json view
 
 	}
 }

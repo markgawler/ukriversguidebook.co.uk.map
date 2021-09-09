@@ -39,6 +39,8 @@ class UkrgbmapModelAuthenticate extends JModelItem
         /** @var JCacheControllerCallback $cache */
         $cache = JFactory::getCache('com_ukrgbmap', 'callback');
         $cacheId = 'com_ukrgbmap-' . 'access_token';
+        /** @var JCache $cache */
+        $cache->setCaching(true);
         $expiresIn = 0;
         $result = false;
         while ($expiresIn < 30) {

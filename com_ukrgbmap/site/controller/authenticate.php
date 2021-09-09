@@ -11,11 +11,13 @@ class UkrgbmapControllerAuthenticate extends JControllerBase
         $user = Factory::getUser();
         $model = new UkrgbmapModelAuthenticate();
         $accessToken = $model->getAccessToken();
+        $app = JFactory::getApplication();
 
         echo json_encode(array(
             'userId' => $user->id,
             'accessToken' => $accessToken->accessToken,
             'expiresIn' => $accessToken->expiresIn));
+        $app->close(); // TODO: fix json view
 	}
 
 }
