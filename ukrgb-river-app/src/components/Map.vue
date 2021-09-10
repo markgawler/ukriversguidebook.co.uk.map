@@ -39,7 +39,7 @@ export default {
     map: Object, // the map
     road: Object, // road layer
     leisure: Object, // leasure layer
-    points: Array, // the markers belonging to this map
+    points: null, // the markers belonging to this map
     initialised: false // True when map created followin recipt of access token
   }),
   watch: {
@@ -77,7 +77,7 @@ export default {
         // Create the Map on receipt of an Access Token.
         this.createMap()
         this.initialised = true
-        if (this.points.length > 0) {
+        if (this.points != null && this.points.length > 0) {
           this.addPoints()
         }
       }
