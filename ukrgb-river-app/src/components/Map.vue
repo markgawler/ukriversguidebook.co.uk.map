@@ -12,14 +12,6 @@ import { toRaw } from 'vue'
 import '../utils/GridRefUtils'
 import { withHeaders } from '../utils/WithHeaders'
 
-// Fix for marker not appearing
-delete L.Icon.Default.prototype._getIconUrl
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
-  iconUrl: require('leaflet/dist/images/marker-icon.png'),
-  shadowUrl: require('leaflet/dist/images/marker-shadow.png')
-})
-
 export default {
   name: 'Map',
   components: {
@@ -204,8 +196,17 @@ export default {
         })
     },
     addPoints () {
+      const redIcon = new L.Icon({
+        iconUrl: require('@/assets/marker-icon-2x-red.png'),
+        shadowUrl: require('@/assets/marker-shadow.png'),
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      })
+      // L.marker([51.5, -0.09], {icon: greenIcon}).addTo(map);
       for (const p of this.points) {
-        L.marker([p.Y, p.X])
+        L.marker([p.Y, p.X], { icon: redIcon })
           .addTo(toRaw(this.map)) // toRaw resolves Vue 3 proxy issue with complex object
           .bindPopup(p.description)
       }
