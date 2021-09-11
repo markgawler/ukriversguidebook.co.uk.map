@@ -196,15 +196,15 @@ export default {
         })
     },
     addPoints () {
+      const s = 8 / 10
       const redIcon = new L.Icon({
-        iconUrl: require('@/assets/marker-icon-2x-red.png'),
+        iconUrl: require('@/assets/marker-icon-red.png'),
         shadowUrl: require('@/assets/marker-shadow.png'),
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41]
+        iconSize: [25 * s, 41 * s],
+        iconAnchor: [12 * s, 41 * s],
+        popupAnchor: [1, -34 * s],
+        shadowSize: [41 * s, 41 * s]
       })
-      // L.marker([51.5, -0.09], {icon: greenIcon}).addTo(map);
       for (const p of this.points) {
         L.marker([p.Y, p.X], { icon: redIcon })
           .addTo(toRaw(this.map)) // toRaw resolves Vue 3 proxy issue with complex object
