@@ -1,0 +1,14 @@
+{
+  "name": "test-server",
+  "version": "1.0.0",
+  "description": "A trst server for the UKRGB river app map",
+  "main": "app.js",
+  "author": "Mark Gawler",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "request": "^2.88.2"
+  }
+}

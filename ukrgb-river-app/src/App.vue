@@ -57,7 +57,6 @@ export default {
         }
       })
         .then(response => {
-          // console.log('Auth response', response)
           this.authenticated = response.data.userId > 0 // Authenticated user if userId > 0
           this.tokenExpiresIn = response.data.expiresIn
           this.accessToken = response.data.accessToken

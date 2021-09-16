@@ -2,14 +2,14 @@ import { createApp } from 'vue'
 import App from './App.vue'
 if (window.mapParams === undefined) {
   window.mapParams = {
-    url: 'http://172.18.0.3/index.php?option=com_ukrgbmap&tmpl=raw&format=json',
+    url: 'http://localhost:3000/index.php?option=com_ukrgbmap&tmpl=raw&format=json',
     mapdata: {
-      w_lng: '-1.806281',
-      s_lat: '50.7448296',
-      e_lng: '-1.740877609.',
-      n_lat: '50.7570654',
+      w_lng: '-1.7105113819807',
+      s_lat: '52.182724885006',
+      e_lng: '-1.6913676124912',
+      n_lat: '52.201556311097',
       map_type: '0',
-      aid: '2'
+      aid: '2293'
     }
   }
 }
