@@ -1,5 +1,7 @@
 <template>
-  <div class='mapcontainer' id='map'></div>
+  <div class='resize' >
+    <div class='mapcontainer ' id='map' ref="mapContainer"></div>
+  </div>
   <MapCursor v-bind:poss='{ lat, lng }' />
 </template>
 
@@ -32,7 +34,8 @@ export default {
     road: Object, // road layer
     leisure: Object, // leasure layer
     points: null, // the markers belonging to this map
-    initialised: false // True when map created followin recipt of access token
+    initialised: false, // True when map created followin recipt of access token
+    resizeObserver: null
   }),
   watch: {
     points () {
@@ -175,6 +178,11 @@ export default {
         this.lng = e.latlng.lng
         this.lat = e.latlng.lat
       })
+
+      this.resizeObserver = new ResizeObserver(this.onResize).observe(this.$refs.mapContainer)
+    },
+    onResize () {
+      toRaw(this.map).invalidateSize()
     },
     loadMapPointData () {
       const axios = require('axios')
@@ -214,6 +222,9 @@ export default {
   },
   mounted () {
     this.loadMapPointData()
+  },
+  beforeUnmount () {
+    this.resizeObserver.unobserve(this.$refs.mapContainer)
   }
 }
 </script>
@@ -222,7 +233,7 @@ export default {
 .mapcontainer {
   position: relative;
   width: 100%;
-  height: 400px;
+  height: 100%;
 }
 
 .os-branding-logo {
@@ -230,5 +241,13 @@ export default {
   width: 90px;
   height: 24px;
   background-position: center;
+}
+
+.resize {
+  overflow: hidden;
+  resize: both;
+  height: 400px;
+  max-height: 800px;
+  max-width: 1200px;
 }
 </style>
