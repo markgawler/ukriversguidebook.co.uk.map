@@ -2,7 +2,8 @@
 <div>
   <div>
   </div>
-  <Map v-bind:premium=authenticated v-bind:accessToken=accessToken v-bind:initialBounds=initialBounds v-bind:mapId=mapId v-bind:callbackURL=callbackURL />
+  <Map v-bind:premium=authenticated v-bind:accessToken=accessToken v-bind:initialBounds=initialBounds v-bind:mapId=mapId v-bind:callbackURL=callbackURL
+  />
 </div>
 </template>
 
