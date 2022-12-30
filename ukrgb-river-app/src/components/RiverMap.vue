@@ -9,7 +9,7 @@ import axios from "axios";
 import L from "leaflet";
 import MapCursor from "./MapCursor.vue";
 import redIconMarker from "../assets/marker-icon-red.png";
-import shadowIconMarker from "../assets/marker-shadow.png";
+import shadowIconMarker from "../assets/marker-shadow.png"; 
 
 const lat = ref(0);
 const lng = ref(0);
@@ -207,7 +207,7 @@ function getLayer(layerType, premium) {
   <MapCursor v-bind:poss="{ lat, lng }" />
 </template>
 
-<style scoped>
+<style>
 .mapcontainer {
   position: relative;
   width: 100%;
