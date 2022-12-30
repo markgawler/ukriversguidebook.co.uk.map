@@ -61,7 +61,6 @@ getAccessToken();
     v-bind:mapId="mapId"
     v-bind:premium="authenticated"
   />
-  <p>Expires: {{ tokenExpiresIn }} </p>
 </template>
 
 <style scoped></style>
