@@ -25,8 +25,10 @@ class plgContentUkrgbMap extends JPlugin {
 	{		
 		$app_js = "";
 		$chunk_vendors_js = "";
+		$index_js = "";
 		$app_css = "";
 		$chunk_vendors_css = "";
+		$index_css = "";
 		if (isset($article->id) and $context == 'com_content.article')
 		{
 			$model = new UkrgbmapModelMap;
@@ -49,17 +51,20 @@ class plgContentUkrgbMap extends JPlugin {
                 $document->addScriptDeclaration('window.mapParams = ' .$mapData.';');
 
                 // Preload resources
-                $document->addHeadLink('components/com_ukrgbmap/view/map/js/app.' . $app_js . '.js', 'preload', 'rel', array('as' => 'script'));
-                $document->addHeadLink('components/com_ukrgbmap/view/map/js/chunk-vendors.' . $chunk_vendors_js . '.js', 'preload', 'rel', array('as' => 'script'));
-                $document->addHeadLink('components/com_ukrgbmap/view/map/css/app.' . $app_css . '.css', 'preload', 'rel', array('as' => 'style'));
-                $document->addHeadLink('components/com_ukrgbmap/view/map/css/chunk-vendors.' . $chunk_vendors_css . '.css', 'preload', 'rel', array('as' => 'style'));
+                $document->addHeadLink('components/com_ukrgbmap/view/map/assets/' . $index_js . '.js', 'preload', 'rel', array('as' => 'script'));
+                //$document->addHeadLink('components/com_ukrgbmap/view/map/js/app.' . $app_js . '.js', 'preload', 'rel', array('as' => 'script'));
+                //$document->addHeadLink('components/com_ukrgbmap/view/map/js/chunk-vendors.' . $chunk_vendors_js . '.js', 'preload', 'rel', array('as' => 'script'));
+                $document->addHeadLink('components/com_ukrgbmap/view/map/assets/' . $index_css . '.css', 'preload', 'rel', array('as' => 'style'));
+                //$document->addHeadLink('components/com_ukrgbmap/view/map/css/app.' . $app_css . '.css', 'preload', 'rel', array('as' => 'style'));
+                //$document->addHeadLink('components/com_ukrgbmap/view/map/css/chunk-vendors.' . $chunk_vendors_css . '.css', 'preload', 'rel', array('as' => 'style'));
 
 				// Load resources
-				JHtml::_('stylesheet','components/com_ukrgbmap/view/map/css/app.' . $app_css . '.css');
-				JHtml::_('stylesheet','components/com_ukrgbmap/view/map/css/chunk-vendors.' . $chunk_vendors_css . '.css');
+				JHtml::_('stylesheet','components/com_ukrgbmap/view/map/assets/' . $index_css . '.css');
+				//JHtml::_('stylesheet','components/com_ukrgbmap/view/map/css/chunk-vendors.' . $chunk_vendors_css . '.css');
 
                 /** @noinspection HtmlUnknownTarget */
-                $mapDiv = '<div id="app"></div><script src="components/com_ukrgbmap/view/map/js/chunk-vendors.' . $chunk_vendors_js . '.js"></script><script src="components/com_ukrgbmap/view/map/js/app.' . $app_js . '.js"></script>';
+                //$mapDiv = '<div id="app"></div><script src="components/com_ukrgbmap/view/map/js/chunk-vendors.' . $chunk_vendors_js . '.js"></script><script src="components/com_ukrgbmap/view/map/js/app.' . $app_js . '.js"></script>';
+				$mapDiv = '</script><script src="components/com_ukrgbmap/view/map/assets/' . $index_js . '.js"></script>';
 				$pattern = '/{map}/i'; 
 				$article->text = preg_replace($pattern, $mapDiv, $article->text);
 			}

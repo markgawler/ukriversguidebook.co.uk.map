@@ -15,7 +15,7 @@ component_dir=$PROJECT_ROOT/com_ukrgbmap
 rsync -a --exclude=".idea" "$component_dir" "$temp_dir"
 rsync -a --exclude="favicon.ico" --exclude="index.html" "$PROJECT_ROOT"/ukrgb-river-app/dist/* "$temp_dir"/com_ukrgbmap/site/view/map/
 
-# Make the .zip packa
+# Make the .zip package
 cd "$temp_dir" || exit
 zip -qr "$PROJECT_ROOT/packagefiles/com_ukrgbmap" .
 rm -rf "$temp_dir"
