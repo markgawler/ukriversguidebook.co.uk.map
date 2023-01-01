@@ -54,6 +54,7 @@ const lng = computed (() => {
   display: grid;
   grid-gap: 2px;
   grid-template-columns: 20em 15em;
+  line-height: normal;
 }
 
 .box {
