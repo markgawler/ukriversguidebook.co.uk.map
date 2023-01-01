@@ -3,7 +3,7 @@
 import "leaflet/dist/leaflet.css";
 import "proj4leaflet";
 import { onBeforeUnmount, onMounted } from "vue";
-import { ref, watch } from "vue";
+import { ref, reactive, watch } from "vue";
 import L from "leaflet";
 import "../utils/WithHeaders";
 import axios from "axios";
@@ -16,7 +16,7 @@ const lng = ref(0);
 let map = {}; // the map
 let road = {}; // road layer
 let leisure = {}; // leisure layer
-let points = null; // the markers belonging to this map
+const points = reactive({values : []}); // the markers belonging to this map
 let initialised = false; // True when map created followin recipt of access token
 let resizeObserver = null;
 const mapContainer = ref(null); // Reference to mapContainer <div> used for watching for map resize
@@ -46,11 +46,11 @@ watch(
       // Create the Map on receipt of an Access Token.
       createMap();
       initialised = true;
-      if (points != null && points.length > 0) {
+      if (points.values != null && points.values.length > 0) {
         addPoints();
       }
     }
-
+  
     function createMap() {
       // Setup the EPSG:27700 (British National Grid) projection.
       var crs = new L.Proj.CRS(
@@ -111,6 +111,12 @@ watch(
   }
 );
 
+watch(points, (p) => {
+  if (initialised == true && points.values != null && points.values.length > 0) {
+     addPoints();
+  }
+})
+
 onBeforeUnmount(() => {
   resizeObserver.unobserve(mapContainer.value);
 });
@@ -130,7 +136,7 @@ function loadMapPointData() {
     })
     .then((response) => {
       // success
-      points = response.data;
+      points.values = response.data;
     })
     .catch((error) => {
       // error
@@ -148,7 +154,7 @@ function addPoints() {
     popupAnchor: [1, -34 * s],
     shadowSize: [41 * s, 41 * s],
   });
-  for (const p of points) {
+  for (const p of points.values) {
     L.marker([p.Y, p.X], { icon: redIcon }).addTo(map).bindPopup(p.description);
   }
 }
