@@ -58,6 +58,7 @@ L.TileLayerWithHeaders = L.TileLayer.extend({
   }
 })
 
-export function withHeaders (url, options, headers, abort) {
-  return new L.TileLayerWithHeaders(url, options, headers, abort)
-}
+
+L.TileLayerH = function (url, options, headers, abort) {
+  return new L.TileLayerWithHeaders(url, options, headers, abort);
+};

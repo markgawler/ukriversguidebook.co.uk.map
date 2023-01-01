@@ -1,16 +1,21 @@
-import { createApp } from 'vue'
-import App from './App.vue'
+import { createApp } from "vue";
+import "./style.css";
+import App from "./App.vue";
+// Load test data is required, this is done this way for compatability with original map.
+// TODO: Fix the intial map data loading.
 if (window.mapParams === undefined) {
   window.mapParams = {
-    url: 'http://localhost:3000/index.php?option=com_ukrgbmap&tmpl=raw&format=json',
+    // Test Server
+    url: "http://localhost:3000/index.php?option=com_ukrgbmap&tmpl=raw&format=json",
+    // Map bounds and Joomla article ID
     mapdata: {
-      w_lng: '-1.7105113819807',
-      s_lat: '52.182724885006',
-      e_lng: '-1.6913676124912',
-      n_lat: '52.201556311097',
-      map_type: '0',
-      aid: '2293'
-    }
-  }
+      w_lng: "-3.85",
+      s_lat: "50.4",
+      e_lng: "-3.9",
+      n_lat: "50.55",
+      map_type: "0",
+      aid: "2293",
+    },
+  };
 }
-createApp(App).mount('#app')
+createApp(App).mount("#app");

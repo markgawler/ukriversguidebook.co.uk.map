@@ -23,10 +23,8 @@ class plgContentUkrgbMap extends JPlugin {
 	 */
 	public function onContentPrepare($context, &$article, &$params, $page = 0)
 	{		
-		$app_js = "";
-		$chunk_vendors_js = "";
-		$app_css = "";
-		$chunk_vendors_css = "";
+		$index_js = "";
+		$index_css = "";
 		if (isset($article->id) and $context == 'com_content.article')
 		{
 			$model = new UkrgbmapModelMap;
@@ -45,21 +43,15 @@ class plgContentUkrgbMap extends JPlugin {
 				/** @var JDocumentHtml $document */
 				$document = JFactory::getDocument();
 
-				// Map parameters passed ina global variable
-                $document->addScriptDeclaration('window.mapParams = ' .$mapData.';');
-
-                // Preload resources
-                $document->addHeadLink('components/com_ukrgbmap/view/map/js/app.' . $app_js . '.js', 'preload', 'rel', array('as' => 'script'));
-                $document->addHeadLink('components/com_ukrgbmap/view/map/js/chunk-vendors.' . $chunk_vendors_js . '.js', 'preload', 'rel', array('as' => 'script'));
-                $document->addHeadLink('components/com_ukrgbmap/view/map/css/app.' . $app_css . '.css', 'preload', 'rel', array('as' => 'style'));
-                $document->addHeadLink('components/com_ukrgbmap/view/map/css/chunk-vendors.' . $chunk_vendors_css . '.css', 'preload', 'rel', array('as' => 'style'));
-
+				// Map parameters passed ina global variable and include JS 
+				// The important bit is the '<script type="module" crossorigin' which is why I havent used $document->addScript
+                $document->addScriptDeclaration('window.mapParams = ' .$mapData.
+				'</script><script type="module" crossorigin src="components/com_ukrgbmap/view/map/assets/' . $index_js . '.js"></script><script>');
+                
 				// Load resources
-				JHtml::_('stylesheet','components/com_ukrgbmap/view/map/css/app.' . $app_css . '.css');
-				JHtml::_('stylesheet','components/com_ukrgbmap/view/map/css/chunk-vendors.' . $chunk_vendors_css . '.css');
-
-                /** @noinspection HtmlUnknownTarget */
-                $mapDiv = '<div id="app"></div><script src="components/com_ukrgbmap/view/map/js/chunk-vendors.' . $chunk_vendors_js . '.js"></script><script src="components/com_ukrgbmap/view/map/js/app.' . $app_js . '.js"></script>';
+				JHtml::_('stylesheet','components/com_ukrgbmap/view/map/assets/' . $index_css . '.css');
+				
+				$mapDiv = '<div id="app"></div>';
 				$pattern = '/{map}/i'; 
 				$article->text = preg_replace($pattern, $mapDiv, $article->text);
 			}
