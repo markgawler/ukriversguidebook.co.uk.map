@@ -1,12 +1,12 @@
 <script setup>
-import "../utils/GridRefUtils";
+
 import "leaflet/dist/leaflet.css";
 import "proj4leaflet";
 import { onBeforeUnmount, onMounted } from "vue";
 import { ref, watch } from "vue";
-import { withHeaders } from "../utils/WithHeaders";
-import axios from "axios";
 import L from "leaflet";
+import "../utils/WithHeaders";
+import axios from "axios";
 import MapCursor from "./MapCursor.vue";
 import redIconMarker from "../assets/marker-icon-red.png";
 import shadowIconMarker from "../assets/marker-shadow.png"; 
@@ -188,7 +188,7 @@ function getLayer(layerType, premium) {
   const serviceUrl = "https://api.os.uk/maps/raster/v1/zxy";
   const attribution =
     "Contains OS data &copy; Crown copyright and database rights " + year;
-  return withHeaders(
+  return L.TileLayerH(
     serviceUrl + "/" + layerType + "_27700/{z}/{x}/{y}.png",
     {
       minZoom: minZoom,
