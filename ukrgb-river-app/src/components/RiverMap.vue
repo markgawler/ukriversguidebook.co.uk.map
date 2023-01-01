@@ -153,6 +153,8 @@ function addPoints() {
   }
 }
 
+// Control which zoom levels are avalable to authenticated and unauthenitcated users, some 
+// premium zoom levels are avalable to unauthenticated users (at present)
 function getMapConfig(premium) {
   if (premium) {
     return {
@@ -168,6 +170,8 @@ function getMapConfig(premium) {
     };
   }
 }
+
+// Get OS Map Layer with autherisation headers
 function getLayer(layerType, premium) {
   const config = getMapConfig(premium);
   let minZoom = 0;
