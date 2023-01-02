@@ -45,21 +45,20 @@ watch(accessToken, async () => {
   const sleep = function (x) {
     return new Promise((resolve) => setTimeout(resolve, x * 1000));
   };
-  await sleep( tokenExpiresIn - 7);
+  await sleep(tokenExpiresIn - 7);
   getAccessToken();
-})
+});
 
 getAccessToken();
-
 </script>
 
 <template>
   <RiverMap
-    v-bind:accessToken="accessToken"
-    v-bind:callbackURL="callbackURL"
-    v-bind:initialBounds="initialBounds"
-    v-bind:mapId="mapId"
-    v-bind:premium="authenticated"
+    :access-token="accessToken"
+    :callback-u-r-l="callbackURL"
+    :initial-bounds="initialBounds"
+    :map-id="mapId"
+    :premium="authenticated"
   />
 </template>
 

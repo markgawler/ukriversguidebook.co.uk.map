@@ -1,37 +1,37 @@
 <script setup>
-import { gridrefNumToLet } from '../utils/GridRefUtils'
-import proj4 from 'proj4'
-import { computed } from "vue"
+import { gridrefNumToLet } from "../utils/GridRefUtils";
+import proj4 from "proj4";
+import { computed } from "vue";
 
-const fmt = new Intl.NumberFormat('en', {
-  minimumIntegerDigits: '3',
-  minimumFractionDigits: '6',
-  signDisplay: 'never'
-})
+const fmt = new Intl.NumberFormat("en", {
+  minimumIntegerDigits: "3",
+  minimumFractionDigits: "6",
+  signDisplay: "never",
+});
 
-const props = defineProps ({
-  poss: Object
-  })
+const props = defineProps({
+  poss: Object,
+});
 
 const gridRef = computed(() => {
-    // ne is the EPSG:27700 Northings and Eastings, which need converting to a Grid Ref
-    if (props.poss.lng !== 0) {
-      const lat = parseFloat(props.poss.lat)
-      const lng = parseFloat(props.poss.lng)
-      const ne = proj4('EPSG:4326', 'EPSG:27700', [lng, lat])
-      return gridrefNumToLet(...ne, 10)
-    }
-    return ''
-  })
+  // ne is the EPSG:27700 Northings and Eastings, which need converting to a Grid Ref
+  if (props.poss.lng !== 0) {
+    const lat = parseFloat(props.poss.lat);
+    const lng = parseFloat(props.poss.lng);
+    const ne = proj4("EPSG:4326", "EPSG:27700", [lng, lat]);
+    return gridrefNumToLet(...ne, 10);
+  }
+  return "";
+});
 
-const lat = computed (() => {
-  return fmt.format(props.poss.lat) + '° N'
-})
+const lat = computed(() => {
+  return fmt.format(props.poss.lat) + "° N";
+});
 
-const lng = computed (() => {
-  const l = props.poss.lng
-  return fmt.format(l) + (l < 0 ? '° W' : '° E')
-})
+const lng = computed(() => {
+  const l = props.poss.lng;
+  return fmt.format(l) + (l < 0 ? "° W" : "° E");
+});
 </script>
 
 <template>

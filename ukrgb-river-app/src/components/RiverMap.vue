@@ -1,5 +1,4 @@
 <script setup>
-
 import "leaflet/dist/leaflet.css";
 import "proj4leaflet";
 import { onBeforeUnmount, onMounted } from "vue";
@@ -9,23 +8,23 @@ import "../utils/WithHeaders";
 import axios from "axios";
 import MapCursor from "./MapCursor.vue";
 import redIconMarker from "../assets/marker-icon-red.png";
-import shadowIconMarker from "../assets/marker-shadow.png"; 
+import shadowIconMarker from "../assets/marker-shadow.png";
 
 const lat = ref(0);
 const lng = ref(0);
 let map = {}; // the map
 let road = {}; // road layer
 let leisure = {}; // leisure layer
-const points = reactive({values : []}); // the markers belonging to this map
+const points = reactive({ values: [] }); // the markers belonging to this map
 let initialised = false; // True when map created followin recipt of access token
 let resizeObserver = null;
 const mapContainer = ref(null); // Reference to mapContainer <div> used for watching for map resize
 
 const props = defineProps({
-  accessToken: String,
-  callbackURL: String,
-  initialBounds: Array,
-  mapId: Number,
+  accessToken: { type: String, default: "" },
+  callbackURL: { type: String, default: "" },
+  initialBounds: { type: Array, default: null },
+  mapId: { type: Number, default: 0 },
   premium: Boolean,
 });
 
@@ -50,7 +49,7 @@ watch(
         addPoints();
       }
     }
-  
+
     function createMap() {
       // Setup the EPSG:27700 (British National Grid) projection.
       var crs = new L.Proj.CRS(
@@ -111,11 +110,15 @@ watch(
   }
 );
 
-watch(points, (p) => {
-  if (initialised == true && points.values != null && points.values.length > 0) {
-     addPoints();
+watch(points, () => {
+  if (
+    initialised == true &&
+    points.values != null &&
+    points.values.length > 0
+  ) {
+    addPoints();
   }
-})
+});
 
 onBeforeUnmount(() => {
   resizeObserver.unobserve(mapContainer.value);
@@ -159,7 +162,7 @@ function addPoints() {
   }
 }
 
-// Control which zoom levels are avalable to authenticated and unauthenitcated users, some 
+// Control which zoom levels are avalable to authenticated and unauthenitcated users, some
 // premium zoom levels are avalable to unauthenticated users (at present)
 function getMapConfig(premium) {
   if (premium) {
@@ -212,9 +215,9 @@ function getLayer(layerType, premium) {
 
 <template>
   <div class="resize">
-    <div class="mapcontainer" id="map" ref="mapContainer"></div>
+    <div id="map" ref="mapContainer" class="mapcontainer"></div>
   </div>
-  <MapCursor v-bind:poss="{ lat, lng }" />
+  <MapCursor :poss="{ lat, lng }" />
 </template>
 
 <style>
