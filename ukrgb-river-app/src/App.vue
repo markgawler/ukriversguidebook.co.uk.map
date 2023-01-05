@@ -6,7 +6,6 @@ import RiverMap from "./components/RiverMap.vue";
 const accessToken = ref("");
 let authenticated = false;
 let tokenExpiresIn = 0; // Inital length of validity of access token (seconds)
-const userId = 0;
 const callbackURL =
   window.mapParams.url == undefined ? "" : window.mapParams.url;
 
