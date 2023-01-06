@@ -33,10 +33,16 @@ watch(
     // On receipt of the first Access Token create the Map, otherwise update
     // the Autherisation header with the new Access Token.
     const header = [{ header: "Authorization", value: "Bearer " + token }];
-    if (road.headers[0].value === "Bearer ") {
+    if (road.headers == undefined) {
       // now we have an access token we can add the laters to the map
+
+      // Instantiate a tile layer object for the Road style (displayed at zoom levels 10-13).
+      road = getLayer("Road", props.premium);
       road.headers = header;
       road.addTo(map);
+
+      // Instantiate a tile layer object for the Leisure style (displayed at zoom levels 0-9).
+      leisure = getLayer("Leisure", props.premium);
       leisure.headers = header;
       leisure.addTo(map);
     } else {
@@ -80,16 +86,9 @@ function createMap() {
     }
   );
 
-  // Instantiate a tile layer object for the Leisure style (displayed at zoom levels 0-9).
-  leisure = getLayer("Leisure", props.premium);
-
-  // Instantiate a tile layer object for the Road style (displayed at zoom levels 10-13).
-  road = getLayer("Road", props.premium);
-
   // Initialize the map.
   const mapOptions = {
     crs: crs,
-    //layers: [road, leisure],
     minZoom: 0,
     maxBounds: [
       [49.562026923812304, -10.83428466254654],
@@ -170,7 +169,7 @@ function getMapConfig(premium) {
     return {
       maxZoom: 10,
       maxZoomLeisure: 9,
-      minZoomRoad: 6,
+      minZoomRoad: 10,
     };
   }
 }
