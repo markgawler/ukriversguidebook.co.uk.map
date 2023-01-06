@@ -33,20 +33,20 @@ watch(
     // On receipt of the first Access Token create the Map, otherwise update
     // the Autherisation header with the new Access Token.
     const header = [{ header: "Authorization", value: "Bearer " + token }];
-    if (road.headers[0].value !== "Bearer ") {
-      // An access token has perviously been set in the headder i.e. the Bearer includes a token 
+    if (road.headers[0].value === "Bearer ") {
+      // now we have an access token we can add the laters to the map
+      road.headers = header;
+      road.addTo(map);
+      leisure.headers = header;
+      leisure.addTo(map);
+    } else {
+      // An access token has perviously been set in the headder i.e. the Bearer includes a token
       // Update the Access Token in the Autherisation headder of all the layers (with headders)
       map.eachLayer(function (layer) {
         if ("headers" in layer) {
           layer.headers = header;
         }
       });
-    } else {
-      // now we have an access token we can add the laters to the map
-      road.headers = header;
-      road.addTo(map);
-      leisure.headers = header;
-      leisure.addTo(map);
     }
   }
 );
