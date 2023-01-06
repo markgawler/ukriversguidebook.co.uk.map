@@ -13,25 +13,10 @@ function get_ids
     path=$1
     sufix=$2
 
-    local app_id
-    local chunk_id
     local index_id
     for f in "$path"/*."$sufix" ;do
         file=$(basename "$f" ."$sufix")
         case $file in
-        app*)
-            if [ -n "$app_id" ]; then
-                echo "Multiple app" > /dev/tty
-            fi
-            app_id=${file/app./}
-            ;;
-
-        chunk-vendors*)
-            if [ -n "$chunk_id" ]; then
-                echo "Multiple chuncks" > /dev/tty
-            fi
-            chunk_id=${file/chunk-vendors./}
-            ;;
         index-*)
             if [ -n "$index_id" ]; then
                 echo "Multiple indexes" > /dev/tty
@@ -43,13 +28,11 @@ function get_ids
         esac
     done
 
-    echo "$app_id $chunk_id $index_id"
+    echo "$index_id"
 }
 
 function set_var_value
 {
-    #echo "Params:" >/dev/tty
-    #echo "$@" > /dev/tty
     local var=$1
     local value=$2
     local file=$3
