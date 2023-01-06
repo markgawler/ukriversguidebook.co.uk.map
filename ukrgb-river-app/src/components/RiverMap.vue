@@ -16,7 +16,6 @@ let map = {}; // the map
 let road = {}; // road layer
 let leisure = {}; // leisure layer
 const points = reactive({ values: [] }); // the markers belonging to this map
-let initialised = false; // True when map created followin recipt of access token
 let resizeObserver = null;
 const mapContainer = ref(null); // Reference to mapContainer <div> used for watching for map resize
 
@@ -34,7 +33,8 @@ watch(
     // On receipt of the first Access Token create the Map, otherwise update
     // the Autherisation header with the new Access Token.
     const header = [{ header: "Authorization", value: "Bearer " + token }];
-    if (initialised) {
+    if (road.headers[0].value !== "Bearer ") {
+      // An access token has perviously been set in the headder i.e. the Bearer includes a token 
       // Update the Access Token in the Autherisation headder of all the layers (with headders)
       map.eachLayer(function (layer) {
         if ("headers" in layer) {
@@ -47,18 +47,12 @@ watch(
       road.addTo(map);
       leisure.headers = header;
       leisure.addTo(map);
-
-      initialised = true;
     }
   }
 );
 
 watch(points, () => {
-  if (
-    //initialised == true &&
-    points.values != null &&
-    points.values.length > 0
-  ) {
+  if (points.values != null && points.values.length > 0) {
     addPoints();
   }
 });
