@@ -2,7 +2,6 @@
 
 PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." &> /dev/null && pwd )"
 temp_dir=$(mktemp -d)
-echo "$temp_dir"
 cd "$PROJECT_ROOT" || exit
 
 ASSETS=$PROJECT_ROOT/ukrgb-river-app/dist/assets
@@ -56,6 +55,9 @@ function set_var_value
     local file=$3
     sed -i "/^\W*\$$var\W*=/ s/\"[0-9a-z]*\"/\"$value\"/" "$file"
 }
+# Build the Vue distribution
+cd "$PROJECT_ROOT/ukrgb-river-app" || exit
+npx vite build
 
 # copy the plugin files
 rsync -a --exclude=".idea" "$plugin_dir" "$temp_dir"
