@@ -6,7 +6,6 @@ import RiverMap from "./components/RiverMap.vue";
 const accessToken = ref("");
 let authenticated = false;
 let tokenExpiresIn = 0; // Inital length of validity of access token (seconds)
-const userId = 0;
 const callbackURL =
   window.mapParams.url == undefined ? "" : window.mapParams.url;
 
@@ -45,21 +44,20 @@ watch(accessToken, async () => {
   const sleep = function (x) {
     return new Promise((resolve) => setTimeout(resolve, x * 1000));
   };
-  await sleep( tokenExpiresIn - 7);
+  await sleep(tokenExpiresIn - 7);
   getAccessToken();
-})
+});
 
 getAccessToken();
-
 </script>
 
 <template>
   <RiverMap
-    v-bind:accessToken="accessToken"
-    v-bind:callbackURL="callbackURL"
-    v-bind:initialBounds="initialBounds"
-    v-bind:mapId="mapId"
-    v-bind:premium="authenticated"
+    :access-token="accessToken"
+    :callback-u-r-l="callbackURL"
+    :initial-bounds="initialBounds"
+    :map-id="mapId"
+    :premium="authenticated"
   />
 </template>
 
