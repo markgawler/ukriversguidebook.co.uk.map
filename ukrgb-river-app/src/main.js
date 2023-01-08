@@ -18,7 +18,7 @@ if (window.mapParams === undefined) {
       e_lng: "-3.9",
       n_lat: "50.55",
       map_type: "0",
-      aid: "2293",
+      //aid: "2293",
     },
   };
 }
@@ -28,7 +28,7 @@ const router = createRouter({
   routes: [
     { path: "/", name: "Home", component: MapHome },
     { path: "/about", name: "About", component: AboutMaps },
-    { path: "/section-map", name: "Section Map", component: SectionMap},
+    { path: "/section", name: "Section Map", component: SectionMap},
 
   ],
 });

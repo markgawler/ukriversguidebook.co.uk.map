@@ -9,6 +9,7 @@ import axios from "axios";
 import MapCursor from "./MapCursor.vue";
 import redIconMarker from "../assets/marker-icon-red.png";
 import shadowIconMarker from "../assets/marker-shadow.png";
+import { accessToken } from "./AccessToken.vue";
 
 const lat = ref(0);
 const lng = ref(0);
@@ -30,30 +31,8 @@ const props = defineProps({
 watch(
   () => props.accessToken,
   (token) => {
-    // On receipt of the first Access Token create the Map, otherwise update
-    // the Autherisation header with the new Access Token.
-    const header = [{ header: "Authorization", value: "Bearer " + token }];
-    if (road.headers == undefined) {
-      // now we have an access token we can add the laters to the map
-
-      // Instantiate a tile layer object for the Road style (displayed at zoom levels 10-13).
-      road = getLayer("Road", props.premium);
-      road.headers = header;
-      road.addTo(map);
-
-      // Instantiate a tile layer object for the Leisure style (displayed at zoom levels 0-9).
-      leisure = getLayer("Leisure", props.premium);
-      leisure.headers = header;
-      leisure.addTo(map);
-    } else {
-      // An access token has perviously been set in the headder i.e. the Bearer includes a token
-      // Update the Access Token in the Autherisation headder of all the layers (with headders)
-      map.eachLayer(function (layer) {
-        if ("headers" in layer) {
-          layer.headers = header;
-        }
-      });
-    }
+    console.log('Watch Token', token)
+    addLayers(token);
   }
 );
 
@@ -64,15 +43,46 @@ watch(points, () => {
 });
 
 onBeforeUnmount(() => {
+  console.log("unobserve ", resizeObserver);
   resizeObserver.unobserve(mapContainer.value);
 });
 
 onMounted(() => {
   createMap();
   loadMapPointData();
+  if (accessToken.value !== "") {
+    addLayers(accessToken.value);
+  }
 });
 
-function createMap() {
+const addLayers = (token) => {
+  // On receipt of the first Access Token create the Map, otherwise update
+  // the Autherisation header with the new Access Token.
+  const header = [{ header: "Authorization", value: "Bearer " + token }];
+  if (road.headers == undefined) {
+    // now we have an access token we can add the laters to the map
+
+    // Instantiate a tile layer object for the Road style (displayed at zoom levels 10-13).
+    road = getLayer("Road", props.premium);
+    road.headers = header;
+    road.addTo(map);
+
+    // Instantiate a tile layer object for the Leisure style (displayed at zoom levels 0-9).
+    leisure = getLayer("Leisure", props.premium);
+    leisure.headers = header;
+    leisure.addTo(map);
+  } else {
+    // An access token has perviously been set in the headder i.e. the Bearer includes a token
+    // Update the Access Token in the Autherisation headder of all the layers (with headders)
+    map.eachLayer(function (layer) {
+      if ("headers" in layer) {
+        layer.headers = header;
+      }
+    });
+  }
+};
+
+const createMap = () => {
   // Setup the EPSG:27700 (British National Grid) projection.
   var crs = new L.Proj.CRS(
     "EPSG:27700",
@@ -120,6 +130,7 @@ function createMap() {
   resizeObserver = new ResizeObserver(() => {
     map.invalidateSize();
   }).observe(mapContainer.value);
+  console.log("create: ", resizeObserver);
 }
 
 function loadMapPointData() {
