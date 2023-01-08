@@ -31,7 +31,6 @@ const props = defineProps({
 watch(
   () => props.accessToken,
   (token) => {
-    console.log('Watch Token', token)
     addLayers(token);
   }
 );
@@ -43,7 +42,6 @@ watch(points, () => {
 });
 
 onBeforeUnmount(() => {
-  console.log("unobserve ", resizeObserver);
   resizeObserver.unobserve(mapContainer.value);
 });
 
@@ -126,12 +124,11 @@ const createMap = () => {
     lat.value = e.latlng.lat;
   });
 
-  // resizeObserver = new ResizeObserver(onResize).observe(mapContainer.value);
   resizeObserver = new ResizeObserver(() => {
     map.invalidateSize();
-  }).observe(mapContainer.value);
-  console.log("create: ", resizeObserver);
-}
+  });
+  resizeObserver.observe(mapContainer.value);
+};
 
 function loadMapPointData() {
   // Make a request for the map points for a given map
