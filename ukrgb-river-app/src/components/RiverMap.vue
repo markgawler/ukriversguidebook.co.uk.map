@@ -113,7 +113,6 @@ const createMap = () => {
       return container;
     },
   });
-
   map = L.map("map", mapOptions);
   map.addControl(new LogoControl());
   map.fitBounds(props.initialBounds);
