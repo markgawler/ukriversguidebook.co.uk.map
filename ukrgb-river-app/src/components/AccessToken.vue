@@ -5,13 +5,14 @@ import axios from "axios";
 let tokenExpiresIn = 0; // Inital length of validity of access token (seconds)
 
 const callbackURL = document.getElementById("app").getAttribute("callback");
+let cancelPolling = false;
 
 async function doTokenPolling() {
-  while (true) {
+  while (!cancelPolling) {
     await getAccessToken();
     console.log("after: ", accessToken.value, "expires: ", tokenExpiresIn);
     const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-    await delay((tokenExpiresIn - 5) * 1000); 
+    await delay((tokenExpiresIn - 5) * 1000);
   }
 }
 
@@ -31,11 +32,12 @@ function getAccessToken() {
     .then((response) => {
       authenticated.value = response.data.userId > 0; // Authenticated user if userId > 0
       tokenExpiresIn = response.data.expiresIn;
-      accessToken.value = response.data.accessToken;
+      accessToken.value = response.data.accessToken; 
     })
     .catch((error) => {
       authenticated.value = false;
       console.log(error);
+      cancelPolling = true
     });
 }
 </script>
