@@ -1,24 +1,27 @@
 <script setup>
-import { ref, watch } from "vue";
+import { onMounted, ref } from "vue";
 import axios from "axios";
 
 let tokenExpiresIn = 0; // Inital length of validity of access token (seconds)
 
 const callbackURL = document.getElementById("app").getAttribute("callback");
 
-watch(accessToken, async () => {
-  // Access Token has been update sleep until time to refresh the token again
-  const sleep = function (x) {
-    return new Promise((resolve) => setTimeout(resolve, x * 1000));
-  };
-  await sleep(tokenExpiresIn - 7);
-  getAccessToken();
+async function doTokenPolling() {
+  while (true) {
+    await getAccessToken();
+    console.log("after: ", accessToken.value, "expires: ", tokenExpiresIn);
+    const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    await delay((tokenExpiresIn - 5) * 1000); 
+  }
+}
+
+onMounted(() => {
+  doTokenPolling();
 });
-getAccessToken();
 
 function getAccessToken() {
   // Get the access token and the users authentication status (logged in or not)
-  axios
+  return axios
     .get(callbackURL, {
       params: {
         task: "authenticate",
