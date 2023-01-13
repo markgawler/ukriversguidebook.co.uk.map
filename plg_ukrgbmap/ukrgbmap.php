@@ -49,7 +49,7 @@ class plgContentUkrgbMap extends JPlugin {
 				JHtml::_('stylesheet','components/com_ukrgbmap/view/map/assets/' . $index_css . '.css');
 
                 // Replace the {map} anotation in the guide with the map plugin html
-				$mapDiv = '<div id="app" guideid="' . $aid . '" callback="' . $url . '"bounds="' . $mapData . '"></div>';
+				$mapDiv = '<div id="app" mode="plugin" guideid="' . $aid . '" callback="' . $url . '"bounds="' . $mapData . '"></div>';
 				$pattern = '/{map}/i'; 
 				$article->text = preg_replace($pattern, $mapDiv, $article->text);
 			}
