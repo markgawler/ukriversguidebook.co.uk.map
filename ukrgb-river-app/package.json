@@ -15,7 +15,8 @@
     "axios": "^1.2.1",
     "leaflet": "^1.9.3",
     "proj4leaflet": "^1.0.2",
-    "vue": "^3.2.45"
+    "vue": "^3.2.45",
+    "vue-router": "4"
   },
   "devDependencies": {
     "@types/proj4": "^2.5.2",

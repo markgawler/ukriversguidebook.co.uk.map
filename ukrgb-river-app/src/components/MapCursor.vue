@@ -10,7 +10,7 @@ const fmt = new Intl.NumberFormat("en", {
 });
 
 const props = defineProps({
-  poss: { type: Object, default:  () => ({}) },
+  poss: { type: Object, default: () => ({}) },
 });
 
 const gridRef = computed(() => {
