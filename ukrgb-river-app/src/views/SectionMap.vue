@@ -7,14 +7,14 @@ const app = document.getElementById("app");
 const callbackURL = app.getAttribute("callback");
 
 const id = app.getAttribute("guideid");
-const guideId = id == undefined ? 0 : parseInt(id);
+const guideId = id === undefined ? 0 : parseInt(id);
 
 // Decode the Base 64 encoded JSON string holding the map bounds
 const bounds = app.getAttribute("bounds");
-const jbounds = bounds == undefined ? undefined : JSON.parse(atob(bounds));
+const jbounds = bounds === undefined ? undefined : JSON.parse(atob(bounds));
 
 const initialBounds =
-  jbounds == undefined
+  jbounds === undefined
     ? [
       // Default to the max extent of the OS tile layers
         [49.562026923812304, -10.83428466254654],
@@ -27,7 +27,6 @@ const initialBounds =
 </script>
 
 <template>
-  <div class="home">Section Map</div>
   <RiverMap
     :access-token="accessToken"
     :callback-u-r-l="callbackURL"
