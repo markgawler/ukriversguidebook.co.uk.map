@@ -14,7 +14,6 @@ if (mode.toLowerCase() === "plugin") {
     { path: "/", name: "Section Map", component: SectionMap },
   ];
 } else {
-  console.log("routes");
   routes = [
     { path: "/", name: "Home", component: MapHome },
     { path: "/about", name: "About", component: AboutMaps },
