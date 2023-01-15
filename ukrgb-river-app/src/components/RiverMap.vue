@@ -1,13 +1,13 @@
 <script setup>
 import "leaflet/dist/leaflet.css";
 import "proj4leaflet";
-import { onBeforeUnmount, onMounted } from "vue";
-import { ref, reactive, watch } from "vue";
+import { onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
 import L from "leaflet";
 import "../utils/WithHeaders";
 import axios from "axios";
 import MapCursor from "./MapCursor.vue";
 import redIconMarker from "../assets/marker-icon-red.png";
+import blueIconMarker from "../assets/marker-icon-blue.png";
 import shadowIconMarker from "../assets/marker-shadow.png";
 import { accessToken } from "./AccessToken.vue";
 
@@ -16,7 +16,8 @@ const lng = ref(0);
 let map = {}; // the map
 let road = {}; // road layer
 let leisure = {}; // leisure layer
-const points = reactive({ values: [] }); // the markers belonging to this map
+const localPoints = reactive({ values: [] }); // the markers belonging to this map
+const otherPoints = reactive({ values: [] }); // the markers belonging to this map
 let resizeObserver = null;
 const mapContainer = ref(null); // Reference to mapContainer <div> used for watching for map resize
 
@@ -35,9 +36,15 @@ watch(
   }
 );
 
-watch(points, () => {
-  if (points.values != null && points.values.length > 0) {
-    addPoints();
+watch(localPoints, () => {
+  if (localPoints.values != null && localPoints.values.length > 0) {
+    addPoints(localPoints.values, redIconMarker);
+  }
+});
+
+watch(otherPoints, () => {
+  if (otherPoints.values != null && otherPoints.values.length > 0) {
+    addPoints(otherPoints.values, blueIconMarker, props.mapId)
   }
 });
 
@@ -48,6 +55,7 @@ onBeforeUnmount(() => {
 onMounted(() => {
   createMap();
   loadMapPointData();
+  loadOtherMapPointData();
   if (accessToken.value !== "") {
     addLayers(accessToken.value);
   }
@@ -57,7 +65,7 @@ const addLayers = (token) => {
   // On receipt of the first Access Token create the Map, otherwise update
   // the Autherisation header with the new Access Token.
   const header = [{ header: "Authorization", value: "Bearer " + token }];
-  if (road.headers == undefined) {
+  if (road.headers === undefined) {
     // now we have an access token we can add the laters to the map
 
     // Instantiate a tile layer object for the Road style (displayed at zoom levels 10-13).
@@ -81,7 +89,7 @@ const addLayers = (token) => {
 };
 
 const createMap = () => {
-  // Setup the EPSG:27700 (British National Grid) projection.
+  // Set up the EPSG:27700 (British National Grid) projection.
   var crs = new L.Proj.CRS(
     "EPSG:27700",
     "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +towgs84=446.448,-125.157,542.06,0.15,0.247,0.842,-20.489 +units=m +no_defs",
@@ -109,15 +117,14 @@ const createMap = () => {
       position: "bottomleft",
     },
     onAdd: () => {
-      var container = L.DomUtil.create("div", "os-branding-logo");
-      return container;
+      return L.DomUtil.create("div", "os-branding-logo");
     },
   });
   map = L.map("map", mapOptions);
   map.addControl(new LogoControl());
   map.fitBounds(props.initialBounds);
 
-  // Event handlet for mouse movement to update cursor
+  // Event handler for mouse movement to update cursor
   map.on("mousemove", (e) => {
     lng.value = e.latlng.lng;
     lat.value = e.latlng.lat;
@@ -130,7 +137,7 @@ const createMap = () => {
 };
 
 function loadMapPointData() {
-  // Make a request for the map points for a given map
+  // Make a request for the map localPoints for a given map
   axios
     .get(props.callbackURL, {
       params: {
@@ -140,7 +147,25 @@ function loadMapPointData() {
     })
     .then((response) => {
       // success
-      points.values = response.data;
+      localPoints.values = response.data;
+    })
+    .catch((error) => {
+      // error
+      console.log(error);
+    });
+}
+function loadOtherMapPointData() {
+  // Make a request for the map localPoints for a given map
+  axios
+    .get(props.callbackURL, {
+      params: {
+        task: "mappoint",
+        type: 0,
+      },
+    })
+    .then((response) => {
+      // success
+      otherPoints.values = response.data;
     })
     .catch((error) => {
       // error
@@ -148,18 +173,20 @@ function loadMapPointData() {
     });
 }
 
-function addPoints() {
+function addPoints(points, marker, excludeGuideId = 0) {
   const s = 8 / 10;
   const redIcon = new L.Icon({
-    iconUrl: redIconMarker,
+    iconUrl: marker,
     shadowUrl: shadowIconMarker,
     iconSize: [25 * s, 41 * s],
     iconAnchor: [12 * s, 41 * s],
     popupAnchor: [1, -34 * s],
     shadowSize: [41 * s, 41 * s],
   });
-  for (const p of points.values) {
-    L.marker([p.Y, p.X], { icon: redIcon }).addTo(map).bindPopup(p.description);
+  for (const p of points) {
+    if (p.riverguide !== excludeGuideId) {
+      L.marker([p.Y, p.X], {icon: redIcon}).addTo(map).bindPopup(p.description);
+    }
   }
 }
 
