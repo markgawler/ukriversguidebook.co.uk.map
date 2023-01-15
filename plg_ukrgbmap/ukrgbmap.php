@@ -31,27 +31,25 @@ class plgContentUkrgbMap extends JPlugin {
 			$mapid = $model->getMapIdForArticle($article->id);
 			
 			if (isset($mapid)){
-			    $userId = Factory::getUser()->id;
-
-				$mapData = json_encode(array(
-						'url' => JURI::base() . 'index.php?option=com_ukrgbmap&tmpl=raw&format=json',
-						'mapdata' => $model->getMapParameters($mapid),
-                        'userId' => $userId
-                    )
-                );
+			    //$userId = Factory::getUser()->id;
+                $url = JURI::base() . 'index.php?option=com_ukrgbmap&tmpl=raw&format=json';
+                $mapData = $model->getMapParameters($mapid);
+                $aid = $mapData['aid']; //TODO is $aid always equal to $article->id
+				$mapData = base64_encode(json_encode($mapData));
 
 				/** @var JDocumentHtml $document */
 				$document = JFactory::getDocument();
 
-				// Map parameters passed ina global variable and include JS 
-				// The important bit is the '<script type="module" crossorigin' which is why I havent used $document->addScript
-                $document->addScriptDeclaration('window.mapParams = ' .$mapData.
-				'</script><script type="module" crossorigin src="components/com_ukrgbmap/view/map/assets/' . $index_js . '.js"></script><script>');
+				// Insert river-app js
+				// The important bit is the '<script type="module" crossorigin' which is why I haven't used $document->addScript
+                $document->addScriptDeclaration(
+                    '</script><script type="module" crossorigin src="components/com_ukrgbmap/view/map/assets/' . $index_js . '.js"></script><script>');
                 
 				// Load resources
 				JHtml::_('stylesheet','components/com_ukrgbmap/view/map/assets/' . $index_css . '.css');
-				
-				$mapDiv = '<div id="app"></div>';
+
+                // Replace the {map} anotation in the guide with the map plugin html
+				$mapDiv = '<div id="app" mode="plugin" guideid="' . $aid . '" callback="' . $url . '"bounds="' . $mapData . '"></div>';
 				$pattern = '/{map}/i'; 
 				$article->text = preg_replace($pattern, $mapDiv, $article->text);
 			}

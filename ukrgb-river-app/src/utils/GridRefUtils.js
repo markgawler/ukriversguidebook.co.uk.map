@@ -26,7 +26,7 @@ function gridrefNumToLet(e, n, digits) {
   n = Math.floor((n % 100000) / Math.pow(10, 5 - digits / 2));
   // note use of floor, as ref is bottom-left of relevant square!
 
-  var gridRef =
+  const gridRef =
     letPair + " " + padLZ(e, digits / 2) + " " + padLZ(n, digits / 2);
   return gridRef;
 }
