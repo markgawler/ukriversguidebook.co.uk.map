@@ -16,6 +16,8 @@ const lng = ref(0);
 let map = {}; // the map
 let road = {}; // road layer
 let leisure = {}; // leisure layer
+let localMarkers = {} // layer for this guides markers
+let otherMarkers = {} // layer for other guides markers
 const localPoints = reactive({ values: [] }); // the markers belonging to this map
 const otherPoints = reactive({ values: [] }); // the markers belonging to this map
 let resizeObserver = null;
@@ -25,26 +27,28 @@ const props = defineProps({
   accessToken: { type: String, default: "" },
   callbackURL: { type: String, default: "" },
   initialBounds: { type: Array, default: null },
-  mapId: { type: Number, default: 0 },
+  guideId: { type: Number, default: 0 },
   premium: Boolean,
 });
 
 watch(
   () => props.accessToken,
   (token) => {
-    addLayers(token);
+    addMapLayers(token);
   }
 );
 
 watch(localPoints, () => {
+  console.log("localPoints:", localPoints.values)
   if (localPoints.values != null && localPoints.values.length > 0) {
-    addPoints(localPoints.values, redIconMarker);
+    addPoints(localMarkers, localPoints.values, redIconMarker);
   }
 });
 
 watch(otherPoints, () => {
+  console.log("otherpoints")
   if (otherPoints.values != null && otherPoints.values.length > 0) {
-    addPoints(otherPoints.values, blueIconMarker, props.mapId)
+    addPoints(otherMarkers, otherPoints.values, blueIconMarker, props.guideId)
   }
 });
 
@@ -54,14 +58,14 @@ onBeforeUnmount(() => {
 
 onMounted(() => {
   createMap();
-  loadMapPointData();
-  loadOtherMapPointData();
+  addMarkerPointLayers();
+
   if (accessToken.value !== "") {
-    addLayers(accessToken.value);
+    addMapLayers(accessToken.value);
   }
 });
 
-const addLayers = (token) => {
+const addMapLayers = (token) => {
   // On receipt of the first Access Token create the Map, otherwise update
   // the Autherisation header with the new Access Token.
   const header = [{ header: "Authorization", value: "Bearer " + token }];
@@ -87,6 +91,21 @@ const addLayers = (token) => {
     });
   }
 };
+
+const addMarkerPointLayers = () => {
+  otherMarkers = L.layerGroup([]).addTo(map)
+  localMarkers = L.layerGroup([]).addTo(map)
+
+  const overlayMaps = {
+    "Guide Maarker": localMarkers,
+    "Other Guide Markers" : otherMarkers
+  };
+  // Add the layer control, the null parameter would be used if we had selectable base maps
+  L.control.layers(null,overlayMaps).addTo(map);
+
+  loadMapPointData();
+  loadOtherMapPointData();
+}
 
 const createMap = () => {
   // Set up the EPSG:27700 (British National Grid) projection.
@@ -142,7 +161,7 @@ function loadMapPointData() {
     .get(props.callbackURL, {
       params: {
         task: "mappoint",
-        guideid: props.mapId,
+        guideid: props.guideId,
       },
     })
     .then((response) => {
@@ -173,7 +192,7 @@ function loadOtherMapPointData() {
     });
 }
 
-function addPoints(points, marker, excludeGuideId = 0) {
+function addPoints(layerGroup, points, marker, excludeGuideId = 0) {
   const s = 8 / 10;
   const redIcon = new L.Icon({
     iconUrl: marker,
@@ -184,14 +203,14 @@ function addPoints(points, marker, excludeGuideId = 0) {
     shadowSize: [41 * s, 41 * s],
   });
   for (const p of points) {
-    if (p.riverguide !== excludeGuideId) {
-      L.marker([p.Y, p.X], {icon: redIcon}).addTo(map).bindPopup(p.description);
+    if ((parseInt(p.riverguide)) !== excludeGuideId) {
+      L.marker([p.Y, p.X], {icon: redIcon}).addTo(layerGroup).bindPopup(p.description);
     }
   }
 }
 
-// Control which zoom levels are avalable to authenticated and unauthenitcated users, some
-// premium zoom levels are avalable to unauthenticated users (at present)
+// Control which zoom levels are available to authenticated and unauthenitcated users, some
+// premium zoom levels are available to unauthenticated users (at present)
 function getMapConfig(premium) {
   if (premium) {
     return {
