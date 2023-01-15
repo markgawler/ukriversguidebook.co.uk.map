@@ -10,7 +10,6 @@ let cancelPolling = false;
 async function doTokenPolling() {
   while (!cancelPolling) {
     await getAccessToken();
-    console.log("after: ", accessToken.value, "expires: ", tokenExpiresIn);
     const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     await delay((tokenExpiresIn - 5) * 1000);
   }

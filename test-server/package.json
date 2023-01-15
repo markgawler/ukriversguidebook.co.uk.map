@@ -5,6 +5,9 @@
   "main": "app.js",
   "author": "Mark Gawler",
   "license": "MIT",
+  "scripts": {
+    "run": "node src/app.js"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",

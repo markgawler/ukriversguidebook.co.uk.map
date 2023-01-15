@@ -31,7 +31,7 @@ const initialBounds =
     :access-token="accessToken"
     :callback-u-r-l="callbackURL"
     :initial-bounds="initialBounds"
-    :map-id="guideId"
+    :guide-id="guideId"
     :premium="authenticated"
   />
 </template>
