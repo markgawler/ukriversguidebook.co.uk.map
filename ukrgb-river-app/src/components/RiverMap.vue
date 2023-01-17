@@ -39,14 +39,12 @@ watch(
 );
 
 watch(localPoints, () => {
-  console.log("localPoints:", localPoints.values)
   if (localPoints.values != null && localPoints.values.length > 0) {
     addPoints(localMarkers, localPoints.values, redIconMarker);
   }
 });
 
 watch(otherPoints, () => {
-  console.log("otherpoints")
   if (otherPoints.values != null && otherPoints.values.length > 0) {
     addPoints(otherMarkers, otherPoints.values, blueIconMarker, props.guideId)
   }
@@ -104,7 +102,9 @@ const addMarkerPointLayers = () => {
   L.control.layers(null,overlayMaps).addTo(map);
 
   loadMapPointData();
-  loadOtherMapPointData();
+  const center = map.getCenter();
+  //loadOtherMapPointData();
+  loadMapPointDataInRadius(center, 10)
 }
 
 const createMap = () => {
@@ -191,6 +191,32 @@ function loadOtherMapPointData() {
       console.log(error);
     });
 }
+
+function loadMapPointDataInRadius(center,radius) {
+
+  // Make a request for the map localPoints that fall within 'radus' KM of 'center'
+  // Radius is in KM
+  // center os an object of {lat : yyy ,lng: xxx}
+  axios
+    .get(props.callbackURL, {
+      params: {
+        task: "mappoint",
+        radius: radius,
+        lat: center.lat,
+        lng: center.lng, 
+      },
+    })
+    .then((response) => {
+      // success
+      otherPoints.values = response.data;
+    })
+    .catch((error) => {
+      // error
+      console.log(error);
+    });
+}
+
+
 
 function addPoints(layerGroup, points, marker, excludeGuideId = 0) {
   const s = 8 / 10;

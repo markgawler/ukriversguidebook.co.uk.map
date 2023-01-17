@@ -61,7 +61,41 @@ class UkrgbmapModelMappoint extends JModelBase
 		return $result;
 	}
 
-	//TODO: update to use proj4phpPoint  object instead of using an array of points.
+    public function getByRadius($centreLat, $centreLng, $radius)
+    {
+        $db = JFactory::getDbo();
+        $query = $this->mapPoint_select($db);
+        // select points within a 'n' km radius of the point
+        $query->where('ST_Distance_Sphere(point, GeomFromText('.
+            $db->quote('POINT('.$centreLng.' '.$centreLat.')').')) < ' . $radius * 1000);
+        $db->setQuery($query);
+
+        try {
+            $result = $db->loadObjectList();
+        } catch (Exception $e) {
+            // catch any database errors.
+            error_log($e);
+            $result = null;
+        }
+        return $result;
+    }
+
+    /* Common select parameters for mappoint queries
+     * 
+     */
+    private function mapPoint_select($db) {
+        $query = $db->getQuery(true);
+        $query->select(array(
+            $db->quoteName('id'),
+            $db->quoteName('riverguide'),
+            'X('.$db->quoteName('point').') AS X',
+            'Y('.$db->quoteName('point').') AS Y',
+            $db->quoteName('type'),
+            $db->quoteName('description')));
+        $query->from('#__ukrgb_map_point');
+        return $query;
+    }
+
 
 	public function updateMapPoints($text,$articleId,$description)
 	{
