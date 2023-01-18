@@ -7,71 +7,52 @@ require_once JPATH_SITE . '/libraries/ukrgbgeo/proj4php/proj4php.php';
 
 class UkrgbmapModelMappoint extends JModelBase
 {
-	public function getByGuideId($guideId)
-	{
-		$db = JFactory::getDbo();
-		$query = $db->getQuery(true);
-		$query->select(array(
-				$db->quoteName('id'),
-				$db->quoteName('riverguide'),
-				'X('.$db->quoteName('point').') AS X',
-				'Y('.$db->quoteName('point').') AS Y',
-				$db->quoteName('type'),
-				$db->quoteName('description')));
-		$query->from('#__ukrgb_map_point');
-		$query->where('riverguide = '. $db->Quote($guideId));
-		//error_log($query);
-		$db->setQuery($query);
+    public $db;
+    public $query;
 
-		try {
-			$result = $db->loadObjectList();
-		} catch (Exception $e) {
-			// catch any database errors.
-			error_log($e);
-			$result = null;
-		}
-		return $result;
+    public function __construct(\Joomla\Registry\Registry $state = null)
+    {
+        $this->db = JFactory::getDbo();
+        $this->query = $this->db->getQuery(true);
+        parent::__construct($state);
+    }
+
+    public function getByGuideId($guideId)
+	{
+        $this->query->where('riverguide = '. $this->db->Quote($guideId));
+        return $this->doQuery();
 	}
 
 	public function getByMapType($mapType)
 	{
-		//error_log("getMapPoints - MapType: " . $mapType);
-		$db = JFactory::getDbo();
-		$query = $db->getQuery(true);
-		$query->select(array(
-				$db->quoteName('id'),
-				$db->quoteName('riverguide'),
-				'X('.$db->quoteName('point').') AS X',
-				'Y('.$db->quoteName('point').') AS Y',
-				$db->quoteName('type'),
-				$db->quoteName('description')));
-		$query->from('#__ukrgb_map_point');
-		$query->where('type = '. $db->Quote($mapType));
-		//error_log($query);
-		$db->setQuery($query);
-
-		try {
-			$result = $db->loadObjectList();
-		} catch (Exception $e) {
-			// catch any database errors.
-			error_log($e);
-			$result = null;
-		}
-		//error_log($result);
-		return $result;
+		$this->query->where('type = '. $this->db->Quote($mapType));
+        return $this->doQuery();
 	}
 
     public function getByRadius($centreLat, $centreLng, $radius)
     {
-        $db = JFactory::getDbo();
-        $query = $this->mapPoint_select($db);
         // select points within a 'n' km radius of the point
-        $query->where('ST_Distance_Sphere(point, GeomFromText('.
-            $db->quote('POINT('.$centreLng.' '.$centreLat.')').')) < ' . $radius * 1000);
-        $db->setQuery($query);
+        $this->query->where('ST_Distance_Sphere(point, GeomFromText('.
+            $this->db->quote('POINT('.$centreLng.' '.$centreLat.')').')) < ' . $radius * 1000);
+        return $this->doQuery();
+    }
+
+    private function doQuery()
+    {
+        $this->query->select(array(
+            $this->db->quoteName('id'),
+            $this->db->quoteName('riverguide'),
+            'X('.$this->db->quoteName('point').') AS X',
+            'Y('.$this->db->quoteName('point').') AS Y',
+            $this->db->quoteName('type'),
+            $this->db->quoteName('description')));
+        $this->query->from('#__ukrgb_map_point');
+
+        //error_log($query);
+        $this->db->setQuery($this->query);
 
         try {
-            $result = $db->loadObjectList();
+            $result = $this->db->loadObjectList();
         } catch (Exception $e) {
             // catch any database errors.
             error_log($e);
@@ -79,23 +60,6 @@ class UkrgbmapModelMappoint extends JModelBase
         }
         return $result;
     }
-
-    /* Common select parameters for mappoint queries
-     * 
-     */
-    private function mapPoint_select($db) {
-        $query = $db->getQuery(true);
-        $query->select(array(
-            $db->quoteName('id'),
-            $db->quoteName('riverguide'),
-            'X('.$db->quoteName('point').') AS X',
-            'Y('.$db->quoteName('point').') AS Y',
-            $db->quoteName('type'),
-            $db->quoteName('description')));
-        $query->from('#__ukrgb_map_point');
-        return $query;
-    }
-
 
 	public function updateMapPoints($text,$articleId,$description)
 	{
