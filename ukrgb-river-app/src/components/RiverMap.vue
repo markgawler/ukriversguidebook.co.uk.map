@@ -1,7 +1,7 @@
 <script setup>
 import "leaflet/dist/leaflet.css";
 import "proj4leaflet";
-import { onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
+import { onBeforeUnmount, onMounted, reactive, ref, watch, toRaw } from "vue";
 import L from "leaflet";
 import "../utils/WithHeaders";
 import axios from "axios";
@@ -16,12 +16,14 @@ const lng = ref(0);
 let map = {}; // the map
 let road = {}; // road layer
 let leisure = {}; // leisure layer
-let localMarkers = {} // layer for this guides markers
-let otherMarkers = {} // layer for other guides markers
-const localPoints = reactive({ values: [] }); // the markers belonging to this map
-const otherPoints = reactive({ values: [] }); // the markers belonging to this map
+let localMarkerLayer = {}; // layer for this guides markers
+let otherMarkerLayer = {}; // layer for other guides markers
+const points = reactive({ values: [] }); // the markers loaded in the last API call
 let resizeObserver = null;
 const mapContainer = ref(null); // Reference to mapContainer <div> used for watching for map resize
+
+let guideMarkers = []  // Array of Guide markers loaded from the DB, which should be all the markers for the guide
+let otherMarkers = []; // Array of other markers loaded from the DB, i.e. markers that have been displayed
 
 const props = defineProps({
   accessToken: { type: String, default: "" },
@@ -38,17 +40,28 @@ watch(
   }
 );
 
-watch(localPoints, () => {
-  console.log("localPoints:", localPoints.values)
-  if (localPoints.values != null && localPoints.values.length > 0) {
-    addPoints(localMarkers, localPoints.values, redIconMarker);
-  }
-});
+watch(points, (newPoints) => {
+  if (points.values != null && points.values.length > 0) {
+    for (const pt of toRaw(newPoints.values)) {
+      if (parseInt(pt.riverguide) === props.guideId) {
+        if (guideMarkers[pt.id] === undefined) {
+          guideMarkers[pt.id] = pt;
+          guideMarkers[pt.id].new = true;
+        } else {
+          guideMarkers[pt.id].new = false;
+        }
+      } else {
+        if (otherMarkers[pt.id] === undefined) {
+          otherMarkers[pt.id] = pt;
+          otherMarkers[pt.id].new = true;
+        } else {
+          otherMarkers[pt.id].new = false;
+        }
+      }
+    }
+    addPoints(otherMarkerLayer, otherMarkers, blueIconMarker);
+    addPoints(localMarkerLayer, guideMarkers, redIconMarker);
 
-watch(otherPoints, () => {
-  console.log("otherpoints")
-  if (otherPoints.values != null && otherPoints.values.length > 0) {
-    addPoints(otherMarkers, otherPoints.values, blueIconMarker, props.guideId)
   }
 });
 
@@ -82,9 +95,9 @@ const addMapLayers = (token) => {
     leisure.headers = header;
     leisure.addTo(map);
   } else {
-    // An access token has perviously been set in the headder i.e. the Bearer includes a token
-    // Update the Access Token in the Autherisation headder of all the layers (with headders)
-    map.eachLayer(function (layer) {
+    // An access token has previously been set in the header i.e. the Bearer includes a token
+    // Update the Access Token in the Authorisation header of all the layers (with headders)
+    map.eachLayer((layer) => {
       if ("headers" in layer) {
         layer.headers = header;
       }
@@ -93,19 +106,18 @@ const addMapLayers = (token) => {
 };
 
 const addMarkerPointLayers = () => {
-  otherMarkers = L.layerGroup([]).addTo(map)
-  localMarkers = L.layerGroup([]).addTo(map)
+  otherMarkerLayer = L.layerGroup([]).addTo(map);
+  localMarkerLayer = L.layerGroup([]).addTo(map);
 
   const overlayMaps = {
-    "Guide Maarker": localMarkers,
-    "Other Guide Markers" : otherMarkers
+    "Guide Maarker": localMarkerLayer,
+    "Other Guide Markers": otherMarkerLayer,
   };
   // Add the layer control, the null parameter would be used if we had selectable base maps
-  L.control.layers(null,overlayMaps).addTo(map);
+  L.control.layers(null, overlayMaps).addTo(map);
 
-  loadMapPointData();
-  loadOtherMapPointData();
-}
+  loadMapPointDataInRadius();
+};
 
 const createMap = () => {
   // Set up the EPSG:27700 (British National Grid) projection.
@@ -153,38 +165,37 @@ const createMap = () => {
     map.invalidateSize();
   });
   resizeObserver.observe(mapContainer.value);
+
+  map.on("moveend", () => {
+    loadMapPointDataInRadius();
+  });
 };
 
-function loadMapPointData() {
-  // Make a request for the map localPoints for a given map
+
+function loadMapPointDataInRadius() {
+  // Make a request for other points on the map that fall within 'radus' KM of 'center'
+
+  // Calculate the radius (in km) of the circle that will (almost) cover the map, assume the maps width
+  // is greater than height, which is a bad assumption.
+  // TODO: either make this a poligon of map bounds or use max dimension
+  const center = map.getCenter();
+  const eastBound = map.getBounds().getEast();
+  const centerEast = L.latLng(center.lat, eastBound);
+  const dist = center.distanceTo(centerEast);
+  const radius = dist / 1000;
+
   axios
     .get(props.callbackURL, {
       params: {
         task: "mappoint",
-        guideid: props.guideId,
+        radius: radius,
+        lat: center.lat,
+        lng: center.lng,
       },
     })
     .then((response) => {
       // success
-      localPoints.values = response.data;
-    })
-    .catch((error) => {
-      // error
-      console.log(error);
-    });
-}
-function loadOtherMapPointData() {
-  // Make a request for the map localPoints for a given map
-  axios
-    .get(props.callbackURL, {
-      params: {
-        task: "mappoint",
-        type: 0,
-      },
-    })
-    .then((response) => {
-      // success
-      otherPoints.values = response.data;
+      points.values = response.data;
     })
     .catch((error) => {
       // error
@@ -192,8 +203,8 @@ function loadOtherMapPointData() {
     });
 }
 
-function addPoints(layerGroup, points, marker, excludeGuideId = 0) {
-  const s = 8 / 10;
+function addPoints(layerGroup, points, marker) {
+  const s = 8 / 10;  // scale the marker 80%
   const redIcon = new L.Icon({
     iconUrl: marker,
     shadowUrl: shadowIconMarker,
@@ -202,9 +213,12 @@ function addPoints(layerGroup, points, marker, excludeGuideId = 0) {
     popupAnchor: [1, -34 * s],
     shadowSize: [41 * s, 41 * s],
   });
+
   for (const p of points) {
-    if ((parseInt(p.riverguide)) !== excludeGuideId) {
-      L.marker([p.Y, p.X], {icon: redIcon}).addTo(layerGroup).bindPopup(p.description);
+    if (p !== undefined && (p.new || p.new === undefined)) {
+      L.marker([p.Y, p.X], { icon: redIcon })
+        .addTo(layerGroup)
+        .bindPopup(p.description);
     }
   }
 }

@@ -15,7 +15,7 @@ app.get("/index.php", (req, res) => {
   const task = query.task;
   if (query.hasOwnProperty("task")) {
     console.log("Task:", task);
-    console.log("query.guideid", query.guideid);
+    // console.log(" query", query);
   }
   switch (task) {
     case "authenticate":
@@ -109,17 +109,30 @@ app.get("/index.php", (req, res) => {
       ];
       data = [];
       if (query.guideid != null) {
+        console.log('- guideid: ',query.guideid)
         for (const p of points) {
           if (p.riverguide == query.guideid) {
             data.push(p);
           }
         }
-      } else {
+      } else if (query.type != null) {
+        console.log('- type:',query.type)
         for (const p of points) {
           if (p.type == query.type) {
             data.push(p);
           }
         }
+      } else if (query.radius != null) {
+        console.log('- radius', query.radius, 'lat: ', query.lat, 'lng: ', query.lng)
+        for (const p of points) {
+          // fudge it, we are biging to need a better test server :-(
+          if (p.id <= 5 ) {
+            data.push(p);
+          }
+        }
+      } else {
+        console.log('- UNKNOWN', query)
+
       }
       res.send(data);
 

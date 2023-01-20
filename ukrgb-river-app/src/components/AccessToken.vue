@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted } from "vue";
 import axios from "axios";
 
 let tokenExpiresIn = 0; // Inital length of validity of access token (seconds)
@@ -31,7 +31,7 @@ function getAccessToken() {
     .then((response) => {
       authenticated.value = response.data.userId > 0; // Authenticated user if userId > 0
       tokenExpiresIn = response.data.expiresIn;
-      accessToken.value = response.data.accessToken; 
+      accessToken.value = response.data.accessToken;
     })
     .catch((error) => {
       authenticated.value = false;
@@ -41,6 +41,8 @@ function getAccessToken() {
 }
 </script>
 <script>
+import { ref } from "vue";
+
 export const accessToken = ref("");
 export const authenticated = ref(false);
 </script>
