@@ -60,7 +60,7 @@ watch(points, (newPoints) => {
       }
     }
     addPoints(otherMarkerLayer, otherMarkers, blueIconMarker);
-    addPoints(localMarkerLayer, guideMarkers, redIconMarker);
+    addPoints(localMarkerLayer, guideMarkers, redIconMarker,false);
 
   }
 });
@@ -203,7 +203,7 @@ function loadMapPointDataInRadius() {
     });
 }
 
-function addPoints(layerGroup, points, marker) {
+function addPoints(layerGroup, points, marker, hyperlink = true) {
   const s = 8 / 10;  // scale the marker 80%
   const redIcon = new L.Icon({
     iconUrl: marker,
@@ -216,9 +216,15 @@ function addPoints(layerGroup, points, marker) {
 
   for (const p of points) {
     if (p !== undefined && (p.new || p.new === undefined)) {
+      let popupContent = ''
+      if (hyperlink) {
+        popupContent = '<a href="/index.php?option=com_content&id='+p.riverguide+'&view=article">' + p.description + '</a><br>';
+      } else {
+        popupContent = p.description
+      }
       L.marker([p.Y, p.X], { icon: redIcon })
         .addTo(layerGroup)
-        .bindPopup(p.description);
+        .bindPopup(popupContent);
     }
   }
 }
