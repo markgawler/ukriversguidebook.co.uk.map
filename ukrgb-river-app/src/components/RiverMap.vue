@@ -16,7 +16,7 @@ const lng = ref(0);
 let map = {}; // the map
 let road = {}; // road layer
 let leisure = {}; // leisure layer
-let localMarkerLayer = {}; // layer for this guides markers
+let localMarkerLayer = {}; // layer for current guides markers
 let otherMarkerLayer = {}; // layer for other guides markers
 const points = reactive({ values: [] }); // the markers loaded in the last API call
 let resizeObserver = null;
@@ -80,10 +80,10 @@ onMounted(() => {
 
 const addMapLayers = (token) => {
   // On receipt of the first Access Token create the Map, otherwise update
-  // the Autherisation header with the new Access Token.
+  // the Authorisation header with the new Access Token.
   const header = [{ header: "Authorization", value: "Bearer " + token }];
   if (road.headers === undefined) {
-    // now we have an access token we can add the laters to the map
+    // now we have an access token we can add the layers to the map
 
     // Instantiate a tile layer object for the Road style (displayed at zoom levels 10-13).
     road = getLayer("Road", props.premium);
@@ -96,7 +96,7 @@ const addMapLayers = (token) => {
     leisure.addTo(map);
   } else {
     // An access token has previously been set in the header i.e. the Bearer includes a token
-    // Update the Access Token in the Authorisation header of all the layers (with headders)
+    // Update the Access Token in the Authorisation header of all the layers (with headers)
     map.eachLayer((layer) => {
       if ("headers" in layer) {
         layer.headers = header;
@@ -110,7 +110,7 @@ const addMarkerPointLayers = () => {
   localMarkerLayer = L.layerGroup([]).addTo(map);
 
   const overlayMaps = {
-    "Guide Maarker": localMarkerLayer,
+    "Guide Marker": localMarkerLayer,
     "Other Guide Markers": otherMarkerLayer,
   };
   // Add the layer control, the null parameter would be used if we had selectable base maps
@@ -121,7 +121,7 @@ const addMarkerPointLayers = () => {
 
 const createMap = () => {
   // Set up the EPSG:27700 (British National Grid) projection.
-  var crs = new L.Proj.CRS(
+  const crs = new L.Proj.CRS(
     "EPSG:27700",
     "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +towgs84=446.448,-125.157,542.06,0.15,0.247,0.842,-20.489 +units=m +no_defs",
     {
@@ -173,11 +173,11 @@ const createMap = () => {
 
 
 function loadMapPointDataInRadius() {
-  // Make a request for other points on the map that fall within 'radus' KM of 'center'
+  // Make a request for other points on the map that fall within 'radius' KM of 'center'
 
   // Calculate the radius (in km) of the circle that will (almost) cover the map, assume the maps width
   // is greater than height, which is a bad assumption.
-  // TODO: either make this a poligon of map bounds or use max dimension
+  // TODO: either make this a polygon of map bounds or use max dimension
   const center = map.getCenter();
   const eastBound = map.getBounds().getEast();
   const centerEast = L.latLng(center.lat, eastBound);
@@ -229,7 +229,7 @@ function addPoints(layerGroup, points, marker, hyperlink = true) {
   }
 }
 
-// Control which zoom levels are available to authenticated and unauthenitcated users, some
+// Control which zoom levels are available to authenticated and unauthenticated users, some
 // premium zoom levels are available to unauthenticated users (at present)
 function getMapConfig(premium) {
   if (premium) {
@@ -247,7 +247,7 @@ function getMapConfig(premium) {
   }
 }
 
-// Get OS Map Layer with autherisation headers
+// Get OS Map Layer with authorisation headers
 function getLayer(layerType, premium) {
   const config = getMapConfig(premium);
   let minZoom = 0;
