@@ -18,11 +18,12 @@ let road = {}; // road layer
 let leisure = {}; // leisure layer
 let localMarkerLayer = {}; // layer for this guides markers
 let otherMarkerLayer = {}; // layer for other guides markers
-const localPoints = reactive({ values: [] }); // the markers belonging to this map
-const otherPoints = reactive({ values: [] }); // the markers belonging to this map
+const points = reactive({ values: [] }); // the markers loaded in the last API call
 let resizeObserver = null;
 const mapContainer = ref(null); // Reference to mapContainer <div> used for watching for map resize
-let otherMarkers = []; // Array of markers loaded from the DB, i.e. markers that have been displayed
+
+let guideMarkers = []  // Array of Guide markers loaded from the DB, which should be all the markers for the guide
+let otherMarkers = []; // Array of other markers loaded from the DB, i.e. markers that have been displayed
 
 const props = defineProps({
   accessToken: { type: String, default: "" },
@@ -39,25 +40,28 @@ watch(
   }
 );
 
-watch(localPoints, () => {
-  if (localPoints.values != null && localPoints.values.length > 0) {
-    addPoints(localMarkerLayer, localPoints.values, redIconMarker);
-  }
-});
-
-watch(otherPoints, (newPoints) => {
-  if (otherPoints.values != null && otherPoints.values.length > 0) {
+watch(points, (newPoints) => {
+  if (points.values != null && points.values.length > 0) {
     for (const pt of toRaw(newPoints.values)) {
-      if (parseInt(pt.riverguide) !== props.guideId) {
+      if (parseInt(pt.riverguide) === props.guideId) {
+        if (guideMarkers[pt.id] === undefined) {
+          guideMarkers[pt.id] = pt;
+          guideMarkers[pt.id].new = true;
+        } else {
+          guideMarkers[pt.id].new = false;
+        }
+      } else {
         if (otherMarkers[pt.id] === undefined) {
           otherMarkers[pt.id] = pt;
           otherMarkers[pt.id].new = true;
         } else {
           otherMarkers[pt.id].new = false;
         }
-        addPoints(otherMarkerLayer, otherMarkers, blueIconMarker);
       }
     }
+    addPoints(otherMarkerLayer, otherMarkers, blueIconMarker);
+    addPoints(localMarkerLayer, guideMarkers, redIconMarker);
+
   }
 });
 
@@ -111,8 +115,6 @@ const addMarkerPointLayers = () => {
   };
   // Add the layer control, the null parameter would be used if we had selectable base maps
   L.control.layers(null, overlayMaps).addTo(map);
-
-  loadMapPointData();
 
   loadMapPointDataInRadius();
 };
@@ -169,25 +171,6 @@ const createMap = () => {
   });
 };
 
-function loadMapPointData() {
-  // Make a request for the map localPoints for a given map
-  axios
-    .get(props.callbackURL, {
-      params: {
-        task: "mappoint",
-        guideid: props.guideId,
-      },
-    })
-    .then((response) => {
-      // success
-      localPoints.values = response.data;
-    })
-    .catch((error) => {
-      // error
-      console.log(error);
-    });
-}
-
 
 function loadMapPointDataInRadius() {
   // Make a request for other points on the map that fall within 'radus' KM of 'center'
@@ -212,7 +195,7 @@ function loadMapPointDataInRadius() {
     })
     .then((response) => {
       // success
-      otherPoints.values = response.data;
+      points.values = response.data;
     })
     .catch((error) => {
       // error
@@ -220,8 +203,8 @@ function loadMapPointDataInRadius() {
     });
 }
 
-function addPoints(layerGroup, points, marker, excludeGuideId = 0) {
-  const s = 8 / 10;
+function addPoints(layerGroup, points, marker) {
+  const s = 8 / 10;  // scale the marker 80%
   const redIcon = new L.Icon({
     iconUrl: marker,
     shadowUrl: shadowIconMarker,

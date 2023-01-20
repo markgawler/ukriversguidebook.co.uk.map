@@ -126,7 +126,7 @@ app.get("/index.php", (req, res) => {
         console.log('- radius', query.radius, 'lat: ', query.lat, 'lng: ', query.lng)
         for (const p of points) {
           // fudge it, we are biging to need a better test server :-(
-          if (p.id == 5) {
+          if (p.id <= 5 ) {
             data.push(p);
           }
         }
