@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker-compose -f stack2.yml up
+docker-compose -f stack.yml up
 
 # To connect to image for debuging
 #
