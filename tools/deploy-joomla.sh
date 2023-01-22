@@ -31,9 +31,12 @@ function sync {
 }
 
 # Watch for changes
-while inotifywait -q -r -e modify,create,delete ${source} | 
+while inotifywait -q -r -e modify,create,delete "$source" "$app_src" | 
     while read -r dir action file; do 
         echo "$action $dir$file"
+        if [ "$action" == "DELETE" ]; then
+            sleep 1
+        fi
         sync "$dir"
     done
 do 
