@@ -175,14 +175,10 @@ const createMap = () => {
 function loadMapPointDataInRadius() {
   // Make a request for other points on the map that fall within 'radius' KM of 'center'
 
-  // Calculate the radius (in km) of the circle that will (almost) cover the map, assume the maps width
-  // is greater than height, which is a bad assumption.
-  // TODO: either make this a polygon of map bounds or use max dimension
+  // Calculate the radius (in km) of the circle that will cover the map
   const center = map.getCenter();
-  const eastBound = map.getBounds().getEast();
-  const centerEast = L.latLng(center.lat, eastBound);
-  const dist = center.distanceTo(centerEast);
-  const radius = dist / 1000;
+  const bounds = map.getBounds()
+  const radius = center.distanceTo(L.latLng(bounds.getNorth(), bounds.getEast()))/1000;
 
   axios
     .get(props.callbackURL, {
