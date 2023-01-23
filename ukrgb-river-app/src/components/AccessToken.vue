@@ -31,23 +31,17 @@ function getAccessToken() {
       },
     })
     .then((response) => {
-      authenticated.value = response.data.userId > 0; // Authenticated user if userId > 0
       tokenExpiresIn = response.data.expiresIn;
-      console.log("Token: ",response.data.accessToken)
       store.commit("updateAccessToken", response.data.accessToken);
-      console.log('Stored Token:',store.state.accessToken)
+      store.commit("setUserId", response.data.userId);
     })
     .catch((error) => {
-      authenticated.value = false;
+      store.commit("setUserId", 0);
+      store.commit("updateAccessToken", "");
       console.log(error);
       cancelPolling = true;
     });
 }
 </script>
-<script>
-import { ref } from "vue";
 
-export const accessToken = ref("");
-export const authenticated = ref(false);
-</script>
 <template><div></div></template>

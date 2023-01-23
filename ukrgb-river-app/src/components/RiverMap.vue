@@ -30,10 +30,10 @@ const props = defineProps({
   callbackURL: { type: String, default: "" },
   initialBounds: { type: Array, default: null },
   guideId: { type: Number, default: 0 },
-  premium: Boolean,
 });
 
 const accessToken = computed(() => store.state.accessToken)
+const premium = computed(() => store.state.userId > 0) // Authenticated user if userId > 0
 
 watch(
   () => store.state.accessToken,
@@ -90,12 +90,12 @@ const addMapLayers = (token) => {
     // now we have an access token we can add the layers to the map
 
     // Instantiate a tile layer object for the Road style (displayed at zoom levels 10-13).
-    road = getLayer("Road", props.premium);
+    road = getLayer("Road", premium.value);
     road.headers = header;
     road.addTo(map);
 
     // Instantiate a tile layer object for the Leisure style (displayed at zoom levels 0-9).
-    leisure = getLayer("Leisure", props.premium);
+    leisure = getLayer("Leisure", premium.value);
     leisure.headers = header;
     leisure.addTo(map);
   } else {

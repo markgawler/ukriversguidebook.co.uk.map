@@ -1,6 +1,5 @@
 <script setup>
 import RiverMap from "@/components/RiverMap.vue";
-import { accessToken, authenticated } from "@/components/AccessToken.vue";
 
 //TODO: Fix claaback so its a property or in a store?
 const app = document.getElementById("app");
@@ -31,6 +30,5 @@ const initialBounds =
     :callback-u-r-l="callbackURL"
     :initial-bounds="initialBounds"
     :guide-id="guideId"
-    :premium="authenticated"
   />
 </template>

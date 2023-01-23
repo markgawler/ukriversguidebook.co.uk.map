@@ -4,7 +4,8 @@ import { createStore } from "vuex";
 const store = createStore({
   state: () => ({
     markers: [],
-    accessToken: ""
+    accessToken: "",
+    userId: 0
   }),
 
   mutations: {
@@ -14,6 +15,9 @@ const store = createStore({
     addMarker(state, marker) {
       state.markers.push(marker);
     },
+    setUserId(state,id) {
+        state.userId = id
+    }
   },
 });
 export default store;
