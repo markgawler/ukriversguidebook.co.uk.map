@@ -1,7 +1,8 @@
 <script setup>
 import "leaflet/dist/leaflet.css";
 import "proj4leaflet";
-import { onBeforeUnmount, onMounted, reactive, ref, watch, toRaw } from "vue";
+import { onBeforeUnmount, onMounted, reactive, ref, watch, toRaw, computed } from "vue";
+import { useStore } from 'vuex'
 import L from "leaflet";
 import "../utils/WithHeaders";
 import axios from "axios";
@@ -9,8 +10,8 @@ import MapCursor from "./MapCursor.vue";
 import redIconMarker from "../assets/marker-icon-red.png";
 import blueIconMarker from "../assets/marker-icon-blue.png";
 import shadowIconMarker from "../assets/marker-shadow.png";
-import { accessToken } from "./AccessToken.vue";
 
+const store = useStore()
 const lat = ref(0);
 const lng = ref(0);
 let map = {}; // the map
@@ -26,15 +27,16 @@ let guideMarkers = []  // Array of Guide markers loaded from the DB, which shoul
 let otherMarkers = []; // Array of other markers loaded from the DB, i.e. markers that have been displayed
 
 const props = defineProps({
-  accessToken: { type: String, default: "" },
   callbackURL: { type: String, default: "" },
   initialBounds: { type: Array, default: null },
   guideId: { type: Number, default: 0 },
   premium: Boolean,
 });
 
+const accessToken = computed(() => store.state.accessToken)
+
 watch(
-  () => props.accessToken,
+  () => store.state.accessToken,
   (token) => {
     addMapLayers(token);
   }
@@ -47,6 +49,7 @@ watch(points, (newPoints) => {
         if (guideMarkers[pt.id] === undefined) {
           guideMarkers[pt.id] = pt;
           guideMarkers[pt.id].new = true;
+          store.commit('addMarker',pt)
         } else {
           guideMarkers[pt.id].new = false;
         }
@@ -72,11 +75,12 @@ onBeforeUnmount(() => {
 onMounted(() => {
   createMap();
   addMarkerPointLayers();
-
   if (accessToken.value !== "") {
     addMapLayers(accessToken.value);
   }
 });
+
+
 
 const addMapLayers = (token) => {
   // On receipt of the first Access Token create the Map, otherwise update
@@ -271,7 +275,7 @@ function getLayer(layerType, premium) {
       maxZoom: maxZoom,
       attribution: attribution,
     },
-    [{ header: "Authorization", value: "Bearer " + props.accessToken }]
+    [{ header: "Authorization", value: "Bearer " + accessToken.value }]
   );
 }
 </script>

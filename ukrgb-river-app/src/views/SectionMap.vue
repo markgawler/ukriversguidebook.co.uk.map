@@ -28,7 +28,6 @@ const initialBounds =
 
 <template>
   <RiverMap
-    :access-token="accessToken"
     :callback-u-r-l="callbackURL"
     :initial-bounds="initialBounds"
     :guide-id="guideId"

@@ -1,7 +1,9 @@
 <script setup>
 import { onMounted } from "vue";
+import { useStore } from "vuex";
 import axios from "axios";
 
+const store = useStore();
 let tokenExpiresIn = 0; // Inital length of validity of access token (seconds)
 
 const callbackURL = document.getElementById("app").getAttribute("callback");
@@ -31,12 +33,14 @@ function getAccessToken() {
     .then((response) => {
       authenticated.value = response.data.userId > 0; // Authenticated user if userId > 0
       tokenExpiresIn = response.data.expiresIn;
-      accessToken.value = response.data.accessToken;
+      console.log("Token: ",response.data.accessToken)
+      store.commit("updateAccessToken", response.data.accessToken);
+      console.log('Stored Token:',store.state.accessToken)
     })
     .catch((error) => {
       authenticated.value = false;
       console.log(error);
-      cancelPolling = true
+      cancelPolling = true;
     });
 }
 </script>
