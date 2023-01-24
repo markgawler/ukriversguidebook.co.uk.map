@@ -32,11 +32,11 @@ const props = defineProps({
   guideId: { type: Number, default: 0 },
 });
 
-const accessToken = computed(() => store.state.accessToken)
-const premium = computed(() => store.state.userId > 0) // Authenticated user if userId > 0
+const accessToken = computed(() => store.state.mapAccess.accessToken)
+const premium = computed(() => store.state.mapAccess.userId > 0) // Authenticated user if userId > 0
 
 watch(
-  () => store.state.accessToken,
+  () => store.state.mapAccess.accessToken,
   (token) => {
     addMapLayers(token);
   }
@@ -49,7 +49,7 @@ watch(points, (newPoints) => {
         if (guideMarkers[pt.id] === undefined) {
           guideMarkers[pt.id] = pt;
           guideMarkers[pt.id].new = true;
-          store.commit('addMarker',pt)
+          store.commit('mapPoints/addMarker',pt)
         } else {
           guideMarkers[pt.id].new = false;
         }
@@ -205,7 +205,7 @@ function loadMapPointDataInRadius() {
 
 function addPoints(layerGroup, points, marker, hyperlink = true) {
   const s = 8 / 10;  // scale the marker 80%
-  const redIcon = new L.Icon({
+  const markerIcon = new L.Icon({
     iconUrl: marker,
     shadowUrl: shadowIconMarker,
     iconSize: [25 * s, 41 * s],
@@ -222,7 +222,7 @@ function addPoints(layerGroup, points, marker, hyperlink = true) {
       } else {
         popupContent = p.description
       }
-      L.marker([p.Y, p.X], { icon: redIcon })
+      L.marker([p.Y, p.X], { icon: markerIcon })
         .addTo(layerGroup)
         .bindPopup(popupContent);
     }

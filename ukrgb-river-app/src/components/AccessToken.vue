@@ -32,12 +32,12 @@ function getAccessToken() {
     })
     .then((response) => {
       tokenExpiresIn = response.data.expiresIn;
-      store.commit("updateAccessToken", response.data.accessToken);
-      store.commit("setUserId", response.data.userId);
+      store.commit("mapAccess/updateAccessToken", response.data.accessToken);
+      store.commit("mapAccess/setUserId", response.data.userId);
     })
     .catch((error) => {
-      store.commit("setUserId", 0);
-      store.commit("updateAccessToken", "");
+      store.commit("mapAccess/setUserId", 0);
+      store.commit("mapAccess/updateAccessToken", "");
       console.log(error);
       cancelPolling = true;
     });
