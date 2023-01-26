@@ -1,23 +1,25 @@
 #!/bin/bash
 # Script to update most of the joomla components files without installing the package. Install the Joomla package at
 # least once before using this script as set the file permissions of the destination folders so the script can write
-# there.
+# there. 
 #
 # todo: language files
-# todo: Joomla Plugin files (low priority, this will need to update the .php file with the name of the Vue app build).
 # todo: Build the Vue app when it changes (low priority)
 
 PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." &> /dev/null && pwd )"
+WEB_ROOT="$PROJECT_ROOT/docker/www"
 
 component="com_ukrgbmap"
+plugin="ukrgbmap"
 
 source="$PROJECT_ROOT/$component"
 admin_src="$source/admin"
 site_src="$source/site"
 app_src="$PROJECT_ROOT/ukrgb-river-app/dist/assets"
 
-admin_dest="$PROJECT_ROOT/docker/www/administrator/components/$component"
-site_dest="$PROJECT_ROOT/docker/www/components/$component"
+admin_dest="$WEB_ROOT/administrator/components/$component"
+site_dest="$WEB_ROOT/components/$component"
+plg_dest="$WEB_ROOT/plugins/content/$plugin"
 
 function sync {
     if [[ $dir == $site_src* ]]; then
@@ -27,6 +29,7 @@ function sync {
         rsync -av --no-o --no-g --no-perms --quiet --exclude="language" "$admin_src/" "$admin_dest/"
     elif  [[ $dir == $app_src* ]]; then
         rsync -av --no-o --no-g --no-perms --quiet "$app_src/" "$site_dest/view/map/assets"
+        unzip -jo "$PROJECT_ROOT"/packagefiles/plg_"$plugin".zip plg_"$plugin"/"$plugin".* -d "$plg_dest/"
     fi
 }
 
