@@ -19,7 +19,7 @@ let road = {}; // road layer
 let leisure = {}; // leisure layer
 let localMarkerLayer = {}; // layer for current guides markers
 let otherMarkerLayer = {}; // layer for other guides markers
-let resizeObserver = null;
+let resizeObserver = null; // observer for map <div> resize, used to foure leaflet resize
 const mapContainer = ref(null); // Reference to mapContainer <div> used for watching for map resize
 
 const props = defineProps({
@@ -38,6 +38,7 @@ watch(
   }
 );
 
+// Subscribe to mutations of the maPoints store addMarker
 const unsubscribe = store.subscribe((mutation) => {
   if (mutation.type === "mapPoints/addMarker") {
     const pt = mutation.payload;
@@ -169,9 +170,10 @@ const createMap = () => {
   });
 };
 
+/* Call API to get any map point that would be visable on the map.
+ *  Some points outside the map bounds will be loaded as the area
+ *  is calculated as a circle encompasi ng the whole map. */
 function loadMapPointDataInRadius() {
-  // Make a request for other points on the map that fall within 'radius' KM of 'center'
-
   // Calculate the radius (in km) of the circle that will cover the map
   const center = map.getCenter();
   const bounds = map.getBounds();

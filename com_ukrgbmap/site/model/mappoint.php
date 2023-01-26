@@ -117,9 +117,11 @@ class UkrgbmapModelMappoint extends JModelBase
 		}
 	}
 
+	/* 
+	* Add Marker point to the DB
+	*/
 	public function addMapPoint ($point,$riverguide,$type,$description){
-		/*
-		 * */
+		
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
 			
