@@ -1,8 +1,8 @@
 <script setup>
 import "leaflet/dist/leaflet.css";
 import "proj4leaflet";
-import { onBeforeUnmount, onMounted, reactive, ref, watch, toRaw, computed } from "vue";
-import { useStore } from 'vuex'
+import { onBeforeUnmount, onMounted, ref, watch, computed } from "vue";
+import { useStore } from "vuex";
 import L from "leaflet";
 import "../utils/WithHeaders";
 import axios from "axios";
@@ -11,7 +11,7 @@ import redIconMarker from "../assets/marker-icon-red.png";
 import blueIconMarker from "../assets/marker-icon-blue.png";
 import shadowIconMarker from "../assets/marker-shadow.png";
 
-const store = useStore()
+const store = useStore();
 const lat = ref(0);
 const lng = ref(0);
 let map = {}; // the map
@@ -19,12 +19,8 @@ let road = {}; // road layer
 let leisure = {}; // leisure layer
 let localMarkerLayer = {}; // layer for current guides markers
 let otherMarkerLayer = {}; // layer for other guides markers
-const points = reactive({ values: [] }); // the markers loaded in the last API call
 let resizeObserver = null;
 const mapContainer = ref(null); // Reference to mapContainer <div> used for watching for map resize
-
-let guideMarkers = []  // Array of Guide markers loaded from the DB, which should be all the markers for the guide
-let otherMarkers = []; // Array of other markers loaded from the DB, i.e. markers that have been displayed
 
 const props = defineProps({
   callbackURL: { type: String, default: "" },
@@ -32,8 +28,8 @@ const props = defineProps({
   guideId: { type: Number, default: 0 },
 });
 
-const accessToken = computed(() => store.state.mapAccess.accessToken)
-const premium = computed(() => store.state.mapAccess.userId > 0) // Authenticated user if userId > 0
+const accessToken = computed(() => store.state.mapAccess.accessToken);
+const premium = computed(() => store.state.mapAccess.userId > 0); // Authenticated user if userId > 0
 
 watch(
   () => store.state.mapAccess.accessToken,
@@ -42,33 +38,15 @@ watch(
   }
 );
 
-watch(points, (newPoints) => {
-  if (points.values != null && points.values.length > 0) {
-    for (const pt of toRaw(newPoints.values)) {
-      if (parseInt(pt.riverguide) === props.guideId) {
-        if (guideMarkers[pt.id] === undefined) {
-          guideMarkers[pt.id] = pt;
-          guideMarkers[pt.id].new = true;
-          store.commit('mapPoints/addMarker',pt)
-        } else {
-          guideMarkers[pt.id].new = false;
-        }
-      } else {
-        if (otherMarkers[pt.id] === undefined) {
-          otherMarkers[pt.id] = pt;
-          otherMarkers[pt.id].new = true;
-        } else {
-          otherMarkers[pt.id].new = false;
-        }
-      }
-    }
-    addPoints(otherMarkerLayer, otherMarkers, blueIconMarker);
-    addPoints(localMarkerLayer, guideMarkers, redIconMarker,false);
-
+const unsubscribe = store.subscribe((mutation) => {
+  if (mutation.type === "mapPoints/addMarker") {
+    const pt = mutation.payload;
+    addPoint(pt, parseInt(pt.riverguide) === props.guideId);
   }
 });
 
 onBeforeUnmount(() => {
+  unsubscribe(); // unsubscribe for store mutations
   resizeObserver.unobserve(mapContainer.value);
 });
 
@@ -80,7 +58,23 @@ onMounted(() => {
   }
 });
 
-
+const scale = 8 / 10; // scale the marker 80%
+const redMarker = new L.Icon({
+  iconUrl: redIconMarker,
+  shadowUrl: shadowIconMarker,
+  iconSize: [25 * scale, 41 * scale],
+  iconAnchor: [12 * scale, 41 * scale],
+  popupAnchor: [1, -34 * scale],
+  shadowSize: [41 * scale, 41 * scale],
+});
+const blueMarker = new L.Icon({
+  iconUrl: blueIconMarker,
+  shadowUrl: shadowIconMarker,
+  iconSize: [25 * scale, 41 * scale],
+  iconAnchor: [12 * scale, 41 * scale],
+  popupAnchor: [1, -34 * scale],
+  shadowSize: [41 * scale, 41 * scale],
+});
 
 const addMapLayers = (token) => {
   // On receipt of the first Access Token create the Map, otherwise update
@@ -175,14 +169,14 @@ const createMap = () => {
   });
 };
 
-
 function loadMapPointDataInRadius() {
   // Make a request for other points on the map that fall within 'radius' KM of 'center'
 
   // Calculate the radius (in km) of the circle that will cover the map
   const center = map.getCenter();
-  const bounds = map.getBounds()
-  const radius = center.distanceTo(L.latLng(bounds.getNorth(), bounds.getEast()))/1000;
+  const bounds = map.getBounds();
+  const radius =
+    center.distanceTo(L.latLng(bounds.getNorth(), bounds.getEast())) / 1000;
 
   axios
     .get(props.callbackURL, {
@@ -195,7 +189,7 @@ function loadMapPointDataInRadius() {
     })
     .then((response) => {
       // success
-      points.values = response.data;
+      store.dispatch("mapPoints/storePoints", response.data);
     })
     .catch((error) => {
       // error
@@ -203,30 +197,27 @@ function loadMapPointDataInRadius() {
     });
 }
 
-function addPoints(layerGroup, points, marker, hyperlink = true) {
-  const s = 8 / 10;  // scale the marker 80%
-  const markerIcon = new L.Icon({
-    iconUrl: marker,
-    shadowUrl: shadowIconMarker,
-    iconSize: [25 * s, 41 * s],
-    iconAnchor: [12 * s, 41 * s],
-    popupAnchor: [1, -34 * s],
-    shadowSize: [41 * s, 41 * s],
-  });
-
-  for (const p of points) {
-    if (p !== undefined && (p.new || p.new === undefined)) {
-      let popupContent = ''
-      if (hyperlink) {
-        popupContent = '<a href="/index.php?option=com_content&id='+p.riverguide+'&view=article">' + p.description + '</a><br>';
-      } else {
-        popupContent = p.description
-      }
-      L.marker([p.Y, p.X], { icon: markerIcon })
-        .addTo(layerGroup)
-        .bindPopup(popupContent);
-    }
+function addPoint(point, local = true) {
+  let markerIcon = {};
+  let popupContent = "";
+  let layerGroup = {};
+  if (local) {
+    markerIcon = redMarker;
+    layerGroup = localMarkerLayer;
+    popupContent = point.description;
+  } else {
+    markerIcon = blueMarker;
+    layerGroup = otherMarkerLayer;
+    popupContent =
+      '<a href="/index.php?option=com_content&id=' +
+      point.riverguide +
+      '&view=article">' +
+      point.description +
+      "</a><br>";
   }
+  L.marker([point.Y, point.X], { icon: markerIcon })
+    .addTo(layerGroup)
+    .bindPopup(popupContent);
 }
 
 // Control which zoom levels are available to authenticated and unauthenticated users, some
