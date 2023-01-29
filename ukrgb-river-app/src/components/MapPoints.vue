@@ -41,7 +41,6 @@ p {
 .mp-row div {
   border-bottom: 1px solid gray;
   border-left: 1px solid gray;
-  text-align: center;
 }
 .mp-row div:last-child {
   border-right: 1px solid gray;

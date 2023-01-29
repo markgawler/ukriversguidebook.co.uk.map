@@ -36,6 +36,11 @@ const mutations = {
   addPoint(state, point) {
     state.points.push(point);
   },
+
+  deletePoint (state, pointId) {
+    const index = state.points.findIndex((x) => x.id === pointId)
+    state.points.splice(index, 1)
+  },
 };
 
 export default {

@@ -21,6 +21,7 @@ let localMarkerLayer = {}; // layer for current guides markers
 let otherMarkerLayer = {}; // layer for other guides markers
 let resizeObserver = null; // observer for map <div> resize, used to foure leaflet resize
 const mapContainer = ref(null); // Reference to mapContainer <div> used for watching for map resize
+const markers = []; // the markers 
 
 const props = defineProps({
   callbackURL: { type: String, default: "" },
@@ -39,16 +40,28 @@ watch(
 );
 
 // Subscribe to mutations of the mapPoints store addPoint
-const unsubscribe = store.subscribe((mutation) => {
+const unsubscribeAddMarker = store.subscribe((mutation) => {
   if (mutation.type === "mapPoints/addPoint") {
     const pt = mutation.payload;
     // Add the point to the Map
     addMapMarker(pt, parseInt(pt.riverguide) === props.guideId);
   }
 });
+// Subscribe to mutations of the mapPoints store deletePoint
+const unsubscribedeleteMarker = store.subscribe((mutation) => {
+  if (mutation.type === "mapPoints/deletePoint") {
+    const id = mutation.payload; // Paylod of mutation is the id of the point to delete
+    const index = markers.findIndex((x) => x.id === id);
+
+    console.log(markers);
+    localMarkerLayer.removeLayer(markers[index].marker);
+    markers.splice(index, 1);
+  }
+});
 
 onBeforeUnmount(() => {
-  unsubscribe(); // unsubscribe for store mutations
+  unsubscribeAddMarker(); // unsubscribe for store mutations
+  unsubscribedeleteMarker();
   resizeObserver.unobserve(mapContainer.value);
 });
 
@@ -115,7 +128,6 @@ const addMarkerPointLayers = () => {
   };
   // Add the layer control, the null parameter would be used if we had selectable base maps
   L.control.layers(null, overlayMaps).addTo(map);
-
   loadMapPointDataInRadius();
 };
 
@@ -218,9 +230,9 @@ function addMapMarker(point, local = true) {
       point.description +
       "</a><br>";
   }
-  L.marker([point.Y, point.X], { icon: markerIcon })
-    .addTo(layerGroup)
-    .bindPopup(popupContent);
+  const marker = new L.marker([point.Y, point.X], { icon: markerIcon });
+  marker.addTo(layerGroup).bindPopup(popupContent);
+  markers.push({ id: point.id, marker: marker }); // track the id to marker references
 }
 
 // Control which zoom levels are available to authenticated and unauthenticated users, some
