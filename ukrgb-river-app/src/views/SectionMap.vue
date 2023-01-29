@@ -1,5 +1,6 @@
 <script setup>
 import RiverMap from "@/components/RiverMap.vue";
+import MapPoints from "@/components/MapPoints.vue";
 
 //TODO: Fix claaback so its a property or in a store?
 const app = document.getElementById("app");
@@ -15,7 +16,7 @@ const jbounds = bounds === undefined ? undefined : JSON.parse(atob(bounds));
 const initialBounds =
   jbounds === undefined
     ? [
-      // Default to the max extent of the OS tile layers
+        // Default to the max extent of the OS tile layers
         [49.562026923812304, -10.83428466254654],
         [61.93445135313357, 7.548212515441139],
       ]
@@ -31,4 +32,5 @@ const initialBounds =
     :initial-bounds="initialBounds"
     :guide-id="guideId"
   />
+  <MapPoints :guide-id="guideId"/>
 </template>

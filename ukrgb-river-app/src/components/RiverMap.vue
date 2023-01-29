@@ -38,11 +38,12 @@ watch(
   }
 );
 
-// Subscribe to mutations of the maPoints store addMarker
+// Subscribe to mutations of the mapPoints store addPoint
 const unsubscribe = store.subscribe((mutation) => {
-  if (mutation.type === "mapPoints/addMarker") {
+  if (mutation.type === "mapPoints/addPoint") {
     const pt = mutation.payload;
-    addPoint(pt, parseInt(pt.riverguide) === props.guideId);
+    // Add the point to the Map
+    addMapMarker(pt, parseInt(pt.riverguide) === props.guideId);
   }
 });
 
@@ -199,7 +200,7 @@ function loadMapPointDataInRadius() {
     });
 }
 
-function addPoint(point, local = true) {
+function addMapMarker(point, local = true) {
   let markerIcon = {};
   let popupContent = "";
   let layerGroup = {};
