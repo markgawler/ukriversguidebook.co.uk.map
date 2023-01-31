@@ -7,15 +7,15 @@ const getters = {
     return state.points.find((x) => x.id == id);
   },
 
-  getPointsByGuideId: (state) => (guideId) => state.points.filter((x) => x.riverguide == guideId),
+  getPointsByGuideId: (state) => (guideId) =>
+    state.points.filter((x) => x.riverguide == guideId),
 
   getPoints: (state) => state.points,
-
 };
 
 const actions = {
   storePoints({ commit, state }, pts) {
-    // Add new markers to the store
+    // Add new point to the store
     for (const p of pts) {
       // Check if the point exists
       if (!state.points.find((x) => x.id == p.id)) {
@@ -23,13 +23,6 @@ const actions = {
       }
     }
   },
-  // storePoint({ commit, state }, marker) {
-  //   // Add new markers to the store
-  //   const id = marker.id;
-  //   if (state.markers[id] === undefined) {
-  //     commit("addMarker", marker);
-  //   }
-  // },
 };
 
 const mutations = {
@@ -37,9 +30,16 @@ const mutations = {
     state.points.push(point);
   },
 
-  deletePoint (state, pointId) {
-    const index = state.points.findIndex((x) => x.id === pointId)
-    state.points.splice(index, 1)
+  updatePoint(state, payload) {
+    const index = state.points.findIndex((x) => x.id == payload.id);
+    if (index >= 0) {
+      state.points[index].description = payload.description;
+    }
+  },
+
+  deletePoint(state, pointId) {
+    const index = state.points.findIndex((x) => x.id === pointId);
+    state.points.splice(index, 1);
   },
 };
 
