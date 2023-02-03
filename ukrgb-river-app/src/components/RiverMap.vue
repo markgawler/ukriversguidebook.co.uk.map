@@ -19,7 +19,7 @@ let road = {}; // road layer
 let leisure = {}; // leisure layer
 let localMarkerLayer = {}; // layer for current guides markers
 let otherMarkerLayer = {}; // layer for other guides markers
-let resizeObserver = null; // observer for map <div> resize, used to foure leaflet resize
+let resizeObserver = null; // observer for map <div> resize, used handle map resize
 const mapContainer = ref(null); // Reference to mapContainer <div> used for watching for map resize
 const markers = []; // the markers
 
@@ -45,7 +45,7 @@ const unsubscribe = store.subscribe((mutation) => {
   switch (mutation.type) {
     case "mapPoints/deletePoint":
       {
-        const id = mutation.payload; // Paylod of mutation is the id of the point to delete
+        const id = mutation.payload; // Payload of mutation is the id of the point to delete
         const index = markers.findIndex((x) => x.id === id);
         localMarkerLayer.removeLayer(markers[index].marker);
         markers.splice(index, 1);
@@ -191,9 +191,9 @@ const createMap = () => {
   });
 };
 
-/* Call API to get any map point that would be visable on the map.
+/* Call API to get any map point that would be visible on the map.
  *  Some points outside the map bounds will be loaded as the area
- *  is calculated as a circle encompasi ng the whole map. */
+ *  is calculated as a circle encompassing the whole map. */
 function loadMapPointDataInRadius() {
   // Calculate the radius (in km) of the circle that will cover the map
   const center = map.getCenter();
@@ -296,13 +296,13 @@ function getLayer(layerType, premium) {
 
 <template>
   <div class="resize">
-    <div id="map" ref="mapContainer" class="mapcontainer"></div>
+    <div id="map" ref="mapContainer" class="map-container"></div>
   </div>
   <MapCursor :poss="{ lat, lng }" />
 </template>
 
 <style>
-.mapcontainer {
+.map-container {
   position: relative;
   width: 100%;
   height: 100%;

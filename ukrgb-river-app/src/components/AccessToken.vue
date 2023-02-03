@@ -4,7 +4,7 @@ import { useStore } from "vuex";
 import axios from "axios";
 
 const store = useStore();
-let tokenExpiresIn = 0; // Inital length of validity of access token (seconds)
+let tokenExpiresIn = 0; // Initial length of validity of access token (seconds)
 
 const callbackURL = document.getElementById("app").getAttribute("callback");
 let cancelPolling = false;

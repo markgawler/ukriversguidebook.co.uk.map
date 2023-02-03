@@ -14,7 +14,7 @@ const props = defineProps({
 });
 
 const gridRef = computed(() => {
-  // ne is the EPSG:27700 Northings and Eastings, which need converting to a Grid Ref
+  // const 'ne' is the EPSG:27700 Northings and Eastings, which need converting to a Grid Ref
   if (props.poss.lng !== 0) {
     const lat = parseFloat(props.poss.lat);
     const lng = parseFloat(props.poss.lng);

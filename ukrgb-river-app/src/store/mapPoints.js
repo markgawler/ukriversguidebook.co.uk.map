@@ -5,13 +5,12 @@ const state = () => ({
 
 const getters = {
   getPointById: (state) => (id) => {
-    return state.points.find((x) => x.id == id && !x.deleted);
+    return state.points.find((x) => x.id === id && !x.deleted);
   },
 
   getPointsByGuideId: (state) => (guideId) =>
-    state.points.filter((x) => x.riverguide == guideId && !x.deleted),
+    state.points.filter((x) => x.riverguide === guideId && !x.deleted),
 
-  //getPoints: (state) => state.points,
 };
 
 const actions = {
@@ -19,13 +18,13 @@ const actions = {
     // Add new point to the store
     for (const p of pts) {
       // Check if the point exists
-      if (!state.points.find((x) => x.id == p.id)) {
+      if (!state.points.find((x) => x.id === p.id)) {
         commit("addPoint", p);
       }
     }
   },
   updatePoint({ commit, state }, payload) {
-    const index = state.points.findIndex((x) => x.id == payload.id);
+    const index = state.points.findIndex((x) => x.id === payload.id);
     if (index >= 0) {
       if (state.points[index].updated !== true) {
         commit("archivePoint", index);
@@ -54,8 +53,8 @@ const actions = {
 };
 
 const mutations = {
-  // Add a point to the store, no chech for duplicate is perfoemed, the 
-  // action 'storePoints' is asumed to have taken care of this
+  // Add a point to the store, no check for duplicate is performed, the
+  // action 'storePoints' is assumed to have taken care of this
   addPoint(state, point) {
     state.points.push(point);
   },
@@ -76,16 +75,16 @@ const mutations = {
     state.points[index].deleted = true; // Soft delete
   },
 
-  // Remore the deleted marker from a point, efectivly undeleting it.
+  // Remove the deleted marker from a point, effectively undeleting it.
   unDeletePoint(state, point) {
     const index = state.points.findIndex((x) => x.id === point.id);
     state.points[index].deleted = false; // Undelete
   },
 
-  // Take a clone of a point so it can be restored if the edit is canceled.
+  // Take a clone of a point, so it can be restored if the edit is canceled.
   archivePoint(state, index) {
-    const cloanedPoint = { ...state.points[index] }; // make a shalow cloan
-    state.archivedPoints.push(cloanedPoint);
+    const pt = { ...state.points[index] }; // make a shallow clone
+    state.archivedPoints.push(pt);
   },
 };
 
