@@ -43,7 +43,7 @@ watch(
 // Subscribe to mutations of the mapPoints store deletePoint
 const unsubscribe = store.subscribe((mutation) => {
   switch (mutation.type) {
-    case "mapPoints/deletePoint":
+    case "mapPoints/softDeletePoint":
       {
         const id = mutation.payload; // Payload of mutation is the id of the point to delete
         const index = markers.findIndex((x) => x.id === id);

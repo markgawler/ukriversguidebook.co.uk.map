@@ -10,7 +10,6 @@ const getters = {
 
   getPointsByGuideId: (state) => (guideId) =>
     state.points.filter((x) => x.riverguide === guideId && !x.deleted),
-
 };
 
 const actions = {
@@ -36,11 +35,12 @@ const actions = {
     }
   },
   cancelUpdates({ commit, state }) {
+    // undelete soft delete of points
     const pts = state.points.filter((x) => x.deleted);
     pts.forEach((pt) => {
       commit("unDeletePoint", pt);
     });
-
+    // restore points from archive
     state.archivedPoints.forEach((pt) => {
       commit("updatePoint", {
         id: pt.id,
@@ -48,13 +48,25 @@ const actions = {
         restore: true,
       });
     });
-    state.archivedPoints = [];
+    commit('deleteArchive')
+  },
+  saveUpdates({ commit, state }) {
+    state.points.forEach((pt, index) => {
+      if (pt.deleted){
+        commit("deletePoint", index);
+      }
+      if (pt.updated){
+        commit("updatePointCommit", index);
+      }
+      commit('deleteArchive')
+    });
   },
 };
 
 const mutations = {
-  // Add a point to the store, no check for duplicate is performed, the
-  // action 'storePoints' is assumed to have taken care of this
+  /* Add a point to the store, no check for duplicate is performed, the
+     action 'storePoints' is assumed to have taken care of this
+  */
   addPoint(state, point) {
     state.points.push(point);
   },
@@ -65,14 +77,27 @@ const mutations = {
     const index = state.points.findIndex((x) => x.id === payload.id);
     if (index >= 0) {
       state.points[index].description = payload.description;
-      state.points[index].updated = !payload.restore;  // If restoring the point clear the updated flag
+      state.points[index].updated = !payload.restore; // If restoring the point clear the updated flag
     }
   },
 
+  /* Commit the update by clearing the updated flag, this means the cancel action cannot atempt to 
+     undo the update.
+  */
+  updatePointCommit(state, index) {
+    state.points[index].updated = false; // Clear the updated flag, to indicate save committed.
+  },
+
   // Mark a point as deleted, i.e. soft delete
-  deletePoint(state, pointId) {
+  softDeletePoint(state, pointId) {
     const index = state.points.findIndex((x) => x.id === pointId);
     state.points[index].deleted = true; // Soft delete
+  },
+
+  // Hard delete the point
+  deletePoint(state, index) {
+    //const index = state.points.findIndex((x) => x.id === pointId);
+    state.points.splice(index, 1);
   },
 
   // Remove the deleted marker from a point, effectively undeleting it.
@@ -86,6 +111,11 @@ const mutations = {
     const pt = { ...state.points[index] }; // make a shallow clone
     state.archivedPoints.push(pt);
   },
+
+  // Clear the archived points store. Used after a cancel or save operation
+  deleteArchive(state){
+    state.archivedPoints = [];
+  }
 };
 
 export default {

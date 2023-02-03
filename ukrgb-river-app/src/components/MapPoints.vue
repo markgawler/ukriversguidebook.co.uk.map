@@ -16,6 +16,9 @@ const points = computed(() =>
 const cancelEdits = () => {
   store.dispatch("mapPoints/cancelUpdates");
 };
+const saveEdits = () => {
+  store.dispatch("mapPoints/saveUpdates");
+};
 </script>
 
 <template>

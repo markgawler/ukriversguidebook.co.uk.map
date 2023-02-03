@@ -20,7 +20,7 @@ const description = computed({
 });
 
 const deletePoint = () => {
-  store.commit("mapPoints/deletePoint", props.point.id);
+  store.commit("mapPoints/softDeletePoint", props.point.id);
 };
 </script>
 
