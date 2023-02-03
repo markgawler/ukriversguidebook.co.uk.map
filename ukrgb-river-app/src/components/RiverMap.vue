@@ -5,11 +5,11 @@ import { onBeforeUnmount, onMounted, ref, watch, computed } from "vue";
 import { useStore } from "vuex";
 import L from "leaflet";
 import "../utils/WithHeaders";
-import axios from "axios";
 import MapCursor from "./MapCursor.vue";
 import redIconMarker from "../assets/marker-icon-red.png";
 import blueIconMarker from "../assets/marker-icon-blue.png";
 import shadowIconMarker from "../assets/marker-shadow.png";
+import {getPointsByRadius} from "../network/mapData";
 
 const store = useStore();
 const lat = ref(0);
@@ -39,8 +39,14 @@ watch(
   }
 );
 
-// Subscribe to mutations of the mapPoints store addPoint
-// Subscribe to mutations of the mapPoints store deletePoint
+/*
+  Keep the Map in sync with the Store, subscribe to mutations of the mapPoints store: 
+    Add Markers:-
+      addPoint
+      unDeletePoint
+    Delete Markers:-
+      deletePoint
+ */
 const unsubscribe = store.subscribe((mutation) => {
   switch (mutation.type) {
     case "mapPoints/softDeletePoint":
@@ -191,7 +197,7 @@ const createMap = () => {
   });
 };
 
-/* Call API to get any map point that would be visible on the map.
+/*  Load any map point that would be visible on the map.
  *  Some points outside the map bounds will be loaded as the area
  *  is calculated as a circle encompassing the whole map. */
 function loadMapPointDataInRadius() {
@@ -200,24 +206,8 @@ function loadMapPointDataInRadius() {
   const bounds = map.getBounds();
   const radius =
     center.distanceTo(L.latLng(bounds.getNorth(), bounds.getEast())) / 1000;
-
-  axios
-    .get(props.callbackURL, {
-      params: {
-        task: "mappoint",
-        radius: radius,
-        lat: center.lat,
-        lng: center.lng,
-      },
-    })
-    .then((response) => {
-      // success
-      store.dispatch("mapPoints/storePoints", response.data);
-    })
-    .catch((error) => {
-      // error
-      console.log(error);
-    });
+  
+  getPointsByRadius(center,radius,props.callbackURL)
 }
 
 function addMapMarker(point, local = true) {
