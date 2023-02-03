@@ -21,7 +21,7 @@ let localMarkerLayer = {}; // layer for current guides markers
 let otherMarkerLayer = {}; // layer for other guides markers
 let resizeObserver = null; // observer for map <div> resize, used to foure leaflet resize
 const mapContainer = ref(null); // Reference to mapContainer <div> used for watching for map resize
-const markers = []; // the markers 
+const markers = []; // the markers
 
 const props = defineProps({
   callbackURL: { type: String, default: "" },
@@ -40,28 +40,36 @@ watch(
 );
 
 // Subscribe to mutations of the mapPoints store addPoint
-const unsubscribeAddMarker = store.subscribe((mutation) => {
-  if (mutation.type === "mapPoints/addPoint") {
-    const pt = mutation.payload;
-    // Add the point to the Map
-    addMapMarker(pt, parseInt(pt.riverguide) === props.guideId);
-  }
-});
 // Subscribe to mutations of the mapPoints store deletePoint
-const unsubscribedeleteMarker = store.subscribe((mutation) => {
-  if (mutation.type === "mapPoints/deletePoint") {
-    const id = mutation.payload; // Paylod of mutation is the id of the point to delete
-    const index = markers.findIndex((x) => x.id === id);
-
-    console.log(markers);
-    localMarkerLayer.removeLayer(markers[index].marker);
-    markers.splice(index, 1);
+const unsubscribe = store.subscribe((mutation) => {
+  switch (mutation.type) {
+    case "mapPoints/deletePoint":
+      {
+        const id = mutation.payload; // Paylod of mutation is the id of the point to delete
+        const index = markers.findIndex((x) => x.id === id);
+        localMarkerLayer.removeLayer(markers[index].marker);
+        markers.splice(index, 1);
+      }
+      break;
+    case "mapPoints/addPoint":
+    case "mapPoints/unDeletePoint":
+      {
+        const pt = mutation.payload;
+        // Add / restore the point to the Map
+        addMapMarker(pt, parseInt(pt.riverguide) === props.guideId);
+      }
+      break;
+    case "mapPoints/updatePoint":
+      {
+        const pt = mutation.payload;
+        console.log(pt);
+      }
+      break;
   }
 });
 
 onBeforeUnmount(() => {
-  unsubscribeAddMarker(); // unsubscribe for store mutations
-  unsubscribedeleteMarker();
+  unsubscribe(); // unsubscribe for store mutations
   resizeObserver.unobserve(mapContainer.value);
 });
 

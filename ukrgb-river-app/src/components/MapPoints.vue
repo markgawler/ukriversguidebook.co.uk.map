@@ -11,6 +11,11 @@ const props = defineProps({
 const points = computed(() =>
   store.getters["mapPoints/getPointsByGuideId"](props.guideId)
 );
+
+
+const cancelEdits = () => {
+  store.dispatch("mapPoints/cancelUpdates");
+};
 </script>
 
 <template>

@@ -12,7 +12,7 @@ const description = computed({
     return props.point.description;
   },
   set(description) {
-    store.commit("mapPoints/updatePoint", {
+    store.dispatch("mapPoints/updatePoint", {
       id: props.point.id,
       description: description,
     });
