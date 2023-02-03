@@ -3,13 +3,13 @@ import "leaflet/dist/leaflet.css";
 import "proj4leaflet";
 import { onBeforeUnmount, onMounted, ref, watch, computed } from "vue";
 import { useStore } from "vuex";
+import {getPointsByRadius} from "../network/mapData";
 import L from "leaflet";
 import "../utils/WithHeaders";
 import MapCursor from "./MapCursor.vue";
 import redIconMarker from "../assets/marker-icon-red.png";
 import blueIconMarker from "../assets/marker-icon-blue.png";
 import shadowIconMarker from "../assets/marker-shadow.png";
-import {getPointsByRadius} from "../network/mapData";
 
 const store = useStore();
 const lat = ref(0);

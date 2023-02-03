@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import { useStore } from "vuex";
 import MapPointItem from "./MapPointItem.vue";
+import { savePoints } from "../network/mapData";
 
 const store = useStore();
 
@@ -12,12 +13,11 @@ const points = computed(() =>
   store.getters["mapPoints/getPointsByGuideId"](props.guideId)
 );
 
-
 const cancelEdits = () => {
   store.dispatch("mapPoints/cancelUpdates");
 };
 const saveEdits = () => {
-  store.dispatch("mapPoints/saveUpdates");
+  store.dispatch("mapPoints/saveUpdates", savePoints);
 };
 </script>
 

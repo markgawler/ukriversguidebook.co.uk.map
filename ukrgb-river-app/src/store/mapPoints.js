@@ -48,18 +48,26 @@ const actions = {
         restore: true,
       });
     });
-    commit('deleteArchive')
+    commit("deleteArchive");
   },
-  saveUpdates({ commit, state }) {
+  saveUpdates({ commit, state }, saveCallback) {
+    let data = { delete: [], update: [] };
+
     state.points.forEach((pt, index) => {
-      if (pt.deleted){
-        commit("deletePoint", index);
+      if (pt.deleted) {
+        data.delete.push(pt.id);
       }
-      if (pt.updated){
+      if (pt.updated) {
+        data.update.push(pt)
         commit("updatePointCommit", index);
       }
-      commit('deleteArchive')
+      commit("deleteArchive");
     });
+    // Remore all the deleted points from the store
+    commit("hardDeletePoints");
+
+    // Call the callback to save the data in an external store
+    saveCallback(data);
   },
 };
 
@@ -94,10 +102,10 @@ const mutations = {
     state.points[index].deleted = true; // Soft delete
   },
 
-  // Hard delete the point
-  deletePoint(state, index) {
-    //const index = state.points.findIndex((x) => x.id === pointId);
-    state.points.splice(index, 1);
+  // Hard delete the points
+  hardDeletePoints(state) {
+    const result = state.points.filter((pt) => !pt.deleted)
+    state.points = result
   },
 
   // Remove the deleted marker from a point, effectively undeleting it.
@@ -113,9 +121,9 @@ const mutations = {
   },
 
   // Clear the archived points store. Used after a cancel or save operation
-  deleteArchive(state){
+  deleteArchive(state) {
     state.archivedPoints = [];
-  }
+  },
 };
 
 export default {
