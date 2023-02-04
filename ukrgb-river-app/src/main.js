@@ -9,14 +9,13 @@ import SectionMap from "@/views/SectionMap.vue";
 
 const app = document.getElementById("app");
 const mode = app.getAttribute("mode");
-let routes = [];
+const callbackUrl = app.getAttribute("callback");
 
+let routes = [];
 
 // Create the router
 if (mode.toLowerCase() === "plugin") {
-  routes = [
-    { path: "/", name: "Section Map", component: SectionMap },
-  ];
+  routes = [{ path: "/", name: "Section Map", component: SectionMap }];
 } else {
   routes = [
     { path: "/", name: "Home", component: MapHome },
@@ -29,4 +28,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
+store.commit("mapAccess/setCallbackUrl", callbackUrl);
+
 createApp(App).use(router).use(store).mount("#app");

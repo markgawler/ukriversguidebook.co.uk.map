@@ -3,9 +3,10 @@ import { store } from "../store/store";
 
 /* Call API to get any map point that within a radius.
  */
-function getPointsByRadius(center, radius, callbackURL) {
+function getPointsByRadius(center, radius) {
+  const callbackUrl = store.state.mapAccess.callbackUrl;
   axios
-    .get(callbackURL, {
+    .get(callbackUrl, {
       params: {
         task: "mappoint",
         radius: radius,
@@ -24,8 +25,12 @@ function getPointsByRadius(center, radius, callbackURL) {
 }
 //callbackURL
 function savePoints(points) {
+  const callbackUrl = store.state.mapAccess.callbackUrl;
+
+  console.log("callbackUrl", callbackUrl);
   console.log(points);
-  return false
+
+  return false;
 }
 
 export { getPointsByRadius, savePoints };

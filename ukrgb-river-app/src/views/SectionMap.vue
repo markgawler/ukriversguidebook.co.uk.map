@@ -2,9 +2,7 @@
 import RiverMap from "@/components/RiverMap.vue";
 import MapPoints from "@/components/MapPoints.vue";
 
-//TODO: Fix claaback so its a property or in a store?
 const app = document.getElementById("app");
-const callbackURL = app.getAttribute("callback");
 
 const id = app.getAttribute("guideid");
 const guideId = id === undefined ? 0 : parseInt(id);
@@ -28,7 +26,6 @@ const initialBounds =
 
 <template>
   <RiverMap
-    :callback-u-r-l="callbackURL"
     :initial-bounds="initialBounds"
     :guide-id="guideId"
   />

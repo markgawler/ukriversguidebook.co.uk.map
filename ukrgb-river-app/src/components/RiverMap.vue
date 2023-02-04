@@ -24,7 +24,6 @@ const mapContainer = ref(null); // Reference to mapContainer <div> used for watc
 const markers = []; // the markers
 
 const props = defineProps({
-  callbackURL: { type: String, default: "" },
   initialBounds: { type: Array, default: null },
   guideId: { type: Number, default: 0 },
 });
@@ -207,7 +206,7 @@ function loadMapPointDataInRadius() {
   const radius =
     center.distanceTo(L.latLng(bounds.getNorth(), bounds.getEast())) / 1000;
   
-  getPointsByRadius(center,radius,props.callbackURL)
+  getPointsByRadius(center,radius)
 }
 
 function addMapMarker(point, local = true) {

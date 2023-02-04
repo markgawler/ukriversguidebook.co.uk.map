@@ -1,8 +1,9 @@
 
 const state = () => ({
     accessToken: "",
-    userId: 0
+    callbackUrl: ""
   })
+
 
  const mutations = {
     updateAccessToken(state,token) {
@@ -10,6 +11,9 @@ const state = () => ({
     },
     setUserId(state,id) {
         state.userId = id
+    },
+    setCallbackUrl(state,url) {
+      state.callbackUrl = url;
     }
   };
 
