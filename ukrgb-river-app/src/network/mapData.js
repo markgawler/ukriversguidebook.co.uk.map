@@ -25,6 +25,7 @@ function getPointsByRadius(center, radius, callbackURL) {
 //callbackURL
 function savePoints(points) {
   console.log(points);
+  return false
 }
 
 export { getPointsByRadius, savePoints };

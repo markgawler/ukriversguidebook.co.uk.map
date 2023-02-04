@@ -51,23 +51,19 @@ const actions = {
     commit("deleteArchive");
   },
   saveUpdates({ commit, state }, saveCallback) {
-    let data = { delete: [], update: [] };
+    const data = {
+      delete: state.points.filter((pt) => pt.deleted).map((p) => p.id), // array of the id's of the deleted points
+      update: state.points.filter((pt) => pt.updated), // Aray of the updated points
+    };
 
-    state.points.forEach((pt, index) => {
-      if (pt.deleted) {
-        data.delete.push(pt.id);
-      }
-      if (pt.updated) {
-        data.update.push(pt)
-        commit("updatePointCommit", index);
-      }
+    // Call the callback to save the data in an external store, if the save is sucsessfull
+    //
+    if (saveCallback(data)) {
+      // Remore all the deleted points from the store
+      commit("hardDeletePoints");
+      commit("updatePointCommit");
       commit("deleteArchive");
-    });
-    // Remore all the deleted points from the store
-    commit("hardDeletePoints");
-
-    // Call the callback to save the data in an external store
-    saveCallback(data);
+    }
   },
 };
 
@@ -92,8 +88,9 @@ const mutations = {
   /* Commit the update by clearing the updated flag, this means the cancel action cannot atempt to 
      undo the update.
   */
-  updatePointCommit(state, index) {
-    state.points[index].updated = false; // Clear the updated flag, to indicate save committed.
+  updatePointCommit(state) {
+    const updates = state.points.filter((pt) => pt.updated);
+    updates.map((pt) => (pt.updated = false)); // Clear the updated flag, to indicate save committed.
   },
 
   // Mark a point as deleted, i.e. soft delete
@@ -104,8 +101,8 @@ const mutations = {
 
   // Hard delete the points
   hardDeletePoints(state) {
-    const result = state.points.filter((pt) => !pt.deleted)
-    state.points = result
+    const result = state.points.filter((pt) => !pt.deleted);
+    state.points = result;
   },
 
   // Remove the deleted marker from a point, effectively undeleting it.
