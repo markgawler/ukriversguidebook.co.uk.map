@@ -52,7 +52,7 @@ const actions = {
     });
     commit("deleteArchive");
   },
-  saveUpdates({ commit, state }, saveCallback) {
+  async saveUpdates({ commit, state }, saveCallback) {
     const data = {
       update: state.points.filter((pt) => pt.updated), //.map((p) => toRaw(p)), // Aray of the updated points
       delete: state.points.filter((pt) => pt.deleted).map((p) => p.id), // array of the id's of the deleted points
@@ -60,7 +60,7 @@ const actions = {
 
     // Call the callback to save the data in an external store, if the save is sucsessfull
     //
-    if (saveCallback(data)) {
+    if (await saveCallback(data)) {
       // Remore all the deleted points from the store
       commit("hardDeletePoints");
       commit("updatePointCommit");
