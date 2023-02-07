@@ -23,12 +23,25 @@ function getPointsByRadius(center, radius) {
       console.log(error);
     });
 }
-//callbackURL
+
 function savePoints(points) {
   const callbackUrl = store.state.mapAccess.callbackUrl;
 
-  console.log("callbackUrl", callbackUrl);
-  console.log(points);
+  const updates = points.update;
+  console.log(updates);
+  axios
+    .post(callbackUrl + "&task=savemappoints", points , {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then(function (response) {
+      0;
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 
   return false;
 }

@@ -9,7 +9,9 @@ const getters = {
   },
 
   getPointsByGuideId: (state) => (guideId) =>
-    state.points.filter((x) => x.riverguide === guideId && !x.deleted),
+    state.points.filter(
+      (x) => parseInt(x.riverguide) === guideId && !x.deleted
+    ),
 };
 
 const actions = {
@@ -52,8 +54,8 @@ const actions = {
   },
   saveUpdates({ commit, state }, saveCallback) {
     const data = {
+      update: state.points.filter((pt) => pt.updated), //.map((p) => toRaw(p)), // Aray of the updated points
       delete: state.points.filter((pt) => pt.deleted).map((p) => p.id), // array of the id's of the deleted points
-      update: state.points.filter((pt) => pt.updated), // Aray of the updated points
     };
 
     // Call the callback to save the data in an external store, if the save is sucsessfull
