@@ -4,20 +4,27 @@ defined('_JEXEC') or die('Restricted access');
 use Joomla\CMS\Factory;
 
 
-class UkrgbmapControllerAuthenticate extends JControllerBase
+class UkrgbmapControllerSaveMapPoints extends JControllerBase
 {
-	public function execute()
+    /*
+
+    */
+    public function execute()
 	{
         $user = Factory::getUser();
-        $model = new UkrgbmapModelAuthenticate();
-        $accessToken = $model->getAccessToken();
+        //$model = new UkrgbmapModelAuthenticate();
         $app = JFactory::getApplication();
+        $deletes = $app->input->post->get('delete', array(),'array');
+        $updates = $app->input->post->get('update', array(),'array');
 
-        echo json_encode(array(
-            'userId' => $user->id,
-            'accessToken' => $accessToken->accessToken,
-            'expiresIn' => $accessToken->expiresIn));
-        $app->close(); // TODO: fix json view
+        
+
+//        ob_start();
+//        var_dump($deletes);
+//        var_dump($updates);
+//        $result = ob_get_clean();
+//        error_log('P: ' .  $result);
+
+        $app->close();
 	}
-
 }

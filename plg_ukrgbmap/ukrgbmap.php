@@ -32,7 +32,7 @@ class plgContentUkrgbMap extends JPlugin {
 			
 			if (isset($mapid)){
 			    //$userId = Factory::getUser()->id;
-                $url = JURI::base() . 'index.php?option=com_ukrgbmap&tmpl=raw&format=json';
+                $url = JURI::base() . 'index.php?option=com_ukrgbmap'; //&tmpl=raw&format=json';
                 $mapData = $model->getMapParameters($mapid);
                 $aid = $mapData['aid']; //TODO is $aid always equal to $article->id
 				$mapData = base64_encode(json_encode($mapData));

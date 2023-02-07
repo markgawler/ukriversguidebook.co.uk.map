@@ -14,30 +14,28 @@ defined('_JEXEC') or die;
  *
  * @package     Joomla.Administrator
  * @subpackage  com_ukrgbmap
- *
+ * @since 1.0
  */
 class UkrgbmapController extends JControllerLegacy
 {
 	/**
 	 * @var		string	The default view.
+     * @since 1.0
 	 */
 	protected $default_view = 'main';
 
 	/**
 	 * Method to display a view.
 	 *
-	 * @param   boolean			$cachable	If true, the view output will be cached
-	 * @param   array  $urlparams	An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
+	 * @param   boolean $cacheable If true, the view output will be cached
+	 * @param   array   $urlparams An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
 	 *
 	 * @return  JController		This object to support chaining.
-
+     * @since 1.0
 	 */
-	public function display($cachable = false, $urlparams = false)
-	{
-		
-
+	public function display($cacheable = false, $urlparams = false): JController
+    {
 		parent::display();
-
 		return $this;
 	}
 }

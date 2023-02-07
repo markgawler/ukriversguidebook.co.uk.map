@@ -14,31 +14,26 @@ defined('_JEXEC') or die('Restricted access');
  *
  * @package     Ukrgbmap
  * @subpackage  controller
+ * @since 1.0
 */
 class UkrgbmapControllerHelper
 {
 	public function parseController($app)
 	{
 		// Require specific controller if requested
-		$tasks = array();
 		$tasks = explode('.', $app->input->get('task','default'));
-
 		$task = ucfirst(strtolower($tasks[0]));
 		$activity = '';
-
 		if (!empty($tasks[1]))
 		{
 			$activity = ucfirst(strtolower($tasks[1]));
 		}
-
 		$controllerName = 'Ukrgbmap' . 'Controller' . $task . $activity;
-
-		if (!class_exists($controllerName))
+        if (!class_exists($controllerName))
 		{
 			error_log("Error Log no such Controller: ".$controllerName);
 			return false;
-		}
-		$controller = new $controllerName;
-		return $controller;
+        }
+        return new $controllerName;
 	}
 }
