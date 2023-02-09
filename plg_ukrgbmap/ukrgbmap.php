@@ -61,7 +61,7 @@ class plgContentUkrgbMap extends JPlugin {
 		if ($context == 'com_content.form')
 		{	
 			$model = new UkrgbmapModelMappoint;
-			$model->updateMapPoints($article->introtext, $article->id, $article->title);
+			$model->updateMapPointsFromArticle($article->introtext, $article->id, $article->title);
 		}				
 	}
 }

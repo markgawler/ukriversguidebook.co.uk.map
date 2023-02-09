@@ -12,18 +12,15 @@ class UkrgbmapControllerSaveMapPoints extends JControllerBase
     public function execute()
 	{
         $user = Factory::getUser();
-        //$model = new UkrgbmapModelAuthenticate();
+        $model = new UkrgbmapModelMappoint;
+
         $app = JFactory::getApplication();
         $deletes = $app->input->post->get('delete', array(),'array');
         $updates = $app->input->post->get('update', array(),'array');
 
-        
+        $model->deleteMapPointsById($deletes);
+        $model->updateMapPoints($updates);
 
-//        ob_start();
-//        var_dump($deletes);
-//        var_dump($updates);
-//        $result = ob_get_clean();
-//        error_log('P: ' .  $result);
 
         $app->close();
 	}
