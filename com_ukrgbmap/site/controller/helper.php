@@ -8,14 +8,13 @@
  */
 
 defined('_JEXEC') or die('Restricted access');
-
 /**
- * Helper class for controllers
+ * UKRGB Map
+ * @package  com_ukrgbmap
  *
- * @package     Ukrgbmap
- * @subpackage  controller
- * @since 1.0
-*/
+ * @copyright  (C) 2023 Mark Gawler. <https://github.com/markgawler>
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ */
 class UkrgbmapControllerHelper
 {
 	public function parseController($app)

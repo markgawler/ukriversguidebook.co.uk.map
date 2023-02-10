@@ -67,7 +67,6 @@ const unsubscribe = store.subscribe((mutation) => {
     case "mapPoints/updatePoint":
       {
         const pt = mutation.payload;
-        console.log(pt);
       }
       break;
   }

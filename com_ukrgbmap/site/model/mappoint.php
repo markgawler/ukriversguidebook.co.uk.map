@@ -1,4 +1,11 @@
 <?php
+/**
+ * UKRGB Map
+ * @package  com_ukrgbmap
+ *
+ * @copyright  (C) 2023 Mark Gawler. <https://github.com/markgawler>
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ */
 defined('_JEXEC') or die('Restricted access');
 
 // Site - Map Model
@@ -196,11 +203,13 @@ class UkrgbmapModelMappoint extends JModelBase
         }
     }
 
-    /** Delete a Map Points for the specified IDs
+    /**
+     * Delete a Map Points for the specified IDs
      *
-     * @param $ids array() of ids to be deleted
+     * @param array $ids () $ids  The ids to be deleted
+     *
      * @since v2.0
-     **/
+     */
     public function deleteMapPointsById($ids)
     {
         $values = implode(',', $ids);
@@ -266,8 +275,6 @@ class UkrgbmapModelMappoint extends JModelBase
      */
     private function OSGridZonetoNE($ossquare)
     {
-
-
         // find the 500km square
         $lookup = array(
             'S' => array(0, 0),

@@ -1,4 +1,11 @@
 <?php defined( '_JEXEC' ) or die( 'Restricted access' );
+/**
+ * UKRGB Map
+ * @package  com_ukrgbmap
+ *
+ * @copyright  (C) 2023 Mark Gawler. <https://github.com/markgawler>
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ */
 
 // Site - Map Model
 
