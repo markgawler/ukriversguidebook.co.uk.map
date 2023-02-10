@@ -26,10 +26,12 @@ function getPointsByRadius(center, radius) {
 
 async function savePoints(points) {
   const callbackUrl = store.state.mapAccess.callbackUrl;
+  const token = store.state.mapAccess.token;
   return await axios
     .post(callbackUrl + "&task=savemappoints", points, {
       headers: {
         "Content-Type": "multipart/form-data",
+        'X-CSRF-TOKEN': token,
       },
     })
     .then(function () {

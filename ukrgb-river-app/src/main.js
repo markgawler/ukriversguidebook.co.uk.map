@@ -10,6 +10,7 @@ import SectionMap from "@/views/SectionMap.vue";
 const app = document.getElementById("app");
 const mode = app.getAttribute("mode");
 const callbackUrl = app.getAttribute("callback");
+const token = app.getAttribute("token");
 
 let routes = [];
 
@@ -30,5 +31,6 @@ const router = createRouter({
 });
 
 store.commit("mapAccess/setCallbackUrl", callbackUrl);
+store.commit("mapAccess/setToken", token);
 
 createApp(App).use(router).use(store).mount("#app");

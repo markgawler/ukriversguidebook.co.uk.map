@@ -1,7 +1,8 @@
 
 const state = () => ({
-    accessToken: "",
-    callbackUrl: ""
+    accessToken: "", // Access token for OSMap data
+    callbackUrl: "", // The Site URL
+    token: ""        // Joomla Sesion Token
   })
 
 
@@ -14,6 +15,9 @@ const state = () => ({
     },
     setCallbackUrl(state,url) {
       state.callbackUrl = url;
+    },
+    setToken(state,url) {
+      state.token = url;
     }
   };
 
