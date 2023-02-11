@@ -3,7 +3,7 @@ import "leaflet/dist/leaflet.css";
 import "proj4leaflet";
 import { onBeforeUnmount, onMounted, ref, watch, computed } from "vue";
 import { useStore } from "vuex";
-import {getPointsByRadius} from "../network/mapData";
+import { getPointsByRadius } from "../network/mapData";
 import L from "leaflet";
 import "../utils/WithHeaders";
 import MapCursor from "./MapCursor.vue";
@@ -64,11 +64,11 @@ const unsubscribe = store.subscribe((mutation) => {
         addMapMarker(pt, parseInt(pt.riverguide) === props.guideId);
       }
       break;
-    case "mapPoints/updatePoint":
-      {
-        const pt = mutation.payload;
-      }
-      break;
+    // case "mapPoints/updatePoint":
+    //   {
+    //     const pt = mutation.payload;
+    //   }
+    //   break;
   }
 });
 
@@ -204,8 +204,8 @@ function loadMapPointDataInRadius() {
   const bounds = map.getBounds();
   const radius =
     center.distanceTo(L.latLng(bounds.getNorth(), bounds.getEast())) / 1000;
-  
-  getPointsByRadius(center,radius)
+
+  getPointsByRadius(center, radius);
 }
 
 function addMapMarker(point, local = true) {
