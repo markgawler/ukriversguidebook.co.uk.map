@@ -22,7 +22,7 @@ class plgContentUkrgbMap extends JPlugin {
 	 * @param int    $page    The 'page' number
      * @since   1.0
 	 */
-	public function onContentPrepare(string $context, $article, &$params, int $page = 0)
+	public function onContentPrepare(string $context, $article, &$params,  $page = 0)
 	{		
 		$index_js = "";
 		$index_css = "";
@@ -34,7 +34,7 @@ class plgContentUkrgbMap extends JPlugin {
 			if (isset($mapId)){
                 $url = JURI::base() . 'index.php?option=com_ukrgbmap'; //&tmpl=raw&format=json';
                 $mapData = $model->getMapParameters($mapId);
-                $aid = $mapData['aid']; //TODO is $aid always equal to $article->id
+                $aid = $mapData['aid'];
 				$mapData = base64_encode(json_encode($mapData));
 
 				// Insert river-app js
