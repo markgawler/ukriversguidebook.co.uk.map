@@ -29,8 +29,9 @@ class UkrgbMapModelMaps extends JModelList
         $query = $db->getQuery(true);
 
         // Create the base select statement.
-        $query->select('*')
-            ->from($db->quoteName('#__ukrgb_maps'));
+        $query->select(array('#__ukrgb_maps.id','#__ukrgb_maps.map_type','#__content.title'))
+            ->from($db->quoteName('#__ukrgb_maps'))
+            ->join('INNER',$db->quoteName('#__content') . ' ON ' . $db->quoteName('#__ukrgb_maps.articleid') . ' = ' . $db->quoteName('#__content.id'));
 
         return $query;
     }

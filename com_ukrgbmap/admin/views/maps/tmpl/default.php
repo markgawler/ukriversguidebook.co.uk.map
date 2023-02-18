@@ -4,25 +4,21 @@
 defined('_JEXEC') or die('Restricted Access');
 
 // load tooltip behavior
-JHtml::_('behavior.tooltip');
+//JHtml::_('behavior.tooltip');
 ?>
 
 <form action="index.php?option=com_ukrgbmap&view=maps" method="post" id="adminForm" name="adminForm">
     <table class="table table-striped table-hover">
         <thead>
         <tr>
-            <th width="1%"><?php echo JText::_('COM_HELLOWORLD_NUM'); ?></th>
-            <th width="2%">
-                <?php echo JHtml::_('grid.checkall'); ?>
+            <th >
+                <?php echo JText::_('COM_UKRGBMAP_ID') ;?>
             </th>
-            <th width="90%">
-                <?php echo JText::_('COM_HELLOWORLD_HELLOWORLDS_NAME') ;?>
+            <th >
+                <?php echo JText::_('COM_UKRGBMAP_MAP_TYPE'); ?>
             </th>
-            <th width="5%">
-                <?php echo JText::_('COM_HELLOWORLD_PUBLISHED'); ?>
-            </th>
-            <th width="2%">
-                <?php echo JText::_('COM_HELLOWORLD_ID'); ?>
+            <th >
+                <?php echo JText::_('COM_UKRGBMAP_TITLE'); ?>
             </th>
         </tr>
         </thead>
@@ -36,22 +32,15 @@ JHtml::_('behavior.tooltip');
         <tbody>
         <?php if (!empty($this->items)) : ?>
             <?php foreach ($this->items as $i => $row) : ?>
-
                 <tr>
                     <td>
-                        <?php echo $this->pagination->getRowOffset($i); ?>
-                    </td>
-                    <td>
-                        <?php echo JHtml::_('grid.id', $i, $row->id); ?>
-                    </td>
-                    <td>
-                        <?php echo $row->greeting; ?>
-                    </td>
-                    <td align="center">
-                        <?php echo JHtml::_('jgrid.published', $row->published, $i, 'helloworlds.', true, 'cb'); ?>
-                    </td>
-                    <td align="center">
                         <?php echo $row->id; ?>
+                    </td>
+                    <td>
+                        <?php echo $row->map_type; ?>
+					</td>
+                    <td >
+                        <?php echo $row->title; ?>
                     </td>
                 </tr>
             <?php endforeach; ?>
