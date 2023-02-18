@@ -7,7 +7,7 @@ defined('_JEXEC') or die('Restricted Access');
 JHtml::_('behavior.tooltip');
 ?>
 
-<form action="index.php?option=com_ukrgbmap&view=main" method="post" id="adminForm" name="adminForm">
+<form action="index.php?option=com_ukrgbmap&view=maps" method="post" id="adminForm" name="adminForm">
     <table class="table table-striped table-hover">
         <thead>
         <tr>

@@ -17,7 +17,7 @@ class UkrgbMapController extends JControllerLegacy
 	 * @var		string	The default view.
      * @since 1.0
 	 */
-    protected $default_view = 'main';
+    protected $default_view = 'maps';
     protected $model_prefix = "UkrgbMapModel";
 
 	/**

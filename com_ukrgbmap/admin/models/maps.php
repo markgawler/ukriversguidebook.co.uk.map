@@ -14,7 +14,7 @@ defined('_JEXEC') or die('Restricted access');
  *
  * @since  3.0.1
  */
-class UkrgbMapModelMain extends JModelList
+class UkrgbMapModelMaps extends JModelList
 {
     /**
      * Method to build an SQL query to load the list data.

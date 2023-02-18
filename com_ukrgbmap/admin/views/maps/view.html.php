@@ -18,7 +18,7 @@ defined('_JEXEC') or die('Restricted access');
  *
  * @since 1.0
 */
-class UkrgbMapViewMain extends JViewLegacy
+class UkrgbMapViewMaps extends JViewLegacy
 {
 	//protected $form;
 	
