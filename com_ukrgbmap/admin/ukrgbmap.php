@@ -7,9 +7,12 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-defined('_JEXEC') or die;
-//JHtml::_('behavior.tabstate');
+defined('_JEXEC') or die('Restricted access');
 
+
+// Set some global property
+//$document = JFactory::getDocument();
+//$document->addStyleDeclaration('.icon-helloworld {background-image: url(../media/com_helloworld/images/Tux-16x16.png);}');
 
 if (!JFactory::getUser()->authorise('core.manage', 'com_ukrgbmap'))
 {

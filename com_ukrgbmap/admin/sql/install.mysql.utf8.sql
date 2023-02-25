@@ -1,10 +1,14 @@
 DROP TABLE IF EXISTS `#__ukrgb_maps`;
 CREATE TABLE `#__ukrgb_maps` (
 `id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+`asset_id` INT(10)     NOT NULL DEFAULT '0',
 `articleid` INT(11),
 `sw_corner` POINT NOT NULL,
 `ne_corner` POINT NOT NULL,
-`map_type` INT( 11 )
+`map_type` INT( 11 ),
+`catid`	    int(11)    NOT NULL DEFAULT '0',
+`params`   VARCHAR(1024) NOT NULL DEFAULT ''
+
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

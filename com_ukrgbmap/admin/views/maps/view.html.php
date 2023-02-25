@@ -32,10 +32,17 @@ class UkrgbMapViewMaps extends JViewLegacy
 	 */
 	function display($tpl = null)
 	{
+        // Get application
+        $app = JFactory::getApplication();
+        $context = "ukrgbmap.list.admin.map";
 		// Get data from the model
 		$this->items = $this->get('Items');
         $this->pagination	= $this->get('Pagination');
-        //$this->form	= $this->get('Form');
+        $this->state			= $this->get('State');
+        $this->filter_order 	= $app->getUserStateFromRequest($context.'filter_order', 'filter_order', 'greeting', 'cmd');
+        $this->filter_order_Dir = $app->getUserStateFromRequest($context.'filter_order_Dir', 'filter_order_Dir', 'asc', 'cmd');
+        $this->filterForm    	= $this->get('FilterForm');
+        $this->activeFilters 	= $this->get('ActiveFilters');
 
         // Check for errors.
         $errors = $this->get('Errors');
@@ -47,30 +54,48 @@ class UkrgbMapViewMaps extends JViewLegacy
 
 		// Set the toolbar
 		$this->addToolBar();
-        //JHtml::_('behavior.framework'); // Adding this line fix the error ReferenceError: Joomla is not defined
 
         // Display the template
 		parent::display($tpl);
+
+        // Set the document
+        $this->setDocument();
 	}
 	
 	/**
 	 * Setting the toolbar
-     * @since 1.0
+     * @since 3.0.1
 	 */
 	protected function addToolBar()
 	{
 		$user = JFactory::getUser();
-		
-		JToolBarHelper::title('UK Rivers Guidebook - Maps');
+        $title = JText::_('UK Rivers Guidebook - Maps');
+		if ($this->pagination->total)
+		{
+			$title .= "<span style='font-size: 0.5em; vertical-align: middle;'>(" . $this->pagination->total . ")</span>";
+		}
+        JToolBarHelper::title($title, 'ukrgbmap');
+        //JToolBarHelper::title('UK Rivers Guidebook - Maps');
 		if ($user->authorise('core.admin', 'com_ukrgbmap'))
 		{
-//            JToolbarHelper::addNew('ukrgbmap.add');
-//            JToolbarHelper::editList('ukrgbmap.edit');
-//            JToolbarHelper::deleteList('', 'ukrgbmap.delete');
+            JToolbarHelper::addNew('maps.add');
+            JToolbarHelper::editList(',map.edit');
+            JToolbarHelper::deleteList('', 'maps.delete');
 			JToolbarHelper::preferences('com_ukrgbmap');
-				
+
 		}
 		JToolbarHelper::divider();
 		
 	}
+    /**
+     * Method to set up the document properties
+     *
+     * @return void
+     * @since 3.0.1
+     */
+    protected function setDocument()
+    {
+        $document = JFactory::getDocument();
+        $document->setTitle(JText::_('COM_UKRGBMAP_ADMINISTRATION'));
+    }
 }

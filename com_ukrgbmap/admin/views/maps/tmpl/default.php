@@ -3,22 +3,38 @@
 // No direct access to this file
 defined('_JEXEC') or die('Restricted Access');
 
-// load tooltip behavior
-//JHtml::_('behavior.tooltip');
+JHtml::_('formbehavior.chosen', 'select');
+
+$listOrder     = $this->escape($this->filter_order);
+$listDirn      = $this->escape($this->filter_order_Dir);
 ?>
 
 <form action="index.php?option=com_ukrgbmap&view=maps" method="post" id="adminForm" name="adminForm">
-    <table class="table table-striped table-hover">
+	<div class="row-fluid">
+		<div class="span6">
+            <?php echo JText::_('COM_UKRGBMAP_MAPS_FILTER'); ?>
+            <?php
+            echo JLayoutHelper::render(
+                'joomla.searchtools.default',
+                array('view' => $this)
+            );
+            ?>
+		</div>
+	</div>
+	<table class="table table-striped table-hover">
         <thead>
         <tr>
             <th >
                 <?php echo JText::_('COM_UKRGBMAP_ID') ;?>
             </th>
+			<th >
+                <?php echo JHtml::_('grid.checkall'); ?>
+			</th>
             <th >
-                <?php echo JText::_('COM_UKRGBMAP_MAP_TYPE'); ?>
+                <?php echo JHtml::_('grid.sort', 'COM_UKRGBMAP_MAP_TYPE', 'map_type', $listDirn, $listOrder); ?>
             </th>
             <th >
-                <?php echo JText::_('COM_UKRGBMAP_TITLE'); ?>
+                <?php echo JHtml::_('grid.sort', 'COM_UKRGBMAP_TITLE', 'title', $listDirn, $listOrder); ?>
             </th>
         </tr>
         </thead>
@@ -31,20 +47,35 @@ defined('_JEXEC') or die('Restricted Access');
         </tfoot>
         <tbody>
         <?php if (!empty($this->items)) : ?>
-            <?php foreach ($this->items as $i => $row) : ?>
+            <?php foreach ($this->items as $i => $row) :
+                $link = JRoute::_('index.php?option=com_ukrgbmap&task=map.edit&id=' . $row->id);
+                ?>
                 <tr>
-                    <td>
-                        <?php echo $row->id; ?>
-                    </td>
-                    <td>
-                        <?php echo $row->map_type; ?>
+					<td><?php echo $this->pagination->getRowOffset($i); ?></td>
+					<td>
+                        <?php echo JHtml::_('grid.id', $i, $row->id); ?>
 					</td>
-                    <td >
-                        <?php echo $row->title; ?>
-                    </td>
+
+					<td>
+						<a href="<?php echo $link; ?>" title="<?php echo JText::_('COM_UKRGBMAP_EDIT_MAP'); ?>">
+                            <?php echo $row->map_type; ?>
+						</a>
+					</td>
+
+					<td>
+						<a href="<?php echo $link; ?>" title="<?php echo JText::_('COM_UKRGBMAP_EDIT_MAP'); ?>">
+                            <?php echo $row->title; ?>
+						</a>
+					</td>
+
                 </tr>
             <?php endforeach; ?>
         <?php endif; ?>
         </tbody>
     </table>
+	<input type="hidden" name="task" value=""/>
+	<input type="hidden" name="boxchecked" value="0"/>
+	<input type="hidden" name="filter_order" value="<?php echo $listOrder; ?>"/>
+	<input type="hidden" name="filter_order_Dir" value="<?php echo $listDirn; ?>"/>
+    <?php echo JHtml::_('form.token'); ?>
 </form>
