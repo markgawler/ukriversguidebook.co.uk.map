@@ -14,7 +14,7 @@ defined('_JEXEC') or die('Restricted access');
  *
  * @since  3.0.1
  */
-class UkrgbmapModelUkrgbmap extends JModelAdmin
+class UkrgbMapModelMap extends JModelAdmin
 {
 	/**
 	 * Method to get a table object, load it if necessary.
@@ -27,7 +27,7 @@ class UkrgbmapModelUkrgbmap extends JModelAdmin
 	 *
 	 * @since   3.0.1
 	 */
-	public function getTable($type = 'Maps', $prefix = 'UkrgbMapTable', $config = array())
+	public function getTable($type = 'Map', $prefix = 'UkrgbMapTable', $config = array())
 	{
 		return JTable::getInstance($type, $prefix, $config);
 	}
@@ -46,8 +46,8 @@ class UkrgbmapModelUkrgbmap extends JModelAdmin
 	{
 		// Get the form.
 		$form = $this->loadForm(
-			'com_ukrgbmap.ukrgbmap',
-			'ukrgbmap',
+			'com_ukrgbmap.map',
+			'map',
 			array(
 				'control' => 'jform',
 				'load_data' => $loadData
@@ -73,7 +73,7 @@ class UkrgbmapModelUkrgbmap extends JModelAdmin
 	{
 		// Check the session for previously entered form data.
 		$data = JFactory::getApplication()->getUserState(
-			'com_ukrgbmap.edit.ukrgbmap.data',
+			'com_ukrgbmap.edit.map.data',
 			array()
 		);
 

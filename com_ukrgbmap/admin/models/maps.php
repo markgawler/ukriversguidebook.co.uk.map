@@ -17,33 +17,12 @@ defined('_JEXEC') or die('Restricted access');
 class UkrgbMapModelMaps extends JModelList
 {
     /**
-     * Constructor.
-     *
-     * @param   array  $config  An optional associative array of configuration settings.
-     *
-     * @see     JController
-     * @since   3.0.1
-     */
-    public function __construct($config = array())
-    {
-        if (empty($config['filter_fields']))
-        {
-            $config['filter_fields'] = array(
-                'map_type',
-                'title'
-            );
-        }
-
-        parent::__construct($config);
-    }
-
-    /**
      * Method to build an SQL query to load the list data.
      *
      * @return      string  An SQL query
      * @since 3.0
      */
-    protected function getListQuery(): string
+    protected function getListQuery()
     {
         // Initialize variables.
         $db    = JFactory::getDbo();

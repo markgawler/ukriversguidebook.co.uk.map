@@ -78,7 +78,7 @@ class UkrgbMapViewMaps extends JViewLegacy
         //JToolBarHelper::title('UK Rivers Guidebook - Maps');
 		if ($user->authorise('core.admin', 'com_ukrgbmap'))
 		{
-            JToolbarHelper::addNew('maps.add');
+            JToolbarHelper::addNew('map.add');
             JToolbarHelper::editList(',map.edit');
             JToolbarHelper::deleteList('', 'maps.delete');
 			JToolbarHelper::preferences('com_ukrgbmap');

@@ -57,7 +57,7 @@ class UkrgbMapViewMap extends JViewLegacy
         parent::display($tpl);
 
         // Set the document
-        $this->setDocument();
+        //$this->setDocument();
     }
 
     /**
@@ -86,9 +86,9 @@ class UkrgbMapViewMap extends JViewLegacy
         }
 
         JToolbarHelper::title($title, 'ukrgbmap');
-        JToolbarHelper::save('ukrgbmap.save');
+        JToolbarHelper::save('map.save');
         JToolbarHelper::cancel(
-            'ukrgbmap.cancel',
+            'map.cancel',
             $isNew ? 'JTOOLBAR_CANCEL' : 'JTOOLBAR_CLOSE'
         );
     }
@@ -99,11 +99,11 @@ class UkrgbMapViewMap extends JViewLegacy
      * @return void
      * @since 3.0.1
      */
-    protected function setDocument()
-    {
-        $isNew = ($this->item->id < 1);
-        $document = JFactory::getDocument();
-        $document->setTitle($isNew ? JText::_('COM_UKRGBMAP_MAP_CREATING') :
-            JText::_('COM_UKRGBMAP_MAP_EDITING'));
-    }
+//    protected function setDocument()
+//    {
+//        $isNew = ($this->item->id < 1);
+//        $document = JFactory::getDocument();
+//        $document->setTitle($isNew ? JText::_('COM_UKRGBMAP_MAP_CREATING') :
+//            JText::_('COM_UKRGBMAP_MAP_EDITING'));
+//    }
 }

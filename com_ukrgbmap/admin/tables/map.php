@@ -14,7 +14,7 @@ defined('_JEXEC') or die('Restricted access');
  *
  * @since  3.0.1
  */
-class UkrgbMapTableMaps extends JTable
+class UkrgbMapTableMap extends JTable
 {
     /**
      * Constructor

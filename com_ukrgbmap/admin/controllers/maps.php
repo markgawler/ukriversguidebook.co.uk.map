@@ -28,7 +28,7 @@ class UkrgbMapControllerMaps extends JControllerAdmin
      *
      * @since   1.6
      */
-    public function getModel($name = 'UkrgbMap', $prefix = 'UkrgbMapModel', $config = array('ignore_request' => true))
+    public function getModel($name = 'Map', $prefix = 'UkrgbMapModel', $config = array('ignore_request' => true))
     {
         $model = parent::getModel($name, $prefix, $config);
 

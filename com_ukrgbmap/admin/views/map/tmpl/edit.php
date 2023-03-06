@@ -11,7 +11,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 ?>
-<form action="<?php echo JRoute::_('index.php?option=com_ukrgb&layout=edit&id=' . (int) $this->item->id); ?>"
+<form action="<?php echo JRoute::_('index.php?option=com_ukrgbmap&layout=edit&id=' . (int) $this->item->id); ?>"
       method="post" name="adminForm" id="adminForm">
     <div class="form-horizontal">
         <fieldset class="adminform">
@@ -27,6 +27,6 @@ defined('_JEXEC') or die('Restricted access');
             </div>
         </fieldset>
     </div>
-    <input type="hidden" name="task" value="ukrgbmap.edit" />
+    <input type="hidden" name="task" value="map.edit" />
     <?php echo JHtml::_('form.token'); ?>
 </form>

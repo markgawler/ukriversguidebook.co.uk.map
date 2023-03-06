@@ -2,7 +2,7 @@
 <!DOCTYPE install PUBLIC "-//Joomla! 2.5//DTD template 1.0//EN" "http://www.joomla.org/xml/dtd/2.5/template-install.dtd">
 
 <extension version="2.5" type="plugin" group="content" method="upgrade">
-	<name>UKRGB-Maps</name>
+	<name>plg_content_ukrgbmap</name>
 	<creationDate>November 2012</creationDate>
 	<author>Mark Gawler</author>
 	<authorEmail>markg@wler.co.uk</authorEmail>
@@ -15,5 +15,8 @@
 	<files>
    		<filename plugin="ukrgbmap">ukrgbmap.php</filename>
 	</files>
+	<languages>
+		<language tag="en-GB">language/en-GB/en-GB.plg_ukrgbmap.ini</language>
+	</languages>
 </extension>
 
