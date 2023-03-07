@@ -5,14 +5,13 @@
                 name="id"
                 type="hidden"
         />
-        <field
-                name="title"
-                type="text"
-                label="COM_HELLOWORLD_HELLOWORLD_GREETING_LABEL"
-                description="COM_HELLOWORLD_HELLOWORLD_GREETING_DESC"
-                size="40"
-                class="inputbox"
-                default=""
-        />
+
+        <field name="map_type" type="list" default="" required="true" label="COM_UKRGBMAP_TYPE_LABEL"
+               description="COM_UKRGBMAP_TYPE_LABEL_DEC">
+            <option value="">Please Select</option>
+            <option value="0">Content Plugin (Auto Generated)</option>
+            <option value="1">Content Plugin (Manual)</option>
+            <option value="2">Other TBD</option>
+        </field>
     </fieldset>
 </form>

@@ -93,17 +93,4 @@ class UkrgbMapViewMap extends JViewLegacy
         );
     }
 
-    /**
-     * Method to set up the document properties
-     *
-     * @return void
-     * @since 3.0.1
-     */
-//    protected function setDocument()
-//    {
-//        $isNew = ($this->item->id < 1);
-//        $document = JFactory::getDocument();
-//        $document->setTitle($isNew ? JText::_('COM_UKRGBMAP_MAP_CREATING') :
-//            JText::_('COM_UKRGBMAP_MAP_EDITING'));
-//    }
 }
