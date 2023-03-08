@@ -17,6 +17,57 @@ defined('_JEXEC') or die('Restricted access');
 class UkrgbMapModelMaps extends JModelList
 {
     /**
+     * Constructor.
+     *
+     * @param   array  $config  An optional associative array of configuration settings.
+     *
+     * @see     JController
+     * @since   3.0.1
+     */
+    public function __construct($config = array())
+    {
+        if (empty($config['filter_fields']))
+        {
+            $config['filter_fields'] = array(
+                'id',
+                'map_type',
+                'title'
+            );
+        }
+        parent::__construct($config);
+    }
+
+    protected function populateState($ordering = null, $direction = null)
+    {
+        $app = JFactory::getApplication();
+
+        // Adjust the context to support modal layouts.
+        if ($layout = $app->input->get('layout'))
+        {
+            $this->context .= '.' . $layout;
+        }
+
+        // Adjust the context to support forced languages.
+        $forcedLanguage = $app->input->get('forcedLanguage', '', 'CMD');
+        if ($forcedLanguage)
+        {
+            $this->context .= '.' . $forcedLanguage;
+        }
+
+        parent::populateState($ordering, $direction);
+
+        // If there's a forced language then define that filter for the query where clause
+        if (!empty($forcedLanguage))
+        {
+            $this->setState('filter.language', $forcedLanguage);
+        }
+    }
+
+
+
+
+
+    /**
      * Method to build an SQL query to load the list data.
      *
      * @return      string  An SQL query
