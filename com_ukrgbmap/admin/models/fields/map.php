@@ -31,6 +31,7 @@ class JFormFieldMap extends JFormFieldList
      * Method to get a list of options for a list input.
      *
      * @return  array  An array of JHtml options.
+     * @since 3.0.1
      */
     protected function getOptions()
     {
@@ -49,9 +50,7 @@ class JFormFieldMap extends JFormFieldList
                 $options[] = JHtml::_('select.option', $message->id, $message->map_type,$message->articleid);
             }
         }
-
         $options = array_merge(parent::getOptions(), $options);
-
         return $options;
     }
 }

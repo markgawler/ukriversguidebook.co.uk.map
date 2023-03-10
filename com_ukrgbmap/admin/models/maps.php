@@ -63,10 +63,6 @@ class UkrgbMapModelMaps extends JModelList
         }
     }
 
-
-
-
-
     /**
      * Method to build an SQL query to load the list data.
      *
@@ -82,7 +78,7 @@ class UkrgbMapModelMaps extends JModelList
         // Create the base select statement.
         $query->select(array('#__ukrgb_maps.id','#__ukrgb_maps.map_type','#__content.title'))
             ->from($db->quoteName('#__ukrgb_maps'))
-            ->join('INNER',$db->quoteName('#__content') . ' ON ' . $db->quoteName('#__ukrgb_maps.articleid') . ' = ' . $db->quoteName('#__content.id'));
+            ->join('LEFT',$db->quoteName('#__content') . ' ON ' . $db->quoteName('#__ukrgb_maps.articleid') . ' = ' . $db->quoteName('#__content.id'));
 
         // Filter: like / search
         $search = $this->getState('filter.search');
