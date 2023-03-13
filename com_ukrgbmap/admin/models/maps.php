@@ -76,20 +76,27 @@ class UkrgbMapModelMaps extends JModelList
         $query = $db->getQuery(true);
 
         // Create the base select statement.
-        $query->select(array('#__ukrgb_maps.id','#__ukrgb_maps.map_type','#__content.title'))
-            ->from($db->quoteName('#__ukrgb_maps'))
-            ->join('LEFT',$db->quoteName('#__content') . ' ON ' . $db->quoteName('#__ukrgb_maps.articleid') . ' = ' . $db->quoteName('#__content.id'));
+        // a - __content table
+        // m - __ukrgb_maps table
+        // c - __categories table
+        $query->select(array('m.id as id, m.map_type as map_type','a.title'))
+            ->from($db->quoteName('#__ukrgb_maps', 'm'))
+            ->join('LEFT',$db->quoteName('#__content', 'a') . ' ON ' . $db->quoteName('m.articleid') . ' = ' . $db->quoteName('a.id'));
+
+        // Join over the categories.
+        $query->select($db->quoteName('c.title', 'category_title'))
+            ->join('LEFT', $db->quoteName('#__categories', 'c') . ' ON c.id = m.catid');
 
         // Filter: like / search
         $search = $this->getState('filter.search');
         if (!empty($search))
         {
             $like = $db->quote('%' . $search . '%');
-            $query->where('#__content.title LIKE ' . $like);
+            $query->where('a.title LIKE ' . $like);
         }
 
         // Add the list ordering clause.
-        $orderCol	= $this->state->get('list.ordering', '#__content.title');
+        $orderCol	= $this->state->get('list.ordering', 'a.title');
         $orderDirn 	= $this->state->get('list.direction', 'asc');
         $query->order($db->escape($orderCol) . ' ' . $db->escape($orderDirn));
 

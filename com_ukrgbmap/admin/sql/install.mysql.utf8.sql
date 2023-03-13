@@ -6,7 +6,7 @@ CREATE TABLE `#__ukrgb_maps` (
 `sw_corner` POINT NOT NULL,
 `ne_corner` POINT NOT NULL,
 `map_type` INT( 11 ),
-`catid`	    int(11)    NOT NULL DEFAULT '0',
+`catid`	   int(11)    NOT NULL DEFAULT '0',
 `params`   VARCHAR(1024) NOT NULL DEFAULT ''
 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

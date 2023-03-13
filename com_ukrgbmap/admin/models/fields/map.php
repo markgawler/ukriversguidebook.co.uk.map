@@ -33,21 +33,24 @@ class JFormFieldMap extends JFormFieldList
      * @return  array  An array of JHtml options.
      * @since 3.0.1
      */
+
+
     protected function getOptions()
     {
         $db    = JFactory::getDBO();
         $query = $db->getQuery(true);
-        $query->select('id,map_type,articleid');
+        $query->select('#__ukrgb_maps.id as id,map_type,articleid,#__categories.title as category,catid');
         $query->from('#__ukrgb_maps');
+        $query->leftJoin('#__categories on catid=#__categories.id');
         $db->setQuery((string) $query);
-        $messages = $db->loadObjectList();
+        $maps = $db->loadObjectList();
         $options  = array();
 
-        if ($messages)
+        if ($maps)
         {
-            foreach ($messages as $message)
+            foreach ($maps as $map)
             {
-                $options[] = JHtml::_('select.option', $message->id, $message->map_type,$message->articleid);
+                $options[] = JHtml::_('select.option', $map->id, $map->map_type,$map->articleid);
             }
         }
         $options = array_merge(parent::getOptions(), $options);

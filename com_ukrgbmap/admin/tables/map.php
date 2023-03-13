@@ -27,7 +27,7 @@ class UkrgbMapTableMap extends JTable
         parent::__construct('#__ukrgb_maps', 'id', $db);
     }
 
-    public function store($updateNulls = false)
+    public function store($updateNulls = false): bool
     {
         // Ensure JTable does not attempt to update the Point columns if the map bounds have not been set.
         if ($this->sw_corner == "" || $this->ne_corner == "") {

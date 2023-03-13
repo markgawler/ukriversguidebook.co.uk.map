@@ -25,8 +25,5 @@
 		label="JCONFIG_PERMISSIONS_LABEL">
 		<field name="rules" type="rules" component="com_ukrgbmap" filter="rules"
 			validate="rules" label="JCONFIG_PERMISSIONS_LABEL" section="component" />
-
-
-
 	</fieldset>
 </config>

@@ -52,7 +52,10 @@ class UkrgbMapViewMaps extends JViewLegacy
             return false;
         }
 
-		// Set the toolbar
+        // Set the submenu
+        UkrgbMapHelper::addSubmenu('maps');
+
+        // Set the toolbar
 		$this->addToolBar();
 
         // Display the template
@@ -69,7 +72,7 @@ class UkrgbMapViewMaps extends JViewLegacy
 	protected function addToolBar()
 	{
 		$user = JFactory::getUser();
-        $title = JText::_('UK Rivers Guidebook - Maps');
+        $title = JText::_('COM_UKRGBMAP_HEADING');
 		if ($this->pagination->total)
 		{
 			$title .= "<span style='font-size: 0.5em; vertical-align: middle;'>(" . $this->pagination->total . ")</span>";

@@ -8,10 +8,22 @@
 
         <field name="map_type" type="list" default="" required="true" label="COM_UKRGBMAP_TYPE_LABEL"
                description="COM_UKRGBMAP_TYPE_LABEL_DEC">
-            <option value="">Please Select</option>
-            <option value="0">Content Plugin (Auto Generated)</option>
-            <option value="1">Content Plugin (Manual)</option>
-            <option value="2">Other TBD</option>
+            <option value="">COM_UKRGBMAP_MAP_TYPE_SELECT</option>
+            <option value="0">COM_UKRGBMAP_MAP_TYPE_0</option>
+            <option value="1">COM_UKRGBMAP_MAP_TYPE_1</option>
+            <option value="2">COM_UKRGBMAP_MAP_TYPE_2</option>
+        </field>
+        <field
+                name="catid"
+                type="category"
+                extension="com_ukrgbmap"
+                class="inputbox"
+                default=""
+                label="COM_UKRGBMAP_MAP_FIELD_CATID_LABEL"
+                description="COM_UKRGBMAP_MAP_FIELD_CATID_DESC"
+                required="true"
+        >
+            <option value="0">JOPTION_SELECT_CATEGORY</option>
         </field>
     </fieldset>
 </form>
