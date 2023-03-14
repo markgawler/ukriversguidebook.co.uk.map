@@ -16,7 +16,7 @@ $document = JFactory::getDocument();
 
 if (!JFactory::getUser()->authorise('core.manage', 'com_ukrgbmap'))
 {
-	return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
+    throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'));
 }
 
 

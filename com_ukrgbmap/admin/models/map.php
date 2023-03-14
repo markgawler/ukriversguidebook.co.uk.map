@@ -10,7 +10,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 /**
- * HelloWorld Model
+ * UkrgbMap Model
  *
  * @since  3.0.1
  */

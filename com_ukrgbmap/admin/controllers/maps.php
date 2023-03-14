@@ -11,7 +11,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 /**
- * HelloWorlds Controller
+ * UKRGB Maps Controller
  *
  * @since  3.0.1
  */

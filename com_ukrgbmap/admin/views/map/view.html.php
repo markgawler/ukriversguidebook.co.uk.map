@@ -25,6 +25,9 @@ class UkrgbMapViewMap extends JViewLegacy
      * @since 3.0.1
      */
     protected $form = null;
+    protected $item;
+    protected $script;
+    protected $canDo;
 
     /**
      * Display the UKRGB Map view
@@ -40,13 +43,15 @@ class UkrgbMapViewMap extends JViewLegacy
         // Get the Data
         $this->form = $this->get('Form');
         $this->item = $this->get('Item');
+        //$this->script = $this->get('Script');  // what's this validation?
+
+        // What Access Permissions does this user have? What can (s)he do?
+        $this->canDo = JHelperContent::getActions('com_ukrgbmap', 'map', $this->item->id);
 
         // Check for errors.
         if (count($errors = $this->get('Errors')))
         {
-            JError::raiseError(500, implode('<br />', $errors));
-
-            return false;
+            throw new Exception(implode("\n", $errors), 500);
         }
 
 
@@ -76,21 +81,43 @@ class UkrgbMapViewMap extends JViewLegacy
 
         $isNew = ($this->item->id == 0);
 
+        JToolBarHelper::title($isNew ? JText::_('JTOOLBAR_NEW')
+            : JText::_('JTOOLBAR_EDIT'), 'map');
+
+        // Build the actions for new and existing records.
         if ($isNew)
         {
-            $title = JText::_('JTOOLBAR_NEW');
+            // For new records, check the create permission.
+            if ($this->canDo->get('core.create'))
+            {
+                JToolBarHelper::apply('map.apply', 'JTOOLBAR_APPLY');
+                JToolbarHelper::save('map.save', 'JTOOLBAR_SAVE');
+
+            }
+            JToolbarHelper::cancel('map.cancel', 'JTOOLBAR_CANCEL');
         }
         else
         {
-            $title = JText::_('JTOOLBAR_EDIT');
+            if ($this->canDo->get('core.edit'))
+            {
+                // We can save the new record
+                JToolBarHelper::apply('map.apply', 'JTOOLBAR_APPLY');
+                JToolBarHelper::save('map.save', 'JTOOLBAR_SAVE');
+
+                // We can save this record, but check the create permission to see
+                // if we can return to make a new one.
+//                if ($this->canDo->get('core.create'))
+//                {
+//                    JToolBarHelper::custom('helloworld.save2new', 'save-new.png', 'save-new_f2.png',
+//                        'JTOOLBAR_SAVE_AND_NEW', false);
+//                }
+            }
+//            if ($this->canDo->get('core.create'))
+//            {
+//                JToolBarHelper::custom('helloworld.save2copy', 'save-copy.png', 'save-copy_f2.png',
+//                    'JTOOLBAR_SAVE_AS_COPY', false);
+//            }
+            JToolBarHelper::cancel('map.cancel', 'JTOOLBAR_CLOSE');
         }
-
-        JToolbarHelper::title($title, 'ukrgbmap');
-        JToolbarHelper::save('map.save');
-        JToolbarHelper::cancel(
-            'map.cancel',
-            $isNew ? 'JTOOLBAR_CANCEL' : 'JTOOLBAR_CLOSE'
-        );
     }
-
 }

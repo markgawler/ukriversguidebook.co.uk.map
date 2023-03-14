@@ -44,12 +44,14 @@ class UkrgbMapViewMaps extends JViewLegacy
         $this->filterForm    	= $this->get('FilterForm');
         $this->activeFilters 	= $this->get('ActiveFilters');
 
+        // What Access Permissions does this user have? What can (s)he do?
+        $this->canDo = JHelperContent::getActions('com_ukrgbmap');
+
         // Check for errors.
         $errors = $this->get('Errors');
         if ($errors != null )
         {
-            JError::raiseError(500, implode('<br />', $errors));
-            return false;
+            throw new Exception(implode("\n", $errors), 500);
         }
 
         // Set the submenu
@@ -79,13 +81,23 @@ class UkrgbMapViewMaps extends JViewLegacy
 		}
         JToolBarHelper::title($title, 'ukrgbmap');
         //JToolBarHelper::title('UK Rivers Guidebook - Maps');
-		if ($user->authorise('core.admin', 'com_ukrgbmap'))
-		{
+        if ($this->canDo->get('core.create'))
+        {
             JToolbarHelper::addNew('map.add');
+        }
+        if ($this->canDo->get('core.edit'))
+        {
             JToolbarHelper::editList(',map.edit');
+        }
+        if ($this->canDo->get('core.delete'))
+        {
             JToolbarHelper::deleteList('', 'maps.delete');
-			JToolbarHelper::preferences('com_ukrgbmap');
-
+        }
+        //if ($user->authorise('core.admin', 'com_ukrgbmap'))
+        if ($this->canDo->get('core.admin'))
+        {
+            JToolBarHelper::divider();
+            JToolbarHelper::preferences('com_ukrgbmap');
 		}
 		JToolbarHelper::divider();
 		
