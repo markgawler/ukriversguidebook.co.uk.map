@@ -1,7 +1,8 @@
 DROP TABLE IF EXISTS `#__ukrgb_maps`;
 CREATE TABLE `#__ukrgb_maps` (
 `id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-`asset_id` INT(10)     NOT NULL DEFAULT '0',
+`asset_id` INT(10) UNSIGNED NOT NULL DEFAULT '0',
+`title` VARCHAR(255) DEFAULT '' NOT NULL ,
 `articleid` INT(11),
 `sw_corner` POINT,
 `ne_corner` POINT,

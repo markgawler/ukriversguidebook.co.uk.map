@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<form>
-    <fieldset>
+<form addrulepath="/administrator/components/com_ukrgbmap/models/rules" >
+
+    <fieldset name="title">
+        <field
+            name="title"
+            type="text"
+            label="JGLOBAL_TITLE"
+            description="JFIELD_TITLE_DESC"
+            id="title"
+            class="inputbox"
+            size="30"
+            required="true"
+        />
+    </fieldset>
+
+
+    <fieldset name="details" label="COM_UKRGBMAP_UKRGBMAP_DETAILS">
         <field
                 name="id"
                 type="hidden"
@@ -26,4 +41,45 @@
             <option value="0">JOPTION_SELECT_CATEGORY</option>
         </field>
     </fieldset>
+
+    <fields name="params">
+        <fieldset
+                name="params"
+                label="JGLOBAL_FIELDSET_DISPLAY_OPTIONS"
+        >
+            <field
+                    name="show_category"
+                    type="list"
+                    label="COM_UKRGBMAP_MAP_FIELD_SHOW_CATEGORY_LABEL"
+                    description="COM_UKRGBMAP_MAP_FIELD_SHOW_CATEGORY_DESC"
+                    default=""
+            >
+                <option value="">JGLOBAL_USE_GLOBAL</option>
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+        </fieldset>
+    </fields>
+    <fieldset
+            name="accesscontrol"
+            label="COM_UKRGBMAP_FIELDSET_RULES"
+    >
+        <field
+                name="asset_id"
+                type="hidden"
+                filter="unset"
+        />
+        <field
+                name="rules"
+                type="rules"
+                label="JFIELD_RULES_LABEL"
+                filter="rules"
+                validate="rules"
+                component="com_ukrgbmap"
+                section="map"
+        />
+    </fieldset>
+
+
+
 </form>
