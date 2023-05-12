@@ -17,7 +17,8 @@ CREATE TABLE `#__ukrgb_maps` (
 DROP TABLE IF EXISTS `#__ukrgb_map_point`;
 CREATE TABLE `#__ukrgb_map_point` (
 `id` INT( 11 ) NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-`riverguide` INT(11),  /* Id of the river guide */
+`riverguide` INT(11),  /* Id of the river guide (depreciated)*/
+`mapid` INT(11),  /* Id of the map guide */
 `point` POINT NOT NULL,
 `type` TINYINT NOT NULL,  /* 1 = putin, 2 = takeout, 3 = alternate */
 `description` varchar(255)

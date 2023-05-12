@@ -25,16 +25,16 @@ class UkrgbmapControllerSaveMapPoints extends JControllerBase
         {
             $user = Factory::getUser();
 
-            $authorised = JAccess::getAuthorisedViewLevels($user->id);
-            //$actions = JAccess::getActions('com_content');
-            $canEdit = JAccess::check($user->id,'core.edit');
-            //$contentModel = JModelLegacy::getInstance('Articles', 'ContentModel', array('ignore_request' => true));
-            //$items = $model->getItems();
-
-            $deletes = $app->input->post->get('delete', array(), 'array');
-            $updates = $app->input->post->get('update', array(), 'array');
-            $model->deleteMapPointsById($deletes);
-            $model->updateMapPoints($updates);
+            $mapId = $app->input->post->get('mapId', 0, 'int');
+            $auth = $user->authorise('core.edit', 'com_ukrgbmap.map.' . $mapId);
+            if ($auth && $mapId !== 0) {
+                $deletes = $app->input->post->get('delete', array(), 'array');
+                $updates = $app->input->post->get('update', array(), 'array');
+                $model->deleteMapPointsById($deletes);
+                $model->updateMapPoints($updates);
+            } else {
+                header("HTTP/1.0 403 Forbidden");
+            }
         }
         else
         {

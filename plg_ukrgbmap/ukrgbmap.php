@@ -30,11 +30,11 @@ class plgContentUkrgbMap extends JPlugin {
 		if (isset($article->id) and $context == 'com_content.article')
 		{
 			$model = new UkrgbmapModelMap;
-			$mapId = $model->getMapIdForArticle($article->id);
+			$mId = $model->getMapIdForArticle($article->id);
 			
-			if (isset($mapId)){
+			if (isset($mId)){
                 $url = JURI::base() . 'index.php?option=com_ukrgbmap'; //&tmpl=raw&format=json';
-                $mapData = $model->getMapParameters($mapId);
+                $mapData = $model->getMapParameters($mId);
                 $aid = $mapData['aid'];
 				$mapData = base64_encode(json_encode($mapData));
 
@@ -52,8 +52,9 @@ class plgContentUkrgbMap extends JPlugin {
                 $bounds = 'bounds="' . $mapData . '"';
                 $callback = 'callback="' . $url . '"';
                 $guideId = 'guideid="' . $aid . '"';
+                $mapId = 'mapid="' . $mId . '"';
                 /** @noinspection HtmlUnknownAttribute */
-                $mapDiv = sprintf("<div id=\"app\" mode=\"plugin\" %s %s %s %s %s></div>", $guideId, $aid, $callback, $bounds, $token);
+                $mapDiv = sprintf("<div id=\"app\" mode=\"plugin\" %s %s %s %s %s %s></div>", $guideId, $mapId, $aid, $callback, $bounds, $token);
 				$pattern = "/{map}/i";
 				$article->text = preg_replace($pattern, $mapDiv, $article->text);
 			}
