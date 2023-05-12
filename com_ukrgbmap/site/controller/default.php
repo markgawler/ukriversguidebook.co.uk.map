@@ -10,7 +10,7 @@ defined('_JEXEC') or die('Restricted access');
 
 // Site - default controller
 
-class UkrgbmapControllerDefault extends JControllerBase
+class UkrgbMapControllerDefault extends JControllerBase
 {
 	public function execute()
 	{

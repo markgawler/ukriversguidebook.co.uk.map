@@ -1,0 +1,1 @@
+alter table `#__ukrgb_map_point` add mapid INT(11) default 0 not null;

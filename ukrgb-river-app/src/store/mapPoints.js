@@ -1,4 +1,5 @@
 const state = () => ({
+  mapId: 0,
   points: [],
   archivedPoints: [],
 });
@@ -12,6 +13,8 @@ const getters = {
     state.points.filter(
       (x) => parseInt(x.riverguide) === guideId && !x.deleted
     ),
+
+  getMapId: (state) => state.mapId 
 };
 
 const actions = {
@@ -54,10 +57,10 @@ const actions = {
   },
   async saveUpdates({ commit, state }, saveCallback) {
     const data = {
+      mapId: state.mapId,
       update: state.points.filter((pt) => pt.updated), //.map((p) => toRaw(p)), // Aray of the updated points
       delete: state.points.filter((pt) => pt.deleted).map((p) => p.id), // array of the id's of the deleted points
     };
-
     // Call the callback to save the data in an external store, if the save is sucsessfull
     //
     if (await saveCallback(data)) {
@@ -70,6 +73,10 @@ const actions = {
 };
 
 const mutations = {
+  /* store the Map Id of the curent map */
+  storeMapId(state, id) {
+    state.mapId = id;
+  },
   /* Add a point to the store, no check for duplicate is performed, the
      action 'storePoints' is assumed to have taken care of this
   */

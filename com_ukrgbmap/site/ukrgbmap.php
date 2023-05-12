@@ -15,7 +15,7 @@ JLoader::registerPrefix('Ukrgbmap', JPATH_COMPONENT);
 $app = JFactory::getApplication();
 $controllerHelper = new UkrgbmapControllerHelper;
 $controller = $controllerHelper->parseController($app);
-$controller->prefix = 'Ukrgbmap';
+$controller->prefix = 'UkrgbMap';
 
 // Perform the Request task
 $controller->execute();

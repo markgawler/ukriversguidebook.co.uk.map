@@ -1,21 +1,36 @@
-<?php defined( '_JEXEC' ) or die( 'Restricted access' );
+<?php
+/**
+ * UKRGB Map
+ *
+ * @package        com_ukrgbmap
+ *
+ * @copyright  (C) 2023 Mark Gawler. <https://github.com/markgawler>
+ * @license        GNU General Public License version 2 or later; see LICENSE.txt
+ */
+defined( '_JEXEC' ) or die( 'Restricted access' );
 
-class UkrgbmapViewDefaultHtml extends JViewHtml
+/**
+ * HTML View class for the HelloWorld Component
+ *
+ * @since  1.0
+ */
+class UkrgbMapViewDefaultHtml extends JViewLegacy
 {
-	function render()
+	function diaplay($tpl = null)
 	{
-		$app = JFactory::getApplication();
-		$layout = $this->getLayout();
 
+        // Assign data to the view
+        $this->msg = $this->get('Msg');
 
-		$this->params = JComponentHelper::getParams('com_ukrgbmap');
+        // Check for errors.
+        if (count($errors = $this->get('Errors')))
+        {
+            JLog::add(implode('<br />', $errors), JLog::WARNING, 'jerror');
 
-		//retrieve task list from model
-		$model = new UkrgbmapModelDefault();
+            return false;
+        }
 
-		$this->message = $model->getMessage();
-
-		//display
-		return parent::render();
+        // Display the view
+        parent::display($tpl);
 	}
 }

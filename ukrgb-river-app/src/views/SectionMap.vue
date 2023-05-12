@@ -4,8 +4,10 @@ import MapPoints from "@/components/MapPoints.vue";
 
 const app = document.getElementById("app");
 
-const id = app.getAttribute("guideid");
-const guideId = id === undefined ? 0 : parseInt(id);
+let id = app.getAttribute("guideid");
+const guideId = id == null ? 0 : parseInt(id);
+id = app.getAttribute("mapid");
+const mapId = id == null ? 0 : parseInt(id);
 
 // Decode the Base 64 encoded JSON string holding the map bounds
 const bounds = app.getAttribute("bounds");
@@ -29,5 +31,8 @@ const initialBounds =
     :initial-bounds="initialBounds"
     :guide-id="guideId"
   />
-  <MapPoints :guide-id="guideId"/>
+  <MapPoints 
+  :guide-id="guideId"
+  :map-id="mapId"
+/>
 </template>

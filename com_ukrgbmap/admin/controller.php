@@ -10,26 +10,13 @@
 
 defined('_JEXEC') or die;
 
-class UkrgbmapController extends JControllerLegacy
+
+class UkrgbMapController extends JControllerLegacy
 {
 	/**
 	 * @var		string	The default view.
      * @since 1.0
 	 */
-	protected $default_view = 'main';
+    protected $default_view = 'maps';
 
-	/**
-	 * Method to display a view.
-	 *
-	 * @param   boolean $cacheable If true, the view output will be cached
-	 * @param   array   $urlparams An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
-	 *
-	 * @return  JController		This object to support chaining.
-     * @since 1.0
-	 */
-	public function display($cacheable = false, $urlparams = false): JController
-    {
-		parent::display();
-		return $this;
-	}
 }

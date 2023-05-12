@@ -1,7 +1,7 @@
 <?php
 /**
  * UKRGB Map
- * @package  com_ukrgbmap
+ * @package  plg_ukrgbmap
  *
  * @copyright  (C) 2023 Mark Gawler. <https://github.com/markgawler>
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
@@ -9,9 +9,10 @@
 
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
-require_once JPATH_SITE . '/components/com_ukrgbmap/model/map.php';
-require_once JPATH_SITE . '/components/com_ukrgbmap/model/mappoint.php';
-
+if (!class_exists('UkrgbmapModelMap')) {
+     require_once JPATH_SITE . '/components/com_ukrgbmap/model/map.php';
+     require_once JPATH_SITE . '/components/com_ukrgbmap/model/mappoint.php';
+}
 class plgContentUkrgbMap extends JPlugin {
 	/**
 	 * Plugin that loads module positions within content
@@ -29,11 +30,11 @@ class plgContentUkrgbMap extends JPlugin {
 		if (isset($article->id) and $context == 'com_content.article')
 		{
 			$model = new UkrgbmapModelMap;
-			$mapId = $model->getMapIdForArticle($article->id);
+			$mId = $model->getMapIdForArticle($article->id);
 			
-			if (isset($mapId)){
+			if (isset($mId)){
                 $url = JURI::base() . 'index.php?option=com_ukrgbmap'; //&tmpl=raw&format=json';
-                $mapData = $model->getMapParameters($mapId);
+                $mapData = $model->getMapParameters($mId);
                 $aid = $mapData['aid'];
 				$mapData = base64_encode(json_encode($mapData));
 
@@ -51,8 +52,9 @@ class plgContentUkrgbMap extends JPlugin {
                 $bounds = 'bounds="' . $mapData . '"';
                 $callback = 'callback="' . $url . '"';
                 $guideId = 'guideid="' . $aid . '"';
+                $mapId = 'mapid="' . $mId . '"';
                 /** @noinspection HtmlUnknownAttribute */
-                $mapDiv = sprintf("<div id=\"app\" mode=\"plugin\" %s %s %s %s %s></div>", $guideId, $aid, $callback, $bounds, $token);
+                $mapDiv = sprintf("<div id=\"app\" mode=\"plugin\" %s %s %s %s %s %s></div>", $guideId, $mapId, $aid, $callback, $bounds, $token);
 				$pattern = "/{map}/i";
 				$article->text = preg_replace($pattern, $mapDiv, $article->text);
 			}
@@ -75,4 +77,8 @@ class plgContentUkrgbMap extends JPlugin {
 			$model->updateMapPointsFromArticle($article->introtext, $article->id, $article->title);
 		}				
 	}
+
+    public function onContentBeforeDelete($context, $data) {
+        return true;
+    }
 }

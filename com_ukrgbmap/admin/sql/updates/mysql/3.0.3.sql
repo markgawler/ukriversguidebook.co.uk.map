@@ -1,0 +1,1 @@
+alter table `#__ukrgb_maps` add title varchar(255) default '' not null;

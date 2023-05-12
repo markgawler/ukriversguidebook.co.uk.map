@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import MapPointItem from "./MapPointItem.vue";
 import { savePoints } from "../network/mapData";
@@ -8,14 +8,22 @@ const store = useStore();
 
 const props = defineProps({
   guideId: { type: Number, default: 0 },
+  mapId: { type: Number, default: 0 },
 });
+
 const points = computed(() =>
   store.getters["mapPoints/getPointsByGuideId"](props.guideId)
 );
 
+onMounted(() => {
+  console.log("mapPoints/storeMapId", props.mapId);
+  store.commit("mapPoints/storeMapId", props.mapId);
+});
+
 const cancelEdits = () => {
   store.dispatch("mapPoints/cancelUpdates");
 };
+
 const saveEdits = () => {
   store.dispatch("mapPoints/saveUpdates", savePoints);
 };
