@@ -17,15 +17,15 @@ const lng = ref(0);
 let map = {}; // the map
 let road = {}; // road layer
 let leisure = {}; // leisure layer
-let localMarkerLayer = {}; // layer for current guides markers
-let otherMarkerLayer = {}; // layer for other guides markers
+let localMarkerLayer = {}; // layer for current maps markers
+let otherMarkerLayer = {}; // layer for other maps markers
 let resizeObserver = null; // observer for map <div> resize, used handle map resize
 const mapContainer = ref(null); // Reference to mapContainer <div> used for watching for map resize
 const markers = []; // the markers
 
 const props = defineProps({
   initialBounds: { type: Array, default: null },
-  guideId: { type: Number, default: 0 },
+  mapId: { type: Number, default: 0 },
 });
 
 const accessToken = computed(() => store.state.mapAccess.accessToken);
@@ -61,7 +61,7 @@ const unsubscribe = store.subscribe((mutation) => {
       {
         const pt = mutation.payload;
         // Add / restore the point to the Map
-        addMapMarker(pt, parseInt(pt.riverguide) === props.guideId);
+        addMapMarker(pt, parseInt(pt.mapid) === props.mapId);
       }
       break;
     // case "mapPoints/updatePoint":
@@ -135,8 +135,8 @@ const addMarkerPointLayers = () => {
   localMarkerLayer = L.layerGroup([]).addTo(map);
 
   const overlayMaps = {
-    "Guide Marker": localMarkerLayer,
-    "Other Guide Markers": otherMarkerLayer,
+    "Map Marker": localMarkerLayer,
+    "Other Maps Markers": otherMarkerLayer,
   };
   // Add the layer control, the null parameter would be used if we had selectable base maps
   L.control.layers(null, overlayMaps).addTo(map);

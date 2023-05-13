@@ -9,9 +9,9 @@ const getters = {
     return state.points.find((x) => x.id === id && !x.deleted);
   },
 
-  getPointsByGuideId: (state) => (guideId) =>
+  getPointsByMapId: (state) => (mapId) =>
     state.points.filter(
-      (x) => parseInt(x.riverguide) === guideId && !x.deleted
+      (x) => parseInt(x.mapid) === mapId && !x.deleted
     ),
 
   getMapId: (state) => state.mapId 

@@ -63,7 +63,8 @@ app.get("/index.php", (req, res) => {
           riverguide: 2293,
           X: -3.4427595700536,
           Y: 54.468013454711,
-          type: 0,
+          type: 1,
+          mapid: 7,
           description: "River Calder - Thornholme Farm to Sellafield",
         },
         {
@@ -71,7 +72,8 @@ app.get("/index.php", (req, res) => {
           riverguide: 2293,
           X: -3.4777318000052,
           Y: 54.440806743921,
-          type: 0,
+          type: 1,
+          mapid: 7,
           description: "River Calder - Thornholme Farm to Sellafield",
         },
         {
@@ -79,7 +81,8 @@ app.get("/index.php", (req, res) => {
           riverguide: 2293,
           X: -3.4874053130213,
           Y: 54.431160754276,
-          type: 0,
+          type: 1,
+          mapid: 7,
           description: "River Calder - Thornholme Farm to Sellafield",
         },
         {
@@ -87,7 +90,8 @@ app.get("/index.php", (req, res) => {
           riverguide: 2293,
           X: -3.5042250694883,
           Y: 54.410549631663,
-          type: 0,
+          type: 1,
+          mapid: 7,
           description: "River Calder - Thornholme Farm to Sellafield",
         },
         {
@@ -96,6 +100,7 @@ app.get("/index.php", (req, res) => {
           X: -3.4299054559252,
           Y: 54.502050382119,
           type: 0,
+          mapid: 2,
           description: "River Calder - Lankrigg Moss to Thornholme Farm",
         },
         {
@@ -104,6 +109,7 @@ app.get("/index.php", (req, res) => {
           X: -3.4429461661822,
           Y: 54.467615760092,
           type: 0,
+          mapid: 2,
           description: "River Calder - Lankrigg Moss to Thornholme Farm",
         },
       ];
