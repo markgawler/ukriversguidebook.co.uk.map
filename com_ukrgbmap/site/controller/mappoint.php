@@ -15,18 +15,12 @@ class UkrgbmapControllerMappoint extends JControllerBase
     {
         $app = JFactory::getApplication();
         $model = new UkrgbmapModelMappoint;
-        $guideId = $app->input->get('guideid', null);
         $mapType = $app->input->get('type', null);
         $radius = $app->input->get('radius', null);
         $centreLat = $app->input->get('lat', null);
         $centreLng = $app->input->get('lng', null);
 
-        if (!is_null($guideId))
-        {
-            $points = $model->getByGuideId($guideId);
-            echo json_encode($points);
-        }
-        else if (!is_null($mapType))
+        if (!is_null($mapType))
         {
             $points = $model->getByMapType($mapType);
             echo json_encode($points);
@@ -36,8 +30,6 @@ class UkrgbmapControllerMappoint extends JControllerBase
             $points = $model->getByRadius($centreLat, $centreLng, $radius);
             echo json_encode($points);
         }
-        JFactory::getApplication()->close(); // TODO: fix json view
+        JFactory::getApplication()->close();
     }
 }
-
-?>

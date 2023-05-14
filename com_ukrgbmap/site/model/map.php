@@ -5,6 +5,7 @@
  *
  * @copyright  (C) 2023 Mark Gawler. <https://github.com/markgawler>
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @since 3.0.2
  */
 
 // Site - Map Model
@@ -13,12 +14,13 @@ class UkrgbmapModelMap extends JModelBase
 {
 	/**
 	 * Get the Map parameters
-	 * @return array - with the map prameters
+	 * @return array - with the map parameters
 	 * (w_lng, s_lat, E_lng n_lat and map_type)
 	 * Map Type:
-	 * 0 - everything
-	 * 10 - retail outlets.
-     *
+	 * 0 - legacy auto generated
+     * 1 - Auto generated
+     * 2 - Manual
+	 *
      * @since 1.0
 	 */
 	public function getMapParameters($mapid)
@@ -32,20 +34,22 @@ class UkrgbmapModelMap extends JModelBase
 
 		$result = $db->loadRow();
 
-		$data = array("w_lng" => $result[0],
+		return array("w_lng" => $result[0],
 				"s_lat" => $result[1],
 				"e_lng" => $result[2],
 				"n_lat" => $result[3],
 				"map_type" => $result[4],
-				"aid" => $result[5]);
-		return $data;
+				"articleid" => $result[5]);
 	}
 
+    /**
+     * Get the Map ID for the article
+     * @param int $articleId
+     * @return mixed - Map ID or null if not found
+     * @since 1.0
+     */
 	public function getMapIdForArticle($articleId)
 	{
-		/*
-		 * Get the Map ID for the article, null is returned if no map found
-		* */
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
 		$query->select(array('id'));
@@ -67,24 +71,41 @@ class UkrgbmapModelMap extends JModelBase
 		return $result->id;
 	}
 
-	public function addMap($type, $sw ,$ne , $articleId)
+    /**
+     * Add a new Map to the database
+     *
+     * @param int $type (0 = legacy, 1 = Auto generated, 2 = manual)
+     * @param object $sw  point South West corner of map
+     * @param object $ne  point North East corner of map
+     * @param int $articleId the content article the map is linked to
+     * @return mixed
+     * @throws Exception
+     *
+     * @since 3.0.4
+     */
+	public function addMap($type, $articleId, $sw = null, $ne = null)
 	{
-		/*
-		 * Add A Map
-		*/
-
+        // Don't allow creation of Map type 0 as this is a legacy format which uses article/ guide id in the map points.
+        if ($type == 0 ) {
+            throw new Exception(JText::_('COM_UKRGBMAP_INVALID_MAP_TYPE'), 500);
+        }
+        $id = null;
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
-			
-		// Insert columns.
-		$columns = array('map_type', 'sw_corner', 'ne_corner', 'articleid');
 
 		// Insert values.
-		$values = array(
-				$db->quote($type),
-				'GeomFromText('.$db->quote('POINT('.$sw->x.' '.$sw->y.')').')',
-				'GeomFromText('.$db->quote('POINT('.$ne->x.' '.$ne->y.')').')',
-				$db->quote($articleId));
+        if ($sw != null && $ne != null) {
+            $columns = array('map_type', 'sw_corner', 'ne_corner', 'articleid');
+            $values = array(
+                $db->quote($type),
+                'GeomFromText(' . $db->quote('POINT(' . $sw->x . ' ' . $sw->y . ')') . ')',
+                'GeomFromText(' . $db->quote('POINT(' . $ne->x . ' ' . $ne->y . ')') . ')',
+                $db->quote($articleId));
+        } else {
+            // Dummy map as we don't know the bounds yet
+            $columns = array('map_type', 'articleid');
+            $values = array($db->quote($type), $db->quote($articleId));
+        }
 
 		// Prepare the insert query.
 		$query->insert($db->quoteName('#__ukrgb_maps'))
@@ -94,17 +115,34 @@ class UkrgbmapModelMap extends JModelBase
 
 		$db->setQuery($query);
 		try {
-			$result = $db->query();
-		} catch (Exception $e) {
+			$db->query();
+            $id = $db->insertid();
+
+        } catch (Exception $e) {
 			error_log($e);
 		}
+        return $id;
 	}
 
-	public function updateMap($type, $sw ,$ne , $articleId)
+    /**
+     * @param int $type
+     * @param object $sw
+     * @param object $ne
+     * @param int $mapId
+     * @return void
+     * @throws Exception
+     * @since 3.0.4
+     */
+	public function updateMap($type, $sw ,$ne , $mapId)
 	{
 		/*
 		 * Update A Map
 		*/
+        // Don't allow creation of Map type 0 as this is a legacy format which uses article/ guide id in the map points.
+        if ($type == 0 ) {
+            throw new Exception(JText::_('COM_UKRGBMAP_INVALID_MAP_TYPE'), 500);
+        }
+
 		//TODO: Do we need to check the map exists?
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
@@ -116,10 +154,10 @@ class UkrgbmapModelMap extends JModelBase
 				$db->quoteName('ne_corner').' = '.'GeomFromText('.$db->quote('POINT('.$ne->x.' '.$ne->y.')').')');
 
 		// Prepare the insert query.
-		$query->update($db->quoteName('#__ukrgb_maps'))->set($fields)->where('articleid = '.$articleId);
+		$query->update($db->quoteName('#__ukrgb_maps'))->set($fields)->where('id = '.$mapId);
 		$db->setQuery($query);
 		try {
-			$result = $db->query();
+			$db->query();
 		} catch (Exception $e) {
 			error_log($e);
 		}

@@ -27,6 +27,7 @@
             <option value="0">COM_UKRGBMAP_MAP_TYPE_0</option>
             <option value="1">COM_UKRGBMAP_MAP_TYPE_1</option>
             <option value="2">COM_UKRGBMAP_MAP_TYPE_2</option>
+            <option value="2">COM_UKRGBMAP_MAP_TYPE_3</option>
         </field>
         <field
                 name="catid"
