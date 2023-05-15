@@ -33,7 +33,7 @@ class UkrgbmapControllerSaveMapPoints extends JControllerBase
                 if ($deletes) {
                     // Check that the points being deleted belong to the map.
                     if ($model->validateMapPoints($deletes, $mapId)) {
-                        $model->deleteMapPointsById($deletes);
+                        $model->deleteMapPointsById($deletes, $mapId);
                     } else {
                         header("HTTP/1.0 400 Bad Request");
                     }

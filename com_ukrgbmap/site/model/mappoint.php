@@ -23,18 +23,19 @@ class UkrgbmapModelMappoint extends JModelBase
     public function __construct(Registry $state = null)
     {
         $this->db = JFactory::getDbo();
-        $this->query = $this->db->getQuery(true);
         parent::__construct($state);
     }
 
     public function getByMapId($mapId)
     {
+        $this->query = $this->db->getQuery(true);
         $this->query->where('mapid = ' . $this->db->Quote($mapId));
         return $this->doQuery();
     }
 
     public function getByMapType($mapType)
     {
+        $this->query = $this->db->getQuery(true);
         $this->query->where('type = ' . $this->db->Quote($mapType));
         return $this->doQuery();
     }
@@ -42,6 +43,7 @@ class UkrgbmapModelMappoint extends JModelBase
     public function getByRadius($centreLat, $centreLng, $radius)
     {
         // select points within a 'n' km radius of the point
+        $this->query = $this->db->getQuery(true);
         $this->query->where('ST_Distance_Sphere(point, GeomFromText(' .
             $this->db->quote('POINT(' . $centreLng . ' ' . $centreLat . ')') . ')) < ' . $radius * 1000);
         return $this->doQuery();
@@ -58,8 +60,6 @@ class UkrgbmapModelMappoint extends JModelBase
             $this->db->quoteName('type'),
             $this->db->quoteName('description')));
         $this->query->from('#__ukrgb_map_point');
-
-        //error_log($query);
         $this->db->setQuery($this->query);
 
         try
@@ -148,33 +148,30 @@ class UkrgbmapModelMappoint extends JModelBase
      **/
     public function addMapPoint($point, $mapId, $type, $description, $guideID)
     {
-
-        $db = JFactory::getDbo();
-        $query = $db->getQuery(true);
+        $this->query = $this->db->getQuery(true);
 
         // Insert columns.
         $columns = array('mapid', 'point', 'type', 'description', 'riverguide');
 
         // Insert values.
         $values = array(
-            $db->quote($mapId),
-            'GeomFromText(' . $db->quote('POINT(' . $point->x . ' ' . $point->y . ')') . ')',
-            $db->quote($type),
-            $db->quote($description),
-            $db->quote($guideID));
+            $this->db->quote($mapId),
+            'GeomFromText(' . $this->db->quote('POINT(' . $point->x . ' ' . $point->y . ')') . ')',
+            $this->db->quote($type),
+            $this->db->quote($description),
+            $this->db->quote($guideID));
 
         // Prepare the insert query.
-        $query->insert($db->quoteName('#__ukrgb_map_point'))
-            ->columns($db->quoteName($columns))
+        $this->query->insert($this->db->quoteName('#__ukrgb_map_point'))
+            ->columns($this->db->quoteName($columns))
             ->values(implode(',', $values))
         ;
         // Reset the query using our newly populated query object.
-
-        $db->setQuery($query);
+        $this->db->setQuery($this->query);
 
         try
         {
-            $db->execute();
+            $this->db->execute();
         }
         catch (Exception $e)
         {
@@ -190,16 +187,16 @@ class UkrgbmapModelMappoint extends JModelBase
      **/
     public function deleteMapPointsForArticle($articleId)
     {
-        $db = JFactory::getDbo();
-        $query = $db->getQuery(true)
-            ->delete($db->quoteName('#__ukrgb_map_point'))
-            ->where('riverguide = ' . $db->Quote($articleId))
+        $this->query = $this->db->getQuery(true);
+        $this->query = $this->db->getQuery(true)
+            ->delete($this->db->quoteName('#__ukrgb_map_point'))
+            ->where('riverguide = ' . $this->db->Quote($articleId))
         ;
-        $db->setQuery($query);
+        $this->db->setQuery($this->query);
 
         try
         {
-            $db->execute();
+            $this->db->execute();
         }
         catch (Exception $e)
         {
@@ -211,23 +208,27 @@ class UkrgbmapModelMappoint extends JModelBase
      * Delete Map Points by the specified IDs in Array
      *
      * @param array $ids () $ids  The ids to be deleted
+     * @param int $map Map id to constrain deletes to.
      *
      * @since v2.0
      */
-    public function deleteMapPointsById($ids)
+    public function deleteMapPointsById($ids, $map = 0)
     {
+        $this->query = $this->db->getQuery(true);
         $values = implode(',', $ids);
         if ($values !== "")
         {
-            $db = JFactory::getDbo();
-            $query = $db->getQuery(true);
-            $query->delete($db->quoteName('#__ukrgb_map_point'));
-            $query->where($db->quoteName('id') . ' IN (' . implode(',', ArrayHelper::toInteger($ids)) . ')');
-            $db->setQuery($query);
+            $constraint = '';
+            if ($map !== 0) {
+                $constraint = ' AND ' . $this->db->quoteName('mapid') .' = ' . $this->db->quote($map);
+            }
+            $this->query->delete($this->db->quoteName('#__ukrgb_map_point'));
+            $this->query->where($this->db->quoteName('id') . ' IN (' . implode(',', ArrayHelper::toInteger($ids))  . ')'. $constraint);
+            $this->db->setQuery($this->query);
 
             try
             {
-                $result = $db->execute();
+                $this->db->execute();
             }
             catch (Exception $e)
             {
@@ -244,14 +245,14 @@ class UkrgbmapModelMappoint extends JModelBase
      */
     public function validateMapPoints($ids,$map)
     {
+        $this->query = $this->db->getQuery(true);
         $pointCount = count($ids);
         $values = implode(',', $ids);
         if ($values != "")
         {
             $this->query->select('COUNT(*)');
-            $this->query->where($this->db->quoteName('id') .
-                ' IN (' . implode(',', ArrayHelper::toInteger($ids)) .
-                ') AND ' . $this->db->quoteName('mapid') .' = ' . $this->db->quote($map));
+            $this->query->where($this->db->quoteName('id') . ' IN (' . implode(',', ArrayHelper::toInteger($ids)) .
+            ') AND ' . $this->db->quoteName('mapid') .' = ' . $this->db->quote($map));
             $this->query->from('#__ukrgb_map_point');
             $this->db->setQuery($this->query);
 
@@ -282,24 +283,23 @@ class UkrgbmapModelMappoint extends JModelBase
      **/
     public function updateMapPointById($point)
     {
-        $db = JFactory::getDbo();
-        $query = $db->getQuery(true);
+        $this->query = $this->db->getQuery(true);
 
         $fields = array(
-            $db->quoteName('riverguide') . ' = ' . $db->quote($point["riverguide"]),
-            $db->quoteName('point') . ' = ' . 'GeomFromText(' . $db->quote('POINT(' . $point["X"] . ' ' . $point["Y"] . ')') . ')',
-            $db->quoteName('type') . ' = ' . $db->quote($point["type"]),
-            $db->quoteName('description') . ' = ' . $db->quote($point["description"]),
+            $this->db->quoteName('riverguide') . ' = ' . $this->db->quote($point["riverguide"]),
+            $this->db->quoteName('point') . ' = ' . 'GeomFromText(' . $this->db->quote('POINT(' . $point["X"] . ' ' . $point["Y"] . ')') . ')',
+            $this->db->quoteName('type') . ' = ' . $this->db->quote($point["type"]),
+            $this->db->quoteName('description') . ' = ' . $this->db->quote($point["description"]),
         );
 
         $conditions = array(
-            $db->quoteName('id') . ' = ' . $db->quote($point["id"])
+            $this->db->quoteName('id') . ' = ' . $this->db->quote($point["id"])
         );
 
-        $query->update($db->quoteName('#__ukrgb_map_point'))->set($fields)->where($conditions);
-        $db->setQuery($query);
+        $this->query->update($this->db->quoteName('#__ukrgb_map_point'))->set($fields)->where($conditions);
+        $this->db->setQuery($this->query);
 
-        return $db->execute();
+        return $this->db->execute();
     }
 
     /**
