@@ -77,63 +77,61 @@ class UkrgbmapModelMappoint extends JModelBase
 
     public function updateMapPointsFromArticle($text, $articleId, $description)
     {
-        //error_log("updateMapPoints");
-        /**
-         * text =  article text
-         * id = article id
-         **/
-        $pat = "/([STNOH][A-HJ-Z]\s?[0-9]{3,5}\s?[0-9]{3,5})/";
-        $res = preg_match_all($pat, $text, $matches);
-        if ($res > 0 && $res)
-        {
+        $mapId = null;
+        $mapPat = "/{map}/i";
+        $hasMap = preg_match($mapPat, $text);
+
+        if ($hasMap) {
+            // there is a map tag in the articlw
             // Check for a map for this article, create a dummy map if one does not exist.
             $mapModel = new UkrgbmapModelMap();
             $mapId = $mapModel->getMapIdForArticle($articleId);
-            if ($mapId == null)
-            {
+            if (!$mapId) {
                 // Create a map of type 1 (Auto Generated), type 0 must not be used (legacy auto generated)
                 $mapId = $mapModel->addMap(1, $articleId);
             }
-            if ($mapId) {
-                // A non-null map ID was returned so create the map and points
-                $proj4 = new Proj4php();
-                $projWGS84 = new Proj4phpProj('EPSG:4326', $proj4);    # LatLon with WGS84 datum
-                $projOSGB36 = new Proj4phpProj('EPSG:27700', $proj4);# UK Ordnance Survey, 1936 datum (OSGB36)
-                // remove existing points
-                $this->deleteMapPointsForArticle($articleId);
-                $north = 0;
-                $south = 1300000;
-                $east = 0;
-                $west = 800000;
-                $grSet = array(); // Array used as a set to ensure the GR is processed only once.
-                foreach ($matches[0] as $gr) {
-                    $gr = str_replace(' ', '', $gr);
+        }
+        if ($mapId) {
+            // A non-null map ID was returned so update the map and points
+            $gridPat = "/([STNOH][A-HJ-Z]\s?[0-9]{3,5}\s?[0-9]{3,5})/";
+            preg_match_all($gridPat, $text, $gridMatches);
 
-                    // Don't process the grid ref. if it is repeated in the guide.
-                    if (!in_array($gr, $grSet)) {
-                        $grSet[] = $gr;
-                        $en = $this->OSGridtoNE($gr);
-                        $pointSrc = new proj4phpPoint($en['x'], $en['y']);
-                        $pointDest = $proj4->transform($projOSGB36, $projWGS84, $pointSrc);
-                        $this->addMapPoint($pointDest, $mapId, 0, $description, $articleId);
+            $proj4 = new Proj4php();
+            $projWGS84 = new Proj4phpProj('EPSG:4326', $proj4);    # LatLon with WGS84 datum
+            $projOSGB36 = new Proj4phpProj('EPSG:27700', $proj4);# UK Ordnance Survey, 1936 datum (OSGB36)
+            // remove existing points
+            $this->deleteMapPointsForArticle($articleId);
+            $north = 0;
+            $south = 1300000;
+            $east = 0;
+            $west = 800000;
+            $grSet = array(); // Array used as a set to ensure the GR is processed only once.
+            foreach ($gridMatches[0] as $gr) {
+                $gr = str_replace(' ', '', $gr);
 
-                        // Calculate the extent of the map in    OSGB Nothings and eastings.
-                        $north = max($north, $en['y']);
-                        $south = min($south, $en['y']);
-                        $east = max($east, $en['x']);
-                        $west = min($west, $en['x']);
-                    }
+                // Don't process the grid ref. if it is repeated in the guide.
+                if (!in_array($gr, $grSet)) {
+                    $grSet[] = $gr;
+                    $en = $this->OSGridtoNE($gr);
+                    $pointSrc = new proj4phpPoint($en['x'], $en['y']);
+                    $pointDest = $proj4->transform($projOSGB36, $projWGS84, $pointSrc);
+                    $this->addMapPoint($pointDest, $mapId, 0, $description, $articleId);
+
+                    // Calculate the extent of the map in    OSGB Nothings and eastings.
+                    $north = max($north, $en['y']);
+                    $south = min($south, $en['y']);
+                    $east = max($east, $en['x']);
+                    $west = min($west, $en['x']);
                 }
-                // Convert Map extent to WGS84
-                $swSrc = new proj4phpPoint($west - 250, $south - 250);
-                $neSrc = new proj4phpPoint($east + 250, $north + 250);
-                $swDest = $proj4->transform($projOSGB36, $projWGS84, $swSrc);
-                $neDest = $proj4->transform($projOSGB36, $projWGS84, $neSrc);
-
-                // Add the map or Update the boundaries.
-
-                $mapModel->updateMap(1, $swDest, $neDest, $mapId);
             }
+            // Convert Map extent to WGS84
+            $swSrc = new proj4phpPoint($west - 250, $south - 250);
+            $neSrc = new proj4phpPoint($east + 250, $north + 250);
+            $swDest = $proj4->transform($projOSGB36, $projWGS84, $swSrc);
+            $neDest = $proj4->transform($projOSGB36, $projWGS84, $neSrc);
+
+            // Add the map or Update the boundaries.
+            $mapModel->updateMap(1, $swDest, $neDest, $mapId);
         }
     }
 

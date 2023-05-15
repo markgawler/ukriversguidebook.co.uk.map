@@ -35,7 +35,6 @@ class plgContentUkrgbMap extends JPlugin {
 			if (isset($mId)){
                 $url = JURI::base() . 'index.php?option=com_ukrgbmap'; //&tmpl=raw&format=json';
                 $mapData = $model->getMapParameters($mId);
-                $aid = $mapData['articleid'];
 				$mapData = base64_encode(json_encode($mapData));
 
 				// Insert river-app js
