@@ -17,8 +17,8 @@ use Joomla\Utilities\ArrayHelper;
 
 class UkrgbmapModelMappoint extends JModelBase
 {
-    public $db;
-    public $query;
+    public ?JDatabaseDriver $db;
+    public string|JDatabaseQuery $query;
 
     public function __construct(Registry $state = null)
     {
@@ -174,7 +174,7 @@ class UkrgbmapModelMappoint extends JModelBase
 
         try
         {
-            $result = $db->query();
+            $db->execute();
         }
         catch (Exception $e)
         {
@@ -186,10 +186,10 @@ class UkrgbmapModelMappoint extends JModelBase
      *
      * @param $articleId
      * @since v1.0
+     * @return void
      **/
     public function deleteMapPointsForArticle($articleId)
     {
-
         $db = JFactory::getDbo();
         $query = $db->getQuery(true)
             ->delete($db->quoteName('#__ukrgb_map_point'))
@@ -199,7 +199,7 @@ class UkrgbmapModelMappoint extends JModelBase
 
         try
         {
-            $result = $db->query(); // $db->execute(); for Joomla 3.0.
+            $db->execute();
         }
         catch (Exception $e)
         {
@@ -208,7 +208,7 @@ class UkrgbmapModelMappoint extends JModelBase
     }
 
     /**
-     * Delete a Map Points for the specified IDs
+     * Delete Map Points by the specified IDs in Array
      *
      * @param array $ids () $ids  The ids to be deleted
      *
@@ -227,13 +227,45 @@ class UkrgbmapModelMappoint extends JModelBase
 
             try
             {
-                $result = $db->query(); // $db->execute(); for Joomla 3.0.
+                $result = $db->execute();
             }
             catch (Exception $e)
             {
                 error_log($e);
             }
         }
+    }
+
+    /**
+     * @param array $ids an array of MapPoint IDs to validate that they belong to the specified Map
+     * @param int $map the owning Map ID
+     * @return boolean
+     * @since 3.0.5
+     */
+    public function validateMapPoints($ids,$map)
+    {
+        $pointCount = count($ids);
+        $values = implode(',', $ids);
+        if ($values != "")
+        {
+            $this->query->select('COUNT(*)');
+            $this->query->where($this->db->quoteName('id') .
+                ' IN (' . implode(',', ArrayHelper::toInteger($ids)) .
+                ') AND ' . $this->db->quoteName('mapid') .' = ' . $this->db->quote($map));
+            $this->query->from('#__ukrgb_map_point');
+            $this->db->setQuery($this->query);
+
+            try
+            {
+                $count = $this->db->loadResult();
+                return $count == $pointCount;
+            }
+            catch (Exception $e)
+            {
+                error_log($e);
+            }
+        }
+        return false;
     }
 
     public function updateMapPoints($points)

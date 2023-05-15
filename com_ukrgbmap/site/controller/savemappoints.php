@@ -21,17 +21,39 @@ class UkrgbmapControllerSaveMapPoints extends JControllerBase
     {
         $model = new UkrgbmapModelMappoint;
         $app = JFactory::getApplication();
-        if (JSession::checkToken())
+        $mapId = $app->input->post->get('mapId', 0, 'int');
+
+        if (JSession::checkToken() && $mapId != 0)
         {
             $user = Factory::getUser();
-
-            $mapId = $app->input->post->get('mapId', 0, 'int');
             $auth = $user->authorise('core.edit', 'com_ukrgbmap.map.' . $mapId);
-            if ($auth && $mapId !== 0) {
+            if ($auth) {
                 $deletes = $app->input->post->get('delete', array(), 'array');
                 $updates = $app->input->post->get('update', array(), 'array');
-                $model->deleteMapPointsById($deletes);
-                $model->updateMapPoints($updates);
+                if ($deletes) {
+                    // Check that the points being deleted belong to the map.
+                    if ($model->validateMapPoints($deletes, $mapId)) {
+                        $model->deleteMapPointsById($deletes);
+                    } else {
+                        header("HTTP/1.0 400 Bad Request");
+                    }
+                }
+                if ($updates) {
+                    // build an array of point IDs, also check that all the points are for this Map
+                    $ids = array();
+                    $valid = true;
+                    foreach ($updates as $pt) {
+                        $ids[] = (int)$pt["id"];
+                        if ((int)$pt["mapid"] !== $mapId) {
+                            $valid = false;
+                        }
+                    }
+                    if ($valid && $model->validateMapPoints($ids, $mapId) ) {
+                        $model->updateMapPoints($updates);
+                    } else {
+                        header("HTTP/1.0 400 Bad Request");
+                    }
+                }
             } else {
                 header("HTTP/1.0 403 Forbidden");
             }
