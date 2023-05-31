@@ -8,6 +8,7 @@
  */
 
 defined( '_JEXEC' ) or die( 'Restricted access' );
+use Joomla\CMS\Factory;
 
 if (!class_exists('UkrgbmapModelMap')) {
      require_once JPATH_SITE . '/components/com_ukrgbmap/model/map.php';
@@ -39,20 +40,26 @@ class plgContentUkrgbMap extends JPlugin {
 
 				// Insert river-app js
 				// The important bit is the '<script type="module" crossorigin' which is why I haven't used $document->addScript
-                JFactory::getDocument()->addScriptDeclaration(
+                Factory::getDocument()->addScriptDeclaration(
                     '</script><script type="module" crossorigin src="components/com_ukrgbmap/view/map/assets/' .
                     $index_js . '.js"></script><script>');
                 
 				// Load resources
 				JHtml::_('stylesheet','components/com_ukrgbmap/view/map/assets/' . $index_css . '.css');
 
-                // Replace the {map} annotation in the guide with the map plugin html
+                // Can we edit the Map?
+                $user = Factory::getUser();
+                $auth = $user->authorise('core.edit', 'com_ukrgbmap.map.' . $mId);
+                $editMode = $auth ? "full":"no";
+
+                    // Replace the {map} annotation in the guide with the map plugin html
                 $token = 'token="' . JSession::getFormToken() . '"'; // Add a token
                 $bounds = 'bounds="' . $mapData . '"';
                 $callback = 'callback="' . $url . '"';
                 $mapId = 'mapid="' . $mId . '"';
+                $edit = 'edit="' . $editMode . '"';
                 /** @noinspection HtmlUnknownAttribute */
-                $mapDiv = sprintf("<div id=\"app\" mode=\"plugin\" %s %s %s %s></div>", $mapId, $callback, $bounds, $token);
+                $mapDiv = sprintf("<div id=\"app\" mode=\"plugin\" %s %s %s %s %s></div>", $mapId, $callback, $bounds, $token, $edit);
 				$pattern = "/{map}/i";
 				$article->text = preg_replace($pattern, $mapDiv, $article->text);
 			}

@@ -3,14 +3,13 @@ import RiverMap from "@/components/RiverMap.vue";
 import MapPoints from "@/components/MapPoints.vue";
 
 const app = document.getElementById("app");
-
-
 const id = app.getAttribute("mapid");
 const mapId = id == null ? 0 : parseInt(id);
 
 // Decode the Base 64 encoded JSON string holding the map bounds
 const bounds = app.getAttribute("bounds");
 const jbounds = bounds === undefined ? undefined : JSON.parse(atob(bounds));
+const canEdit = app.getAttribute("edit") === "full" 
 
 const initialBounds =
   jbounds === undefined
@@ -23,6 +22,8 @@ const initialBounds =
         [parseFloat(jbounds.n_lat), parseFloat(jbounds.w_lng)],
         [parseFloat(jbounds.s_lat), parseFloat(jbounds.e_lng)],
       ];
+  
+
 </script>
 
 <template>
@@ -30,7 +31,7 @@ const initialBounds =
     :initial-bounds="initialBounds"
     :map-id="mapId"
   />
-  <MapPoints 
-  :map-id="mapId"
-/>
+  <div v-if="canEdit">
+    <MapPoints :map-id="mapId"/>
+  </div>
 </template>
