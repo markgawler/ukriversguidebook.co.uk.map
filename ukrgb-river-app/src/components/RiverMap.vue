@@ -69,9 +69,13 @@ const unsubscribe = store.subscribe((mutation) => {
         // Payload is the id and the description of the updated marker
         const pl = mutation.payload;
         const marker = markers.find((x) => x.id === pl.id).marker; // find the leaflet marker
-        marker.getPopup().setContent(pl.description);
-        // Guard against null X & Y, this hapens when the point description is updated in the mappoints 
-        // list. This could be considered as a bug with the store implementation!
+        
+        // Guard against null values, this hapens when the point description is updated in the
+        // mappoints the marker position will not be populated, likewise when a marker is dregedd 
+        // the description may not be populated. 
+        if (pl.description != null) {
+          marker.getPopup().setContent(pl.description);
+        }
         if (pl.X != null) {
           marker.setLatLng([pl.Y, pl.X])
         }
