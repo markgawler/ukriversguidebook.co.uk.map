@@ -33,9 +33,11 @@ const actions = {
       if (state.points[index].updated !== true) {
         commit("archivePoint", index);
       }
-      commit("updatePoint", {
+       commit("updatePoint", {
         id: payload.id,
-        description: payload.description,
+        X: payload.X,
+        Y: payload.Y,
+        description: payload.description
       });
     }
   },
@@ -50,6 +52,8 @@ const actions = {
       commit("updatePoint", {
         id: pt.id,
         description: pt.description,
+        X: pt.X,
+        Y: pt.Y,
         restore: true,
       });
     });
@@ -89,7 +93,13 @@ const mutations = {
   updatePoint(state, payload) {
     const index = state.points.findIndex((x) => x.id === payload.id);
     if (index >= 0) {
-      state.points[index].description = payload.description;
+      if ( payload.description != null ){
+        state.points[index].description = payload.description;
+      }
+      if ( payload.X != null ){
+        state.points[index].X = payload.X;
+        state.points[index].Y = payload.Y;
+      }
       state.points[index].updated = !payload.restore; // If restoring the point clear the updated flag
     }
   },

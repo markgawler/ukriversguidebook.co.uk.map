@@ -67,9 +67,14 @@ const unsubscribe = store.subscribe((mutation) => {
     case "mapPoints/updatePoint":
       {
         // Payload is the id and the description of the updated marker
-        const id = mutation.payload.id; 
-        const marker = markers.find((x) => x.id === id).marker; // find the leaflet marker
-        marker.getPopup().setContent(mutation.payload.description);
+        const pl = mutation.payload;
+        const marker = markers.find((x) => x.id === pl.id).marker; // find the leaflet marker
+        marker.getPopup().setContent(pl.description);
+        // Guard against null X & Y, this hapens when the point description is updated in the mappoints 
+        // list. This could be considered as a bug with the store implementation!
+        if (pl.X != null) {
+          marker.setLatLng([pl.Y, pl.X])
+        }
       }
       break;
   }
@@ -215,6 +220,7 @@ function addMapMarker(point, local = true) {
   let markerIcon = {};
   let popupContent = "";
   let layerGroup = {};
+  const draggable = local;
   if (local) {
     markerIcon = redMarker;
     layerGroup = localMarkerLayer;
@@ -229,9 +235,23 @@ function addMapMarker(point, local = true) {
       point.description +
       "</a><br>";
   }
-  const marker = new L.marker([point.Y, point.X], { icon: markerIcon });
+  const marker = new L.marker([point.Y, point.X], { icon: markerIcon, draggable: draggable });
+
+  // If the marker is dragable update the store with the new location of the marker when
+  // the draging stops.
+  if (draggable) {
+    marker.on("moveend", () => {
+      const latlng = marker.getLatLng();
+      store.dispatch("mapPoints/updatePoint", {
+        id: point.id,
+        X: latlng.lng,
+        Y: latlng.lat,
+      });
+    })
+  }
+  // Add the marker to the layer 
   marker.addTo(layerGroup).bindPopup(popupContent);
-  markers.push({ id: point.id, marker: marker }); // track the id to marker references
+  markers.push({ id: point.id, marker: marker }); // track the id to marker references 
 }
 
 // Control which zoom levels are available to authenticated and unauthenticated users, some
