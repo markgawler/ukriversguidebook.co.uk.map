@@ -64,11 +64,14 @@ const unsubscribe = store.subscribe((mutation) => {
         addMapMarker(pt, parseInt(pt.mapid) === props.mapId);
       }
       break;
-    // case "mapPoints/updatePoint":
-    //   {
-    //     const pt = mutation.payload;
-    //   }
-    //   break;
+    case "mapPoints/updatePoint":
+      {
+        // Payload is the id and the description of the updated marker
+        const id = mutation.payload.id; 
+        const marker = markers.find((x) => x.id === id).marker; // find the leaflet marker
+        marker.getPopup().setContent(mutation.payload.description);
+      }
+      break;
   }
 });
 
