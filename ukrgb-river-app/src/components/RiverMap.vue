@@ -81,6 +81,17 @@ const unsubscribe = store.subscribe((mutation) => {
         }
       }
       break;
+    case "mapPoints/deleteNewPoints":
+      {
+        // Find all the new markers, This exploit knowlage of the store in that there index will be less 
+        // than 0, this does place a dependency on the stor implementation :-( FIXME
+        const pts = markers.filter((pt) => pt.id < 0)
+        for (const pt of pts) {
+          const index = markers.findIndex((mk) => mk.id === pt.id);
+          localMarkerLayer.removeLayer(markers[index].marker);
+          markers.splice(index, 1);
+        }
+      }
   }
 });
 
@@ -152,7 +163,7 @@ const addMarkerPointLayers = () => {
   };
   // Add the layer control, the null parameter would be used if we had selectable base maps
   L.control.layers(null, overlayMaps).addTo(map);
-  loadMapPointDataInRadius();
+  mapMovedOrZoomed();
 };
 
 const createMap = () => {
@@ -203,17 +214,22 @@ const createMap = () => {
   resizeObserver.observe(mapContainer.value);
 
   map.on("moveend", () => {
-    loadMapPointDataInRadius();
+    mapMovedOrZoomed();
   });
 };
 
 /*  Load any map point that would be visible on the map.
  *  Some points outside the map bounds will be loaded as the area
- *  is calculated as a circle encompassing the whole map. */
-function loadMapPointDataInRadius() {
+ *  is calculated as a circle encompassing the whole map. 
+ *  Update the store with the new center point and bounds */
+function mapMovedOrZoomed() {
   // Calculate the radius (in km) of the circle that will cover the map
   const center = map.getCenter();
   const bounds = map.getBounds();
+
+  store.dispatch("mapParameters/storeCenter", center);
+  store.dispatch("mapParameters/storeBounds", bounds);
+
   const radius =
     center.distanceTo(L.latLng(bounds.getNorth(), bounds.getEast())) / 1000;
 

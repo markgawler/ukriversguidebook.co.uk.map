@@ -2,6 +2,7 @@ const state = () => ({
   mapId: 0,
   points: [],
   archivedPoints: [],
+  nextPointId: -1 // Points not in the DB have -ve ID
 });
 
 const getters = {
@@ -41,6 +42,18 @@ const actions = {
       });
     }
   },
+  addNewPoint({ commit, state }, payload) {
+    // Add a new MapPoint
+    commit("addPoint", {
+      id: state.nextPointId,
+      description: payload.description,
+      X: payload.X,
+      Y: payload.Y,
+      new: true,
+      mapid: state.mapId
+    });
+    state.nextPointId--
+  },
   cancelUpdates({ commit, state }) {
     // undelete soft delete of points
     const pts = state.points.filter((x) => x.deleted);
@@ -57,6 +70,7 @@ const actions = {
         restore: true,
       });
     });
+    commit("deleteNewPoints");
     commit("deleteArchive");
   },
   async saveUpdates({ commit, state }, saveCallback) {
@@ -121,6 +135,12 @@ const mutations = {
   // Hard delete the points
   hardDeletePoints(state) {
     const result = state.points.filter((pt) => !pt.deleted);
+    state.points = result;
+  },
+
+  // Delete new points i.e. points not commited to the backend DB
+  deleteNewPoints(state) {
+    const result = state.points.filter((pt) => !pt.new);
     state.points = result;
   },
 

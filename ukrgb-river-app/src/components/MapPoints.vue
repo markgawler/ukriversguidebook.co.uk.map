@@ -3,6 +3,7 @@ import { computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import MapPointItem from "./MapPointItem.vue";
 import { savePoints } from "../network/mapData";
+import AddMarkerButton from "./AddMarkerButton.vue";
 
 const store = useStore();
 
@@ -25,10 +26,12 @@ const cancelEdits = () => {
 const saveEdits = () => {
   store.dispatch("mapPoints/saveUpdates", savePoints);
 };
+
 </script>
 
 <template>
   <div class="mp-boarder">
+    <AddMarkerButton />
     <div class="mp-baseline">
       <div class="mp-row mp-baseline mp-grid">
         <div></div>
