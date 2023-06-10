@@ -26,6 +26,7 @@ const markers = []; // the markers
 const props = defineProps({
   initialBounds: { type: Array, default: null },
   mapId: { type: Number, default: 0 },
+  canEdit: { type: Boolean, default: false }
 });
 
 const accessToken = computed(() => store.state.mapAccess.accessToken);
@@ -53,7 +54,6 @@ watch(
       reloadPoints
  */
 const unsubscribe = store.subscribe((mutation) => {
-  console.log(mutation.type)
   switch (mutation.type) {
     case "mapPoints/softDeletePoint":
       {
@@ -257,7 +257,7 @@ function addMapMarker(point, local = true) {
   let markerIcon = {};
   let popupContent = "";
   let layerGroup = {};
-  const draggable = local;
+  const draggable = local && props.canEdit;
   if (local) {
     markerIcon = redMarker;
     layerGroup = localMarkerLayer;

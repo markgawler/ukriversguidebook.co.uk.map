@@ -30,6 +30,7 @@ const initialBounds =
   <RiverMap
     :initial-bounds="initialBounds"
     :map-id="mapId"
+    :can-edit="canEdit"
   />
   <div v-if="canEdit">
     <MapPoints :map-id="mapId"/>
