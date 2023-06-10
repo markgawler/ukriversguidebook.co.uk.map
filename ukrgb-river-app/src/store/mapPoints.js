@@ -50,9 +50,10 @@ const actions = {
       X: payload.X,
       Y: payload.Y,
       new: true,
+      type: 0, // TODO implement mappoint type
       mapid: state.mapId
     });
-    state.nextPointId--
+    state.nextPointId-- // decrement next ID to keep the IDs uniqe
   },
   cancelUpdates({ commit, state }) {
     // undelete soft delete of points
@@ -76,8 +77,10 @@ const actions = {
   async saveUpdates({ commit, state }, saveCallback) {
     const data = {
       mapId: state.mapId,
-      update: state.points.filter((pt) => pt.updated), //.map((p) => toRaw(p)), // Aray of the updated points
+      update: state.points.filter((pt) => pt.updated && !pt.new), // Aray of the updated points (exclude new)
       delete: state.points.filter((pt) => pt.deleted).map((p) => p.id), // array of the id's of the deleted points
+      new: state.points.filter((pt) => pt.new), // Aray of new Mappoints
+      
     };
     // Call the callback to save the data in an external store, if the save is sucsessfull
     //

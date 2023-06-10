@@ -14,13 +14,15 @@ use Joomla\CMS\Factory;
 
 class UkrgbmapControllerSaveMapPoints extends JControllerBase
 {
-    /*
-
-    */
+    /**
+     * Controller for handling updates from Map Web App
+     * @throws  \Exception
+     * @since 3.0
+     **/
     public function execute()
     {
-        $model = new UkrgbmapModelMappoint;
-        $app = JFactory::getApplication();
+        $mapPointModel = new UkrgbmapModelMappoint;
+        $app = Factory::getApplication();
         $mapId = $app->input->post->get('mapId', 0, 'int');
 
         if (JSession::checkToken() && $mapId != 0)
@@ -28,31 +30,36 @@ class UkrgbmapControllerSaveMapPoints extends JControllerBase
             $user = Factory::getUser();
             $auth = $user->authorise('core.edit', 'com_ukrgbmap.map.' . $mapId);
             if ($auth) {
-                $deletes = $app->input->post->get('delete', array(), 'array');
-                $updates = $app->input->post->get('update', array(), 'array');
-                if ($deletes) {
+                $deletesPts = $app->input->post->get('delete', array(), 'array');
+                $updatesPts = $app->input->post->get('update', array(), 'array');
+                $newPts = $app->input->post->get('new', array(), 'array');
+
+                if ($deletesPts) {
                     // Check that the points being deleted belong to the map.
-                    if ($model->validateMapPoints($deletes, $mapId)) {
-                        $model->deleteMapPointsById($deletes, $mapId);
+                    if ($mapPointModel->validateMapPoints($deletesPts, $mapId)) {
+                        $mapPointModel->deleteMapPointsById($deletesPts, $mapId);
                     } else {
                         header("HTTP/1.0 400 Bad Request");
                     }
                 }
-                if ($updates) {
+                if ($updatesPts) {
                     // build an array of point IDs, also check that all the points are for this Map
                     $ids = array();
                     $valid = true;
-                    foreach ($updates as $pt) {
+                    foreach ($updatesPts as $pt) {
                         $ids[] = (int)$pt["id"];
                         if ((int)$pt["mapid"] !== $mapId) {
                             $valid = false;
                         }
                     }
-                    if ($valid && $model->validateMapPoints($ids, $mapId) ) {
-                        $model->updateMapPoints($updates);
+                    if ($valid && $mapPointModel->validateMapPoints($ids, $mapId) ) {
+                        $mapPointModel->updateMapPoints($updatesPts);
                     } else {
                         header("HTTP/1.0 400 Bad Request");
                     }
+                }
+                if ($newPts) {
+                    $mapPointModel->addMapPointsFromMap($newPts,$mapId);
                 }
             } else {
                 header("HTTP/1.0 403 Forbidden");

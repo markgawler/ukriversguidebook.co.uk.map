@@ -72,6 +72,35 @@ class UkrgbmapModelMap extends JModelBase
 	}
 
     /**
+     * Get the Article ID for the Map
+     * @param int $mapId
+     * @return mixed - Map ID or null if not found
+     * @since 3.0.5
+     */
+    public function getArticleIdFotMap($mapId)
+    {
+        $db = JFactory::getDbo();
+        $query = $db->getQuery(true);
+        $query->select(array('articleid'));
+        $query->from('#__ukrgb_maps');
+        $query->where($db->quoteName('id') .' = '. $db->Quote($mapId));
+
+        $db->setQuery($query);
+        try {
+            $result = $db->loadObject();
+        } catch (Exception $e) {
+            // catch any database errors.
+            error_log($e);
+            $result = null;
+        }
+
+        if ($result == null){
+            return null; //No Article
+        }
+        return $result->articleid;
+    }
+
+    /**
      * Add a new Map to the database
      *
      * @param int $type (0 = legacy, 1 = Auto generated, 2 = manual)

@@ -138,6 +138,30 @@ class UkrgbmapModelMappoint extends JModelBase
     /**
      * Add Marker point to the DB
      *
+     * @param object $points
+     * @param int $mapId
+     * @since v3.0.5
+     **/
+    public function addMapPointsFromMap($points, $mapId, )
+    {
+        $mapModel = new UkrgbmapModelMap ;
+
+        // find the articleId from the MapId
+        $article = $mapModel->getArticleIdFotMap($mapId) ;
+        if ($article) {
+            foreach ($points as $pt){
+                $p = (object)["x"=> $pt["X"], "y"=> $pt["Y"]];
+                $this->addMapPoint($p,$mapId,$pt["type"], $pt["description"], $article);
+            }
+        } else {
+            error_log('No Article associated with Map');
+        }
+    }
+
+
+    /**
+     * Add Marker point to the DB
+     *
      * @param object $point
      * @param int $mapId
      * @param int $type
