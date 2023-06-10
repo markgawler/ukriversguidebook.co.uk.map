@@ -2,7 +2,7 @@ const state = () => ({
   mapId: 0,
   points: [],
   archivedPoints: [],
-  nextPointId: -1 // Points not in the DB have -ve ID
+  nextPointId: -1, // Points not in the DB have -ve ID
 });
 
 const getters = {
@@ -11,11 +11,9 @@ const getters = {
   },
 
   getPointsByMapId: (state) => (mapId) =>
-    state.points.filter(
-      (x) => parseInt(x.mapid) === mapId && !x.deleted
-    ),
+    state.points.filter((x) => parseInt(x.mapid) === mapId && !x.deleted),
 
-  getMapId: (state) => state.mapId 
+  getMapId: (state) => state.mapId,
 };
 
 const actions = {
@@ -34,11 +32,11 @@ const actions = {
       if (state.points[index].updated !== true) {
         commit("archivePoint", index);
       }
-       commit("updatePoint", {
+      commit("updatePoint", {
         id: payload.id,
         X: payload.X,
         Y: payload.Y,
-        description: payload.description
+        description: payload.description,
       });
     }
   },
@@ -51,9 +49,9 @@ const actions = {
       Y: payload.Y,
       new: true,
       type: 0, // TODO implement mappoint type
-      mapid: state.mapId
+      mapid: state.mapId,
     });
-    state.nextPointId-- // decrement next ID to keep the IDs uniqe
+    state.nextPointId--; // decrement next ID to keep the IDs uniqe
   },
   cancelUpdates({ commit, state }) {
     // undelete soft delete of points
@@ -71,8 +69,8 @@ const actions = {
         restore: true,
       });
     });
-    commit("deleteNewPoints");
-    commit("deleteArchive");
+    commit("deleteNewPoints"); // Remove any new mapPoints
+    commit("deleteArchive"); // Clear the Archive as this holds the unmodified points wich have been restored
   },
   async saveUpdates({ commit, state }, saveCallback) {
     const data = {
@@ -80,7 +78,6 @@ const actions = {
       update: state.points.filter((pt) => pt.updated && !pt.new), // Aray of the updated points (exclude new)
       delete: state.points.filter((pt) => pt.deleted).map((p) => p.id), // array of the id's of the deleted points
       new: state.points.filter((pt) => pt.new), // Aray of new Mappoints
-      
     };
     // Call the callback to save the data in an external store, if the save is sucsessfull
     //
@@ -89,6 +86,8 @@ const actions = {
       commit("hardDeletePoints");
       commit("updatePointCommit");
       commit("deleteArchive");
+      commit("deleteNewPoints"); // Delete the new points from the local map as they nao have real IDs in the DB
+      commit("reloadPoints"); // dummy mutation to triger reload
     }
   },
 };
@@ -110,10 +109,10 @@ const mutations = {
   updatePoint(state, payload) {
     const index = state.points.findIndex((x) => x.id === payload.id);
     if (index >= 0) {
-      if ( payload.description != null ){
+      if (payload.description != null) {
         state.points[index].description = payload.description;
       }
-      if ( payload.X != null ){
+      if (payload.X != null) {
         state.points[index].X = payload.X;
         state.points[index].Y = payload.Y;
       }
@@ -163,6 +162,10 @@ const mutations = {
   deleteArchive(state) {
     state.archivedPoints = [];
   },
+
+  // Dummy mutation which can be subscribed to to triger actions when Points should be reloaded
+  // from backend
+  reloadPoints() {},
 };
 
 export default {

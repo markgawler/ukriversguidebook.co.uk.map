@@ -2,24 +2,25 @@ const state = () => ({
   //mapId: 0, // not used yet, need moving from MapPoints store FIXME
   bounds: [],
   center: [],
+  radius: 0,
 });
 
 const getters = {
   getCenter: (state) => {
     return state.center;
-  }
+  },
+  getCircleParams: (state) => {
+    return { center: state.center, radius: state.radius };
+  },
 };
 
 const actions = {
-  storeBounds({ commit }, bounds) {
-    // Store the Map Bounds
-    // LeefletJS LatLngBounds object https://leafletjs.com/reference.html#latlngbounds
-    commit("storeBounds", bounds);
-  },
-  storeCenter({ commit }, center) {
-    // Store the centerpoint of the map
-    // LeefletJS LatLng object https://leafletjs.com/reference.html#latlng
-    commit("storeCenter", center);
+  storeParameters({commit}, params) {
+    // Store the Map parameters and trigger a load of the MapPoints in the visable area
+    commit("storeCenter", params.center);
+    commit("storeRadius", params.radius);
+    commit("storeBounds", params.bounds);
+    commit("loadMap");
   },
 };
 
@@ -30,6 +31,11 @@ const mutations = {
   storeCenter(state, c) {
     state.center = c;
   },
+  storeRadius(state, r) {
+    state.radius = r;
+  },
+  // Dummy mutation which can be subscribed to to triger actions when Map paramters change
+  loadMap (){}
 };
 
 export default {

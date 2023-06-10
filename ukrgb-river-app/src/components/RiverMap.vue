@@ -44,9 +44,16 @@ watch(
       addPoint
       unDeletePoint
     Delete Markers:-
-      deletePoint
+      softDeletePoint
+      deleteNewPoints
+    Update 
+      updatePoint
+    Reload data
+      mapParameters/loadMap
+      reloadPoints
  */
 const unsubscribe = store.subscribe((mutation) => {
+  console.log(mutation.type)
   switch (mutation.type) {
     case "mapPoints/softDeletePoint":
       {
@@ -69,7 +76,7 @@ const unsubscribe = store.subscribe((mutation) => {
         // Payload is the id and the description of the updated marker
         const pl = mutation.payload;
         const marker = markers.find((x) => x.id === pl.id).marker; // find the leaflet marker
-        
+
         // Guard against null values, this hapens when the point description is updated in the
         // mappoints the marker position will not be populated, likewise when a marker is dregedd 
         // the description may not be populated. 
@@ -92,6 +99,16 @@ const unsubscribe = store.subscribe((mutation) => {
           markers.splice(index, 1);
         }
       }
+      break;
+    case "mapParameters/loadMap":
+    case "mapPoints/reloadPoints":
+      {
+        // Load any map point that would be visible on the map. Some points outside 
+        // the map bounds will be loaded as the area is calculated as a circle encompassing the whole map. 
+        const p = store.getters["mapParameters/getCircleParams"]
+        getPointsByRadius(p.center, p.radius);
+      }
+      break;
   }
 });
 
@@ -218,22 +235,22 @@ const createMap = () => {
   });
 };
 
-/*  Load any map point that would be visible on the map.
- *  Some points outside the map bounds will be loaded as the area
- *  is calculated as a circle encompassing the whole map. 
- *  Update the store with the new center point and bounds */
+/*  When the map is moved/panned or zoomed Update the store with the new center point and bounds
+    this is used to refetch the map points in the map area */
 function mapMovedOrZoomed() {
   // Calculate the radius (in km) of the circle that will cover the map
   const center = map.getCenter();
   const bounds = map.getBounds();
-
-  store.dispatch("mapParameters/storeCenter", center);
-  store.dispatch("mapParameters/storeBounds", bounds);
-
   const radius =
     center.distanceTo(L.latLng(bounds.getNorth(), bounds.getEast())) / 1000;
 
-  getPointsByRadius(center, radius);
+  store.dispatch("mapParameters/storeParameters",
+    {
+      bounds: bounds,
+      center: center,
+      radius: radius
+    }
+  )
 }
 
 function addMapMarker(point, local = true) {
