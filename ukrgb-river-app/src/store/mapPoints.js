@@ -1,9 +1,19 @@
+import { point } from "leaflet";
+
 const state = () => ({
   mapId: 0,
   points: [],
   archivedPoints: [],
+  modified: false,
   nextPointId: -1, // Points not in the DB have -ve ID
 });
+
+// Check for any modified or new points, return fals if none found
+const checkForModifiedOrNew = (state) => {
+  const newMatches = state.points.find((x) => x.new);
+  const modified = !state.archivedPoints.length == 0;
+  return newMatches != null || modified;
+};
 
 const getters = {
   getPointById: (state) => (id) => {
@@ -14,6 +24,8 @@ const getters = {
     state.points.filter((x) => parseInt(x.mapid) === mapId && !x.deleted),
 
   getMapId: (state) => state.mapId,
+
+  getModified: (state) => state.modified,
 };
 
 const actions = {
@@ -26,11 +38,16 @@ const actions = {
       }
     }
   },
+
   updatePoint({ commit, state }, payload) {
     const index = state.points.findIndex((x) => x.id === payload.id);
     if (index >= 0) {
       if (state.points[index].updated !== true) {
-        commit("archivePoint", index);
+        if (state.points[index].new !== true) {
+          // Dont archive new points
+          commit("archivePoint", index);
+        }
+        commit("setModified", true);
       }
       commit("updatePoint", {
         id: payload.id,
@@ -40,6 +57,7 @@ const actions = {
       });
     }
   },
+
   addNewPoint({ commit, state }, payload) {
     // Add a new MapPoint
     commit("addPoint", {
@@ -52,7 +70,20 @@ const actions = {
       mapid: state.mapId,
     });
     state.nextPointId--; // decrement next ID to keep the IDs uniqe
+    commit("setModified", true);
   },
+
+  deletePoint({ commit, state }, id) {
+    const index = state.points.findIndex((x) => x.id === id);
+    if (state.points[index].new === true) {
+      commit("hardDeletePointById", id);
+      commit("setModified", checkForModifiedOrNew(state));
+    } else {
+      commit("deletePoint", id);
+      commit("setModified", true);
+    }
+  },
+
   cancelUpdates({ commit, state }) {
     // undelete soft delete of points
     const pts = state.points.filter((x) => x.deleted);
@@ -71,7 +102,9 @@ const actions = {
     });
     commit("deleteNewPoints"); // Remove any new mapPoints
     commit("deleteArchive"); // Clear the Archive as this holds the unmodified points wich have been restored
+    commit("setModified", false);
   },
+
   async saveUpdates({ commit, state }, saveCallback) {
     const data = {
       mapId: state.mapId,
@@ -88,6 +121,7 @@ const actions = {
       commit("deleteArchive");
       commit("deleteNewPoints"); // Delete the new points from the local map as they nao have real IDs in the DB
       commit("reloadPoints"); // dummy mutation to triger reload
+      commit("setModified", false);
     }
   },
 };
@@ -129,14 +163,20 @@ const mutations = {
   },
 
   // Mark a point as deleted, i.e. soft delete
-  softDeletePoint(state, pointId) {
+  deletePoint(state, pointId) {
     const index = state.points.findIndex((x) => x.id === pointId);
     state.points[index].deleted = true; // Soft delete
   },
 
-  // Hard delete the points
+  // Hard delete any deleted points
   hardDeletePoints(state) {
     const result = state.points.filter((pt) => !pt.deleted);
+    state.points = result;
+  },
+
+  // Hard delete a points by its ID
+  hardDeletePointById(state, pointId) {
+    const result = state.points.filter((pt) => pt.id != pointId);
     state.points = result;
   },
 
@@ -166,6 +206,10 @@ const mutations = {
   // Dummy mutation which can be subscribed to to triger actions when Points should be reloaded
   // from backend
   reloadPoints() {},
+
+  setModified(state, modified) {
+    state.modified = modified;
+  },
 };
 
 export default {

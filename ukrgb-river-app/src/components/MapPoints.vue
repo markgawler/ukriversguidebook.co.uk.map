@@ -15,6 +15,10 @@ const points = computed(() =>
   store.getters["mapPoints/getPointsByMapId"](props.mapId)
 );
 
+const canSave = computed(() =>
+  store.getters["mapPoints/getModified"]
+)
+
 onMounted(() => {
   store.commit("mapPoints/storeMapId", props.mapId);
 });
@@ -43,7 +47,7 @@ const saveEdits = () => {
       </div>
     </div>
     <div class="mp-buttons">
-      <div><button @click="saveEdits">Save</button></div>
+      <div><button :disabled="!canSave" @click="saveEdits">Save</button></div>
       <div><button @click="cancelEdits">Cancel</button></div>
     </div>
   </div>
@@ -59,9 +63,11 @@ const saveEdits = () => {
   padding: 5px;
   width: 98%;
 }
+
 .mp-buttons div:first-child {
   text-align: right;
 }
+
 .mp-boarder {
   border: 1px solid gray;
   max-width: 600px;
@@ -69,6 +75,7 @@ const saveEdits = () => {
   padding-bottom: 1px;
   margin-top: 5px;
 }
+
 .mp-baseline {
   border-bottom: 1px solid lightgray;
   margin-bottom: 2px;
@@ -95,7 +102,8 @@ select:focus {
 }
 
 .mp-grid {
-  grid-template-columns: 0.4fr 6fr 1fr; /* Size of items defined inside container */
+  grid-template-columns: 0.4fr 6fr 1fr;
+  /* Size of items defined inside container */
   grid-gap: 8px;
 }
 </style>
