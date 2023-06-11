@@ -3,6 +3,7 @@ import { computed, onMounted } from "vue";
 import { useStore } from "vuex";
 import MapPointItem from "./MapPointItem.vue";
 import { savePoints } from "../network/mapData";
+import AddMarkerButton from "./AddMarkerButton.vue";
 
 const store = useStore();
 
@@ -13,6 +14,10 @@ const props = defineProps({
 const points = computed(() =>
   store.getters["mapPoints/getPointsByMapId"](props.mapId)
 );
+
+const canSave = computed(() =>
+  store.getters["mapPoints/getModified"]
+)
 
 onMounted(() => {
   store.commit("mapPoints/storeMapId", props.mapId);
@@ -25,10 +30,12 @@ const cancelEdits = () => {
 const saveEdits = () => {
   store.dispatch("mapPoints/saveUpdates", savePoints);
 };
+
 </script>
 
 <template>
   <div class="mp-boarder">
+    <AddMarkerButton />
     <div class="mp-baseline">
       <div class="mp-row mp-baseline mp-grid">
         <div></div>
@@ -40,7 +47,7 @@ const saveEdits = () => {
       </div>
     </div>
     <div class="mp-buttons">
-      <div><button @click="saveEdits">Save</button></div>
+      <div><button :disabled="!canSave" @click="saveEdits">Save</button></div>
       <div><button @click="cancelEdits">Cancel</button></div>
     </div>
   </div>
@@ -56,9 +63,11 @@ const saveEdits = () => {
   padding: 5px;
   width: 98%;
 }
+
 .mp-buttons div:first-child {
   text-align: right;
 }
+
 .mp-boarder {
   border: 1px solid gray;
   max-width: 600px;
@@ -66,6 +75,7 @@ const saveEdits = () => {
   padding-bottom: 1px;
   margin-top: 5px;
 }
+
 .mp-baseline {
   border-bottom: 1px solid lightgray;
   margin-bottom: 2px;
@@ -92,7 +102,8 @@ select:focus {
 }
 
 .mp-grid {
-  grid-template-columns: 0.4fr 6fr 1fr; /* Size of items defined inside container */
+  grid-template-columns: 0.4fr 6fr 1fr;
+  /* Size of items defined inside container */
   grid-gap: 8px;
 }
 </style>

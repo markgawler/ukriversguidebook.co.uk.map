@@ -43,6 +43,29 @@ class UkrgbmapModelMap extends JModelBase
 	}
 
     /**
+     * Get the Map Type for Map
+     * @return int -  the map type
+     * Map Type:
+     * 0 - legacy auto generated
+     * 1 - Auto generated
+     * 2 - Manual
+     *
+     * @since 3.0.5
+     */
+    public function getMapType($mapid)
+    {
+        $db = JFactory::getDbo();
+        $query = $db->getQuery(true);
+        $query->select(array('map_type'));
+        $query->from('#__ukrgb_maps');
+        $query->where('id = ' . $db->Quote($mapid));
+        $db->setQuery($query);
+
+        $result = $db->loadResult();
+
+        return (int) $result;
+    }
+    /**
      * Get the Map ID for the article
      * @param int $articleId
      * @return mixed - Map ID or null if not found
@@ -70,6 +93,35 @@ class UkrgbmapModelMap extends JModelBase
 		}
 		return $result->id;
 	}
+
+    /**
+     * Get the Article ID for the Map
+     * @param int $mapId
+     * @return mixed - Map ID or null if not found
+     * @since 3.0.5
+     */
+    public function getArticleIdFotMap($mapId)
+    {
+        $db = JFactory::getDbo();
+        $query = $db->getQuery(true);
+        $query->select(array('articleid'));
+        $query->from('#__ukrgb_maps');
+        $query->where($db->quoteName('id') .' = '. $db->Quote($mapId));
+
+        $db->setQuery($query);
+        try {
+            $result = $db->loadObject();
+        } catch (Exception $e) {
+            // catch any database errors.
+            error_log($e);
+            $result = null;
+        }
+
+        if ($result == null){
+            return null; //No Article
+        }
+        return $result->articleid;
+    }
 
     /**
      * Add a new Map to the database
@@ -162,5 +214,31 @@ class UkrgbmapModelMap extends JModelBase
 			error_log($e);
 		}
 	}
+
+    /**
+     * @param int $type
+     * @param int $mapId
+     * @return true
+     * @since 3.0.5
+     */
+    public function updateMapType($type, $mapId){
+        $db = JFactory::getDbo();
+        $query = $db->getQuery(true);
+
+        // Insert values.
+        $fields = array(
+            $db->quoteName('map_type').' = '.$db->quote($type),
+        );
+
+        // Prepare the insert query.
+        $query->update($db->quoteName('#__ukrgb_maps'))->set($fields)->where('id = '.$mapId);
+        $db->setQuery($query);
+        try {
+            $db->execute();
+        } catch (Exception $e) {
+            error_log($e);
+        }
+        return true;
+    }
 }
 

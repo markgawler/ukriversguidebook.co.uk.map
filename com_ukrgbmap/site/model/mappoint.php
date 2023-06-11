@@ -80,18 +80,23 @@ class UkrgbmapModelMappoint extends JModelBase
         $mapId = null;
         $mapPat = "/{map}/i";
         $hasMap = preg_match($mapPat, $text);
+        $updateMap = false;
 
         if ($hasMap) {
-            // there is a map tag in the articlw
+            // there is a map tag in the article
             // Check for a map for this article, create a dummy map if one does not exist.
             $mapModel = new UkrgbmapModelMap();
             $mapId = $mapModel->getMapIdForArticle($articleId);
             if (!$mapId) {
                 // Create a map of type 1 (Auto Generated), type 0 must not be used (legacy auto generated)
                 $mapId = $mapModel->addMap(1, $articleId);
+                $updateMap = true; // its new so auto generate it!
+            } else {
+                // Only automatically update map that are auto generated. i.e. not manually modified.
+                $updateMap = ($mapModel->getMapType($mapId) < 2);
             }
         }
-        if ($mapId) {
+        if ($mapId && $updateMap) {
             // A non-null map ID was returned so update the map and points
             $gridPat = "/([STNOH][A-HJ-Z]\s?[0-9]{3,5}\s?[0-9]{3,5})/";
             preg_match_all($gridPat, $text, $gridMatches);
@@ -134,6 +139,30 @@ class UkrgbmapModelMappoint extends JModelBase
             $mapModel->updateMap(1, $swDest, $neDest, $mapId);
         }
     }
+
+    /**
+     * Add Marker point to the DB
+     *
+     * @param object $points
+     * @param int $mapId
+     * @since v3.0.5
+     **/
+    public function addMapPointsFromMap($points, $mapId, )
+    {
+        $mapModel = new UkrgbmapModelMap ;
+
+        // find the articleId from the MapId
+        $article = $mapModel->getArticleIdFotMap($mapId) ;
+        if ($article) {
+            foreach ($points as $pt){
+                $p = (object)["x"=> $pt["X"], "y"=> $pt["Y"]];
+                $this->addMapPoint($p,$mapId,$pt["type"], $pt["description"], $article);
+            }
+        } else {
+            error_log('No Article associated with Map');
+        }
+    }
+
 
     /**
      * Add Marker point to the DB

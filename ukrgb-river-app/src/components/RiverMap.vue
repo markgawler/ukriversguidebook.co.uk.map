@@ -26,6 +26,7 @@ const markers = []; // the markers
 const props = defineProps({
   initialBounds: { type: Array, default: null },
   mapId: { type: Number, default: 0 },
+  canEdit: { type: Boolean, default: false }
 });
 
 const accessToken = computed(() => store.state.mapAccess.accessToken);
@@ -45,10 +46,16 @@ watch(
       unDeletePoint
     Delete Markers:-
       deletePoint
+      deleteNewPoints
+    Update 
+      updatePoint
+    Reload data
+      mapParameters/loadMap
+      reloadPoints
  */
 const unsubscribe = store.subscribe((mutation) => {
   switch (mutation.type) {
-    case "mapPoints/softDeletePoint":
+    case "mapPoints/deletePoint":
       {
         const id = mutation.payload; // Payload of mutation is the id of the point to delete
         const index = markers.findIndex((x) => x.id === id);
@@ -69,7 +76,7 @@ const unsubscribe = store.subscribe((mutation) => {
         // Payload is the id and the description of the updated marker
         const pl = mutation.payload;
         const marker = markers.find((x) => x.id === pl.id).marker; // find the leaflet marker
-        
+
         // Guard against null values, this hapens when the point description is updated in the
         // mappoints the marker position will not be populated, likewise when a marker is dregedd 
         // the description may not be populated. 
@@ -79,6 +86,27 @@ const unsubscribe = store.subscribe((mutation) => {
         if (pl.X != null) {
           marker.setLatLng([pl.Y, pl.X])
         }
+      }
+      break;
+    case "mapPoints/deleteNewPoints":
+      {
+        // Find all the new markers, This exploit knowlage of the store in that there index will be less 
+        // than 0, this does place a dependency on the stor implementation :-( FIXME
+        const pts = markers.filter((pt) => pt.id < 0)
+        for (const pt of pts) {
+          const index = markers.findIndex((mk) => mk.id === pt.id);
+          localMarkerLayer.removeLayer(markers[index].marker);
+          markers.splice(index, 1);
+        }
+      }
+      break;
+    case "mapParameters/loadMap":
+    case "mapPoints/reloadPoints":
+      {
+        // Load any map point that would be visible on the map. Some points outside 
+        // the map bounds will be loaded as the area is calculated as a circle encompassing the whole map. 
+        const p = store.getters["mapParameters/getCircleParams"]
+        getPointsByRadius(p.center, p.radius);
       }
       break;
   }
@@ -152,7 +180,7 @@ const addMarkerPointLayers = () => {
   };
   // Add the layer control, the null parameter would be used if we had selectable base maps
   L.control.layers(null, overlayMaps).addTo(map);
-  loadMapPointDataInRadius();
+  mapMovedOrZoomed();
 };
 
 const createMap = () => {
@@ -203,28 +231,33 @@ const createMap = () => {
   resizeObserver.observe(mapContainer.value);
 
   map.on("moveend", () => {
-    loadMapPointDataInRadius();
+    mapMovedOrZoomed();
   });
 };
 
-/*  Load any map point that would be visible on the map.
- *  Some points outside the map bounds will be loaded as the area
- *  is calculated as a circle encompassing the whole map. */
-function loadMapPointDataInRadius() {
+/*  When the map is moved/panned or zoomed Update the store with the new center point and bounds
+    this is used to refetch the map points in the map area */
+function mapMovedOrZoomed() {
   // Calculate the radius (in km) of the circle that will cover the map
   const center = map.getCenter();
   const bounds = map.getBounds();
   const radius =
     center.distanceTo(L.latLng(bounds.getNorth(), bounds.getEast())) / 1000;
 
-  getPointsByRadius(center, radius);
+  store.dispatch("mapParameters/storeParameters",
+    {
+      bounds: bounds,
+      center: center,
+      radius: radius
+    }
+  )
 }
 
 function addMapMarker(point, local = true) {
   let markerIcon = {};
   let popupContent = "";
   let layerGroup = {};
-  const draggable = local;
+  const draggable = local && props.canEdit;
   if (local) {
     markerIcon = redMarker;
     layerGroup = localMarkerLayer;
