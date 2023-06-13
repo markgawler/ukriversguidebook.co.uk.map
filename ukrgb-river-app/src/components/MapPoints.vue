@@ -5,6 +5,8 @@ import MapPointItem from "./MapPointItem.vue";
 import { savePoints } from "../network/mapData";
 import AddMarkerButton from "./AddMarkerButton.vue";
 
+defineEmits(['edit-map-close'])
+
 const store = useStore();
 
 const props = defineProps({
@@ -35,7 +37,7 @@ const saveEdits = () => {
 
 <template>
   <div class="mp-boarder">
-    <AddMarkerButton />
+    <div class="mp-buttons-close"><button @click="$emit('edit-map-close')">X</button></div>
     <div class="mp-baseline">
       <div class="mp-row mp-baseline mp-grid">
         <div></div>
@@ -45,6 +47,8 @@ const saveEdits = () => {
       <div v-for="point in points" :key="point.id">
         <MapPointItem :point="point" />
       </div>
+      <AddMarkerButton />
+
     </div>
     <div class="mp-buttons">
       <div><button :disabled="!canSave" @click="saveEdits">Save</button></div>
@@ -64,6 +68,9 @@ const saveEdits = () => {
   width: 98%;
 }
 
+.mp-buttons-close {
+  text-align: right;
+}
 .mp-buttons div:first-child {
   text-align: right;
 }

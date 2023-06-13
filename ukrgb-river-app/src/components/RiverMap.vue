@@ -26,7 +26,8 @@ const markers = []; // the markers
 const props = defineProps({
   initialBounds: { type: Array, default: null },
   mapId: { type: Number, default: 0 },
-  canEdit: { type: Boolean, default: false }
+  canEdit: { type: Boolean, default: false },
+  editing: { type: Boolean, default: false }
 });
 
 const accessToken = computed(() => store.state.mapAccess.accessToken);
@@ -37,6 +38,19 @@ watch(
   (token) => {
     addMapLayers(token);
   }
+);
+watch (
+  // Enable / Disable draging of markers when switching in and out of edditing
+  () => props.editing, (x) => {
+    // Get the local Markers
+    markers.filter((m) => m.local == true).forEach(m => {
+      if (x) {
+        m.marker.dragging.enable();
+      } else {
+        m.marker.dragging.disable();
+      }
+    });
+  } 
 );
 
 /*
@@ -257,7 +271,6 @@ function addMapMarker(point, local = true) {
   let markerIcon = {};
   let popupContent = "";
   let layerGroup = {};
-  const draggable = local && props.canEdit;
   if (local) {
     markerIcon = redMarker;
     layerGroup = localMarkerLayer;
@@ -272,11 +285,11 @@ function addMapMarker(point, local = true) {
       point.description +
       "</a><br>";
   }
-  const marker = new L.marker([point.Y, point.X], { icon: markerIcon, draggable: draggable });
+  const marker = new L.marker([point.Y, point.X], { icon: markerIcon, draggable: local && props.editing });
 
-  // If the marker is dragable update the store with the new location of the marker when
+  // If the marker is local add function to update the store with the new location of the marker when
   // the draging stops.
-  if (draggable) {
+  if (local && props.canEdit) {
     marker.on("moveend", () => {
       const latlng = marker.getLatLng();
       store.dispatch("mapPoints/updatePoint", {
@@ -288,7 +301,7 @@ function addMapMarker(point, local = true) {
   }
   // Add the marker to the layer 
   marker.addTo(layerGroup).bindPopup(popupContent);
-  markers.push({ id: point.id, marker: marker }); // track the id to marker references 
+  markers.push({ id: point.id, marker: marker, local: local }); // track the id to marker references 
 }
 
 // Control which zoom levels are available to authenticated and unauthenticated users, some
