@@ -19,6 +19,19 @@ const description = computed({
   },
 });
 
+const type = computed({
+  get() {
+    return props.point.type;
+  },
+  set(type) {
+    store.dispatch("mapPoints/updatePoint", {
+      id: props.point.id,
+      type: parseInt(type),
+    });
+  },
+})
+
+
 const deletePoint = () => {
   store.dispatch("mapPoints/deletePoint", props.point.id);
 };
@@ -30,6 +43,15 @@ const deletePoint = () => {
       <button @click="deletePoint">X</button>
     </div>
     <div><input v-model="description" /></div>
-    <div>{{ point.type }}</div>
+    <div>
+      <select  v-model="type"> 
+        <option disabled value=0>Please select one</option>
+        <option value=1>Undefined</option>
+        <option value=2>Put-in</option>
+        <option value=3>Take-out</option>
+        <option value=4>Access Point</option>
+      </select>
+
+    </div>
   </div>
 </template>

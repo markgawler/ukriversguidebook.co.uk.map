@@ -54,6 +54,7 @@ const actions = {
         X: payload.X,
         Y: payload.Y,
         description: payload.description,
+        type: payload.type,
       });
     }
   },
@@ -66,7 +67,7 @@ const actions = {
       X: payload.X,
       Y: payload.Y,
       new: true,
-      type: 0, // TODO implement mappoint type
+      type: 0,
       mapid: state.mapId,
     });
     state.nextPointId--; // decrement next ID to keep the IDs uniqe
@@ -98,6 +99,7 @@ const actions = {
         X: pt.X,
         Y: pt.Y,
         restore: true,
+        type: pt.type
       });
     });
     commit("deleteNewPoints"); // Remove any new mapPoints
@@ -149,6 +151,9 @@ const mutations = {
       if (payload.X != null) {
         state.points[index].X = payload.X;
         state.points[index].Y = payload.Y;
+      }
+      if (payload.type != null) {
+        state.points[index].type = payload.type;
       }
       state.points[index].updated = !payload.restore; // If restoring the point clear the updated flag
     }
