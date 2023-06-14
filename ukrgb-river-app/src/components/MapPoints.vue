@@ -41,8 +41,8 @@ const saveEdits = () => {
     <div class="mp-baseline">
       <div class="mp-row mp-baseline mp-grid">
         <div></div>
-        <div>Description</div>
         <div>Type</div>
+        <div>Description</div>
       </div>
       <div v-for="point in points" :key="point.id">
         <MapPointItem :point="point" />
@@ -91,26 +91,35 @@ const saveEdits = () => {
 .mp-row {
   display: grid;
   padding-bottom: 1px;
+  padding-right: 4px;;
+  padding-left: 2px;;
 }
 
 .mp-row input {
   border: none;
   width: 98%;
   padding: 4px;
+  border-radius: 4px;
 }
 
 .mp-row input:focus,
 textarea:focus,
 select:focus {
-  border-radius: 5px;
   outline-style: solid;
   outline-color: lightgray;
   outline-width: 1px;
 }
 
 .mp-grid {
-  grid-template-columns: 0.4fr 6fr 1fr;
+  grid-template-columns: 0.4fr 1fr 6fr;
   /* Size of items defined inside container */
   grid-gap: 8px;
+}
+
+.mp-boarder select{
+  border: none;
+  background: none;
+  border-radius: 5px;
+  padding: 3px;
 }
 </style>

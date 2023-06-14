@@ -1,4 +1,3 @@
-import { point } from "leaflet";
 
 const state = () => ({
   mapId: 0,

@@ -42,10 +42,9 @@ const deletePoint = () => {
     <div>
       <button @click="deletePoint">X</button>
     </div>
-    <div><input v-model="description" /></div>
-    <div>
-      <select  v-model="type"> 
-        <option disabled value=0>Please select one</option>
+    <div :class="{ mperror: type == 0 }">
+      <select v-model="type">
+        <option disabled value=0>Select...</option>
         <option value=1>Undefined</option>
         <option value=2>Put-in</option>
         <option value=3>Take-out</option>
@@ -53,5 +52,18 @@ const deletePoint = () => {
       </select>
 
     </div>
+    <div :class="{ mperror: description == '' }">
+      <input v-model="description" />
+    </div>
+
   </div>
 </template>
+
+<style>
+.mperror {
+  border-radius: 5px;
+  outline-style: solid;
+  outline-color: red;
+  outline-width: 1px;
+}
+</style>

@@ -39,7 +39,7 @@ watch(
     addMapLayers(token);
   }
 );
-watch (
+watch(
   // Enable / Disable draging of markers when switching in and out of edditing
   () => props.editing, (x) => {
     // Get the local Markers
@@ -50,7 +50,7 @@ watch (
         m.marker.dragging.disable();
       }
     });
-  } 
+  }
 );
 
 /*
@@ -70,6 +70,7 @@ watch (
 const unsubscribe = store.subscribe((mutation) => {
   switch (mutation.type) {
     case "mapPoints/deletePoint":
+    case "mapPoints/hardDeletePointById":
       {
         const id = mutation.payload; // Payload of mutation is the id of the point to delete
         const index = markers.findIndex((x) => x.id === id);
