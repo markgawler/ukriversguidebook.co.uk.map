@@ -18,7 +18,7 @@ const points = computed(() =>
 );
 
 const canSave = computed(() =>
-  store.getters["mapPoints/getModified"]
+  store.getters["mapPoints/isSaveValid"]
 )
 
 onMounted(() => {

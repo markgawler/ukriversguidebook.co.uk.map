@@ -1,4 +1,3 @@
-
 const state = () => ({
   mapId: 0,
   points: [],
@@ -14,6 +13,11 @@ const checkForModifiedOrNew = (state) => {
   return newMatches != null || modified;
 };
 
+// Validate a map point
+const validatePoint = (p) => {
+  return p.type != 0 && p.description !== "";
+};
+
 const getters = {
   getPointById: (state) => (id) => {
     return state.points.find((x) => x.id === id && !x.deleted);
@@ -24,7 +28,10 @@ const getters = {
 
   getMapId: (state) => state.mapId,
 
-  getModified: (state) => state.modified,
+  isSaveValid: (state) => {
+    // Save is valid when there is a modified, new or deleted point and all the points are valid. 
+    return state.modified && !state.points.some((p) => p.valid === false && !p.deleted) 
+  }
 };
 
 const actions = {
@@ -68,6 +75,7 @@ const actions = {
       new: true,
       type: 0,
       mapid: state.mapId,
+      valid: false,
     });
     state.nextPointId--; // decrement next ID to keep the IDs uniqe
     commit("setModified", true);
@@ -98,7 +106,7 @@ const actions = {
         X: pt.X,
         Y: pt.Y,
         restore: true,
-        type: pt.type
+        type: pt.type,
       });
     });
     commit("deleteNewPoints"); // Remove any new mapPoints
@@ -139,8 +147,7 @@ const mutations = {
     state.points.push(point);
   },
 
-  // Update a point with new description and set the updated flag
-  // todo: update other properties of the point.
+  // Update a point with new value and set the updated flag
   updatePoint(state, payload) {
     const index = state.points.findIndex((x) => x.id === payload.id);
     if (index >= 0) {
@@ -155,6 +162,8 @@ const mutations = {
         state.points[index].type = payload.type;
       }
       state.points[index].updated = !payload.restore; // If restoring the point clear the updated flag
+      // Check if the point is valid enough to save to the DB
+      state.points[index].valid = validatePoint(state.points[index])
     }
   },
 
