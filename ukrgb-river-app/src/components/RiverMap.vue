@@ -140,24 +140,6 @@ onMounted(() => {
   }
 });
 
-const scale = 8 / 10; // scale the marker 80%
-const redMarker = new L.Icon({
-  iconUrl: redIconMarker,
-  shadowUrl: shadowIconMarker,
-  iconSize: [25 * scale, 41 * scale],
-  iconAnchor: [12 * scale, 41 * scale],
-  popupAnchor: [1, -34 * scale],
-  shadowSize: [41 * scale, 41 * scale],
-});
-const blueMarker = new L.Icon({
-  iconUrl: blueIconMarker,
-  shadowUrl: shadowIconMarker,
-  iconSize: [25 * scale, 41 * scale],
-  iconAnchor: [12 * scale, 41 * scale],
-  popupAnchor: [1, -34 * scale],
-  shadowSize: [41 * scale, 41 * scale],
-});
-
 const addMapLayers = (token) => {
   // On receipt of the first Access Token create the Map, otherwise update
   // the Authorisation header with the new Access Token.
@@ -268,16 +250,67 @@ function mapMovedOrZoomed() {
   )
 }
 
+const baseIcon = '<svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 149 178"><path fill="{mapIconColor}" stroke="#FFF" stroke-width="6" stroke-miterlimit="10" d="M126 23l-6-6A69 69 0 0 0 74 1a69 69 0 0 0-51 22A70 70 0 0 0 1 74c0 21 7 38 22 52l43 47c6 6 11 6 16 0l48-51c12-13 18-29 18-48 0-20-8-37-22-51z"/><circle fill="{mapIconColorInnerCircle}" cx="74" cy="75" r="61"/><circle fill="#FFF" cx="74" cy="75" r="{pinInnerCircleRadius}"/></svg>'
+const localSettings = {
+      mapIconColor: '#e71010',
+      mapIconColorInnerCircle: '#fff',
+      pinInnerCircleRadius: 48
+    };
+const otherSettings = {
+      mapIconColor: '#cc756b',
+      mapIconColorInnerCircle: '#fff',
+      pinInnerCircleRadius: 48
+    };
+
+const markerIcons = {
+  local : L.divIcon({
+    className: "leaflet-data-marker",
+    html: L.Util.template(baseIcon, localSettings),
+    iconAnchor: [12, 32],
+    iconSize: [25, 30],
+    popupAnchor: [0, -28]
+  }),
+  
+  localActive: L.divIcon({
+    className: "leaflet-data-marker",
+    html: L.Util.template(baseIcon, localSettings),
+    iconAnchor: [18, 42],
+    iconSize: [36, 42],
+    popupAnchor: [0, -30]
+  }),
+
+  other : L.divIcon({
+    className: "leaflet-data-marker",
+    html: L.Util.template(baseIcon, otherSettings),
+    iconAnchor: [12, 32],
+    iconSize: [25, 30],
+    popupAnchor: [0, -28]
+  }),
+  
+  otherActive: L.divIcon({
+    className: "leaflet-data-marker",
+    html: L.Util.template(baseIcon, otherSettings),
+    iconAnchor: [18, 42],
+    iconSize: [36, 42],
+    popupAnchor: [0, -30]
+  })
+  
+  }
+
 function addMapMarker(point, local = true) {
-  let markerIcon = {};
+
   let popupContent = "";
   let layerGroup = {};
+  let divIcon = {};
+  let divIconActive = {};
+
   if (local) {
-    markerIcon = redMarker;
     layerGroup = localMarkerLayer;
     popupContent = point.description;
+    divIcon = markerIcons.local;
+    divIconActive = markerIcons.localActive;
+
   } else {
-    markerIcon = blueMarker;
     layerGroup = otherMarkerLayer;
     popupContent =
       '<a href="/index.php?option=com_content&id=' +
@@ -285,9 +318,11 @@ function addMapMarker(point, local = true) {
       '&view=article">' +
       point.description +
       "</a><br>";
+      divIcon = markerIcons.other;
+      divIconActive = markerIcons.otherActive;
   }
-  const marker = new L.marker([point.Y, point.X], { icon: markerIcon, draggable: local && props.editing });
-
+  const marker = new L.marker([point.Y, point.X], { icon: divIcon, draggable: local && props.editing });
+  marker.active = false
   // If the marker is local add function to update the store with the new location of the marker when
   // the draging stops.
   if (local && props.canEdit) {
@@ -300,6 +335,22 @@ function addMapMarker(point, local = true) {
       });
     })
   }
+  marker.on('mouseover', () => {
+    if (marker.active == false) {
+      marker.setIcon(divIconActive)
+      marker.active = true
+    }
+  })
+
+  marker.on('mouseout', () => {
+    if (marker.active == true) {
+      marker.setIcon(divIcon)
+      marker.active = false
+    }
+  })
+
+
+
   // Add the marker to the layer 
   marker.addTo(layerGroup).bindPopup(popupContent);
   markers.push({ id: point.id, marker: marker, local: local }); // track the id to marker references 
@@ -383,5 +434,9 @@ function getLayer(layerType, premium) {
   height: 400px;
   max-height: 800px;
   max-width: 1200px;
+}
+
+.icon {
+  color: #e71010;
 }
 </style>
