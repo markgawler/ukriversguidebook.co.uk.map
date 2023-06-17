@@ -121,5 +121,8 @@ select:focus {
   background: none;
   border-radius: 5px;
   padding: 3px;
+  width: auto;
+  height:auto;
+  margin: 0;
 }
 </style>
