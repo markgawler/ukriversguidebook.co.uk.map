@@ -7,9 +7,6 @@ import { getPointsByRadius } from "../network/mapData";
 import L from "leaflet";
 import "../utils/WithHeaders";
 import MapCursor from "./MapCursor.vue";
-import redIconMarker from "../assets/marker-icon-red.png";
-import blueIconMarker from "../assets/marker-icon-blue.png";
-import shadowIconMarker from "../assets/marker-shadow.png";
 
 const store = useStore();
 const lat = ref(0);
@@ -250,66 +247,48 @@ function mapMovedOrZoomed() {
   )
 }
 
-const baseIcon = '<svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 149 178"><path fill="{mapIconColor}" stroke="#FFF" stroke-width="6" stroke-miterlimit="10" d="M126 23l-6-6A69 69 0 0 0 74 1a69 69 0 0 0-51 22A70 70 0 0 0 1 74c0 21 7 38 22 52l43 47c6 6 11 6 16 0l48-51c12-13 18-29 18-48 0-20-8-37-22-51z"/><circle fill="{mapIconColorInnerCircle}" cx="74" cy="75" r="61"/><circle fill="#FFF" cx="74" cy="75" r="{pinInnerCircleRadius}"/></svg>'
-const localSettings = {
-      mapIconColor: '#e71010',
-      mapIconColorInnerCircle: '#fff',
-      pinInnerCircleRadius: 48
-    };
-const otherSettings = {
-      mapIconColor: '#cc756b',
-      mapIconColorInnerCircle: '#fff',
-      pinInnerCircleRadius: 48
-    };
+const baseIcon = '<svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 149 190"><path stroke="#FFF" d="m126.3003,23l-6,-6a69,69 0 0 0 -46,-16a69,69 0 0 0 -51,22a70,70 0 0 0 -22,51c0,21 7.3003,38 22.3003,52l42.6997,47c6.3003,6.9009 11,6 16,0l48,-51c12,-13 18,-29 18,-48c0,-20 -8,-37 -22,-51z" stroke-miterlimit="10" stroke-width="6"/><circle r="62" cy="75" cx="74" fill="#FFF" /><text font-size="110" y="114" x="45">{text}</text></svg>';
 
-const markerIcons = {
-  local : L.divIcon({
-    className: "leaflet-data-marker",
-    html: L.Util.template(baseIcon, localSettings),
-    iconAnchor: [12, 32],
-    iconSize: [25, 30],
-    popupAnchor: [0, -28]
-  }),
-  
-  localActive: L.divIcon({
-    className: "leaflet-data-marker",
-    html: L.Util.template(baseIcon, localSettings),
-    iconAnchor: [18, 42],
-    iconSize: [36, 42],
-    popupAnchor: [0, -30]
-  }),
-
-  other : L.divIcon({
-    className: "leaflet-data-marker",
-    html: L.Util.template(baseIcon, otherSettings),
-    iconAnchor: [12, 32],
-    iconSize: [25, 30],
-    popupAnchor: [0, -28]
-  }),
-  
-  otherActive: L.divIcon({
-    className: "leaflet-data-marker",
-    html: L.Util.template(baseIcon, otherSettings),
-    iconAnchor: [18, 42],
-    iconSize: [36, 42],
-    popupAnchor: [0, -30]
-  })
-  
+const getIcons = (cssClass, text) => {
+  return {
+    "normal": L.divIcon({
+      className: cssClass,
+      html: L.Util.template(baseIcon, { text: text }),
+      iconAnchor: [12, 32],
+      iconSize: [25, 30],
+      popupAnchor: [0, -28]
+    }),
+    "active": 
+      L.divIcon({
+      className: cssClass,
+      html: L.Util.template(baseIcon, { text: text }),
+      iconAnchor: [18, 42],
+      iconSize: [36, 42],
+      popupAnchor: [0, -30]
+    }),
   }
-
+}
+const markerIcons = {
+  undefined: getIcons("dm-undefined",""),
+  other: getIcons("dm-undefined","")
+}
+ 
 function addMapMarker(point, local = true) {
 
   let popupContent = "";
   let layerGroup = {};
   let divIcon = {};
-  let divIconActive = {};
 
   if (local) {
     layerGroup = localMarkerLayer;
     popupContent = point.description;
-    divIcon = markerIcons.local;
-    divIconActive = markerIcons.localActive;
-
+    switch (point.type){
+      case 1 : divIcon = markerIcons.undefined;
+      break
+      case 2 : divIcon = markerIcons.other;
+      break
+    }
+    divIcon = markerIcons.undefined;
   } else {
     layerGroup = otherMarkerLayer;
     popupContent =
@@ -318,10 +297,9 @@ function addMapMarker(point, local = true) {
       '&view=article">' +
       point.description +
       "</a><br>";
-      divIcon = markerIcons.other;
-      divIconActive = markerIcons.otherActive;
+    divIcon = markerIcons.other;
   }
-  const marker = new L.marker([point.Y, point.X], { icon: divIcon, draggable: local && props.editing });
+  const marker = new L.marker([point.Y, point.X], { icon: divIcon.normal, draggable: local && props.editing });
   marker.active = false
   // If the marker is local add function to update the store with the new location of the marker when
   // the draging stops.
@@ -335,19 +313,19 @@ function addMapMarker(point, local = true) {
       });
     })
   }
-  marker.on('mouseover', () => {
-    if (marker.active == false) {
-      marker.setIcon(divIconActive)
-      marker.active = true
-    }
-  })
+  // marker.on('mouseover', () => {
+  //   if (marker.active == false) {
+  //     marker.setIcon(divIconActive)
+  //     marker.active = true
+  //   }
+  // })
 
-  marker.on('mouseout', () => {
-    if (marker.active == true) {
-      marker.setIcon(divIcon)
-      marker.active = false
-    }
-  })
+  // marker.on('mouseout', () => {
+  //   if (marker.active == true) {
+  //     marker.setIcon(divIcon)
+  //     marker.active = false
+  //   }
+  // })
 
 
 
@@ -436,7 +414,23 @@ function getLayer(layerType, premium) {
   max-width: 1200px;
 }
 
-.icon {
-  color: #e71010;
+
+.dm-undefined {
+  fill: #e71010;
+  /* marker color */
 }
-</style>
+
+.data-marker-red {
+  fill: #e71010;
+  /* marker color */
+}
+
+.data-marker-blue {
+  fill: black;
+  /* marker color */
+}
+
+.data-marker-blue text {
+  fill: blue;
+  /* text color */
+}</style>
