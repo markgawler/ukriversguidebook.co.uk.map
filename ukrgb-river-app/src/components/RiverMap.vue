@@ -262,37 +262,39 @@ const getIcons = (cssClass, text) => {
       iconSize: [25, 30],
       popupAnchor: [0, -28]
     }),
-    "active": 
+    "active":
       L.divIcon({
-      className: cssClass,
-      html: L.Util.template(baseIcon, { text: text }),
-      iconAnchor: [18, 42],
-      iconSize: [36, 42],
-      popupAnchor: [0, -30]
-    }),
+        className: cssClass,
+        html: L.Util.template(baseIcon, { text: text }),
+        iconAnchor: [18, 42],
+        iconSize: [36, 42],
+        popupAnchor: [0, -30]
+      }),
   }
 }
+
+// Define the Map Icons. The colour of the pin is defined by rhe CSS class
 const markerIcons = {
-  undefined: getIcons("dm-red",""),
-  putin: getIcons("dm-green","P"),
-  takeout: getIcons("dm-red","T"),
-  accesspoint: getIcons("dm-light-red","A"),
-  other: getIcons("dm-orange",""),
-  parking: getIcons("dm-blue","P"),
-  default: getIcons("dm-black","")
+  undefined: getIcons("dm-red", ""),
+  putin: getIcons("dm-green", "P"),
+  takeout: getIcons("dm-red", "T"),
+  accesspoint: getIcons("dm-light-red", "A"),
+  other: getIcons("dm-orange", ""),
+  parking: getIcons("dm-blue", "P"),
+  default: getIcons("dm-black", "")
 }
 
 const getMarkerIcon = (type) => {
-  switch (type){
-      case 1 : return markerIcons.undefined;
-      case 2 : return markerIcons.putin;
-      case 3 : return markerIcons.takeout;
-      case 4 : return markerIcons.accesspoint;
-      case 5 : return markerIcons.parking;
-      default: return markerIcons.default;
-    }
+  switch (type) {
+    case 1: return markerIcons.undefined;
+    case 2: return markerIcons.putin;
+    case 3: return markerIcons.takeout;
+    case 4: return markerIcons.accesspoint;
+    case 5: return markerIcons.parking;
+    default: return markerIcons.default;
+  }
 }
- 
+
 function addMapMarker(point, local = true) {
 
   let popupContent = "";
@@ -332,14 +334,14 @@ function addMapMarker(point, local = true) {
 
   marker.on('mouseover', () => {
     if (marker.active == false) {
-      marker.setIcon( marker.divIcon.active)
+      marker.setIcon(marker.divIcon.active)
       marker.active = true
     }
   })
 
   marker.on('mouseout', () => {
     if (marker.active == true) {
-      marker.setIcon( marker.divIcon.normal)
+      marker.setIcon(marker.divIcon.normal)
       marker.active = false
     }
   })
@@ -457,9 +459,12 @@ dm-black {
 .dm-blue {
   fill: #0075BB;
 }
+
 .dm-blue text {
   fill: white;
 }
+
 .dm-blue circle {
   fill: #0075BB;
-}</style>
+}
+</style>
