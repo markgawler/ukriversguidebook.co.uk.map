@@ -40,6 +40,7 @@ const actions = {
     for (const p of pts) {
       // Check if the point exists
       if (!state.points.find((x) => x.id === p.id)) {
+        p.type = parseInt(p.type)
         commit("addPoint", p);
       }
     }
@@ -55,6 +56,7 @@ const actions = {
         }
         commit("setModified", true);
       }
+      // Only the value being updated and the ID are populated, other fields are Undefined.
       commit("updatePoint", {
         id: payload.id,
         X: payload.X,
