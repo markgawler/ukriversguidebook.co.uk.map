@@ -251,7 +251,7 @@ function mapMovedOrZoomed() {
   )
 }
 
-const baseIcon = '<svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 149 190"><path stroke="#FFF" d="m126.3003,23l-6,-6a69,69 0 0 0 -46,-16a69,69 0 0 0 -51,22a70,70 0 0 0 -22,51c0,21 7.3003,38 22.3003,52l42.6997,47c6.3003,6.9009 11,6 16,0l48,-51c12,-13 18,-29 18,-48c0,-20 -8,-37 -22,-51z" stroke-miterlimit="10" stroke-width="6"/><circle r="62" cy="75" cx="74" fill="#FFF" /><text font-size="110" y="114" x="45">{text}</text></svg>';
+const baseIcon = '<svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 149 190"><path stroke="#FFF" d="m126.3003,23l-6,-6a69,69 0 0 0 -46,-16a69,69 0 0 0 -51,22a70,70 0 0 0 -22,51c0,21 7.3003,38 22.3003,52l42.6997,47c6.3003,6.9009 11,6 16,0l48,-51c12,-13 18,-29 18,-48c0,-20 -8,-37 -22,-51z" stroke-miterlimit="10" stroke-width="6"/><circle r="62" cy="75" cx="74" fill="#FFF" /><text font-weight="bold" font-size="110" y="114" x="38">{text}</text></svg>';
 
 const getIcons = (cssClass, text) => {
   return {
@@ -432,38 +432,34 @@ function getLayer(layerType, premium) {
 }
 
 
-
+/* *Map Marker colours */
 .dm-red {
   fill: #e71010;
-  /* marker color */
 }
 
 .dm-light-red {
   fill: #e710108d;
-  /* marker color */
 }
 
 .dm-green {
   fill: rgb(2, 204, 2);
-  /* marker color */
 }
-
 
 dm-black {
   fill: black;
-  /* marker color */
 }
 
 .dm-orange {
   fill: orange;
-  /* marker color */
 }
 
+/* Parking Blue circle with White Text*/
 .dm-blue {
-  fill: blue;
-  /* marker color */
+  fill: #0075BB;
 }
 .dm-blue text {
-  fill: blue;
-  /* text color */
+  fill: white;
+}
+.dm-blue circle {
+  fill: #0075BB;
 }</style>
