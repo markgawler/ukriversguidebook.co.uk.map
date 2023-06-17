@@ -98,6 +98,9 @@ const unsubscribe = store.subscribe((mutation) => {
         if (pl.X != null) {
           marker.setLatLng([pl.Y, pl.X])
         }
+        if (pl.type != null) {
+          marker.setIcon(getMarkerIcon(pl.type).normal)
+        }
       }
       break;
     case "mapPoints/deleteNewPoints":
@@ -269,8 +272,20 @@ const getIcons = (cssClass, text) => {
   }
 }
 const markerIcons = {
-  undefined: getIcons("dm-undefined",""),
-  other: getIcons("dm-undefined","")
+  undefined: getIcons("dm-red",""),
+  putin: getIcons("dm-green","P"),
+  takeout: getIcons("dm-red","T"),
+  accesspoint: getIcons("dm-light-red","A"),
+  other: getIcons("dm-orange","")
+}
+
+const getMarkerIcon = (type) => {
+  switch (type){
+      case 1 : return markerIcons.undefined;
+      case 2 : return markerIcons.putin;
+      case 3 : return markerIcons.takeout;
+      case 4 : return markerIcons.accesspoint;
+    }
 }
  
 function addMapMarker(point, local = true) {
@@ -282,13 +297,8 @@ function addMapMarker(point, local = true) {
   if (local) {
     layerGroup = localMarkerLayer;
     popupContent = point.description;
-    switch (point.type){
-      case 1 : divIcon = markerIcons.undefined;
-      break
-      case 2 : divIcon = markerIcons.other;
-      break
-    }
-    divIcon = markerIcons.undefined;
+    divIcon = getMarkerIcon(point.type)
+
   } else {
     layerGroup = otherMarkerLayer;
     popupContent =
@@ -313,19 +323,19 @@ function addMapMarker(point, local = true) {
       });
     })
   }
-  // marker.on('mouseover', () => {
-  //   if (marker.active == false) {
-  //     marker.setIcon(divIconActive)
-  //     marker.active = true
-  //   }
-  // })
+  marker.on('mouseover', () => {
+    if (marker.active == false) {
+      marker.setIcon( divIcon.active)
+      marker.active = true
+    }
+  })
 
-  // marker.on('mouseout', () => {
-  //   if (marker.active == true) {
-  //     marker.setIcon(divIcon)
-  //     marker.active = false
-  //   }
-  // })
+  marker.on('mouseout', () => {
+    if (marker.active == true) {
+      marker.setIcon( divIcon.normal)
+      marker.active = false
+    }
+  })
 
 
 
@@ -415,22 +425,33 @@ function getLayer(layerType, premium) {
 }
 
 
-.dm-undefined {
+
+.dm-red {
   fill: #e71010;
   /* marker color */
 }
 
-.data-marker-red {
-  fill: #e71010;
+.dm-light-red {
+  fill: #e710108d;
   /* marker color */
 }
 
-.data-marker-blue {
+.dm-green {
+  fill: rgb(2, 204, 2);
+  /* marker color */
+}
+
+.dm-blue {
   fill: black;
   /* marker color */
 }
 
-.data-marker-blue text {
+.dm-orange {
+  fill: orange;
+  /* marker color */
+}
+
+.dm-blue text {
   fill: blue;
   /* text color */
 }</style>
