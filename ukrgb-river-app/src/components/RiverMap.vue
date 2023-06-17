@@ -266,9 +266,9 @@ const getIcons = (cssClass, text) => {
       L.divIcon({
         className: cssClass,
         html: L.Util.template(baseIcon, { text: text }),
-        iconAnchor: [18, 42],
-        iconSize: [36, 42],
-        popupAnchor: [0, -30]
+        iconAnchor: [15, 40],
+        iconSize: [31, 37],
+        popupAnchor: [0, -35]
       }),
   }
 }
