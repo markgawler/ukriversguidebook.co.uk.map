@@ -14,8 +14,9 @@ const lng = ref(0);
 let map = {}; // the map
 let road = {}; // road layer
 let leisure = {}; // leisure layer
-let localMarkerLayer = {}; // layer for current maps markers
+let accessPointLayer = {}; // layer for current maps markers
 let otherMarkerLayer = {}; // layer for other maps markers
+let additionalInfoLayer = {}; // layer for additional infomation, Parking, etc.
 let resizeObserver = null; // observer for map <div> resize, used handle map resize
 const mapContainer = ref(null); // Reference to mapContainer <div> used for watching for map resize
 const markers = []; // the markers
@@ -24,7 +25,7 @@ const props = defineProps({
   initialBounds: { type: Array, default: null },
   mapId: { type: Number, default: 0 },
   canEdit: { type: Boolean, default: false },
-  editing: { type: Boolean, default: false }
+  editing: { type: Boolean, default: false },
 });
 
 const accessToken = computed(() => store.state.mapAccess.accessToken);
@@ -38,15 +39,18 @@ watch(
 );
 watch(
   // Enable / Disable draging of markers when switching in and out of edditing
-  () => props.editing, (x) => {
+  () => props.editing,
+  (x) => {
     // Get the local Markers
-    markers.filter((m) => m.local == true).forEach(m => {
-      if (x) {
-        m.marker.dragging.enable();
-      } else {
-        m.marker.dragging.disable();
-      }
-    });
+    markers
+      .filter((m) => m.local == true)
+      .forEach((m) => {
+        if (x) {
+          m.marker.dragging.enable();
+        } else {
+          m.marker.dragging.disable();
+        }
+      });
   }
 );
 
@@ -65,13 +69,26 @@ watch(
       reloadPoints
  */
 const unsubscribe = store.subscribe((mutation) => {
+  const findOldLayer = (mk) => {
+    if (accessPointLayer.hasLayer(mk)) {
+      console.log('accessPointLayer')
+      return accessPointLayer;
+    } else {
+      console.log('additionalInfoLayer')
+      return additionalInfoLayer
+    }
+  }
+
+  console.log(mutation.type)
+
   switch (mutation.type) {
     case "mapPoints/deletePoint":
     case "mapPoints/hardDeletePointById":
       {
         const id = mutation.payload; // Payload of mutation is the id of the point to delete
         const index = markers.findIndex((x) => x.id === id);
-        localMarkerLayer.removeLayer(markers[index].marker);
+        const marker = markers[index].marker
+        findOldLayer(marker).removeLayer(marker);
         markers.splice(index, 1);
       }
       break;
@@ -90,28 +107,36 @@ const unsubscribe = store.subscribe((mutation) => {
         const marker = markers.find((x) => x.id === pl.id).marker; // find the leaflet marker
 
         // Guard against null values, this hapens when the point description is updated in the
-        // mappoints the marker position will not be populated, likewise when a marker is dregedd 
-        // the description may not be populated. 
+        // mappoints the marker position will not be populated, likewise when a marker is dregedd
+        // the description may not be populated.
         if (pl.description != null) {
           marker.getPopup().setContent(pl.description);
         }
         if (pl.X != null) {
-          marker.setLatLng([pl.Y, pl.X])
+          marker.setLatLng([pl.Y, pl.X]);
         }
         if (pl.type != null) {
-          marker.divIcon = getMarkerIcon(pl.type)
-          marker.setIcon(marker.divIcon.normal)
+          // Marker type has changed so remove it from the Old Layer and the added to the correct 
+          // layer (which may be the same layer)
+    
+          findOldLayer(marker).removeLayer(marker);
+          marker.addTo(getLayerForType(pl.type));
+          const pins = getMarkerIcon(pl.type);
+          marker.normalPin = pins.normal;
+          marker.activePin = pins.active;
+          marker.setIcon(marker.normalPin);
         }
       }
       break;
     case "mapPoints/deleteNewPoints":
       {
-        // Find all the new markers, This exploit knowlage of the store in that there index will be less 
+        // Find all the new markers, This exploit knowlage of the store in that there index will be less
         // than 0, this does place a dependency on the stor implementation :-( FIXME
-        const pts = markers.filter((pt) => pt.id < 0)
+        const pts = markers.filter((pt) => pt.id < 0);
         for (const pt of pts) {
           const index = markers.findIndex((mk) => mk.id === pt.id);
-          localMarkerLayer.removeLayer(markers[index].marker);
+          const marker = markers[index].marker
+          findOldLayer(marker).removeLayer(marker);
           markers.splice(index, 1);
         }
       }
@@ -119,9 +144,9 @@ const unsubscribe = store.subscribe((mutation) => {
     case "mapParameters/loadMap":
     case "mapPoints/reloadPoints":
       {
-        // Load any map point that would be visible on the map. Some points outside 
-        // the map bounds will be loaded as the area is calculated as a circle encompassing the whole map. 
-        const p = store.getters["mapParameters/getCircleParams"]
+        // Load any map point that would be visible on the map. Some points outside
+        // the map bounds will be loaded as the area is calculated as a circle encompassing the whole map.
+        const p = store.getters["mapParameters/getCircleParams"];
         getPointsByRadius(p.center, p.radius);
       }
       break;
@@ -170,11 +195,13 @@ const addMapLayers = (token) => {
 
 const addMarkerPointLayers = () => {
   otherMarkerLayer = L.layerGroup([]).addTo(map);
-  localMarkerLayer = L.layerGroup([]).addTo(map);
+  additionalInfoLayer = L.layerGroup([]).addTo(map);
+  accessPointLayer = L.layerGroup([]).addTo(map);
 
   const overlayMaps = {
-    "Map Marker": localMarkerLayer,
-    "Other Maps Markers": otherMarkerLayer,
+    "Access Points": accessPointLayer,
+    "Aditional Info": additionalInfoLayer,
+    "Other Rivers": otherMarkerLayer,
   };
   // Add the layer control, the null parameter would be used if we had selectable base maps
   L.control.layers(null, overlayMaps).addTo(map);
@@ -242,36 +269,41 @@ function mapMovedOrZoomed() {
   const radius =
     center.distanceTo(L.latLng(bounds.getNorth(), bounds.getEast())) / 1000;
 
-  store.dispatch("mapParameters/storeParameters",
-    {
-      bounds: bounds,
-      center: center,
-      radius: radius
-    }
-  )
+  store.dispatch("mapParameters/storeParameters", {
+    bounds: bounds,
+    center: center,
+    radius: radius,
+  });
 }
 
-const baseIcon = '<svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 149 190"><path stroke="#FFF" d="m126.3003,23l-6,-6a69,69 0 0 0 -46,-16a69,69 0 0 0 -51,22a70,70 0 0 0 -22,51c0,21 7.3003,38 22.3003,52l42.6997,47c6.3003,6.9009 11,6 16,0l48,-51c12,-13 18,-29 18,-48c0,-20 -8,-37 -22,-51z" stroke-miterlimit="10" stroke-width="6"/><circle r="62" cy="75" cx="74" fill="#FFF" /><text font-weight="bold" font-size="110" y="114" x="38">{text}</text></svg>';
+const baseIcon =
+  '<svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 149 190"><path stroke="#FFF" d="m126.3003,23l-6,-6a69,69 0 0 0 -46,-16a69,69 0 0 0 -51,22a70,70 0 0 0 -22,51c0,21 7.3003,38 22.3003,52l42.6997,47c6.3003,6.9009 11,6 16,0l48,-51c12,-13 18,-29 18,-48c0,-20 -8,-37 -22,-51z" stroke-miterlimit="10" stroke-width="6"/><circle r="62" cy="75" cx="74" fill="#FFF" /><text font-weight="bold" font-size="110" y="114" x="38">{text}</text></svg>';
 
 const getIcons = (cssClass, text) => {
   return {
-    "normal": L.divIcon({
+    small: L.divIcon({
+      className: cssClass,
+      html: L.Util.template(baseIcon, { text: text }),
+      iconAnchor: [9, 24],
+      iconSize: [16, 20],
+      popupAnchor: [0, -21],
+    }),
+    normal: L.divIcon({
       className: cssClass,
       html: L.Util.template(baseIcon, { text: text }),
       iconAnchor: [12, 32],
       iconSize: [25, 30],
-      popupAnchor: [0, -28]
+      popupAnchor: [0, -28],
     }),
-    "active":
-      L.divIcon({
-        className: cssClass,
-        html: L.Util.template(baseIcon, { text: text }),
-        iconAnchor: [15, 40],
-        iconSize: [31, 37],
-        popupAnchor: [0, -35]
-      }),
-  }
-}
+    active: L.divIcon({
+      className: cssClass,
+      html: L.Util.template(baseIcon, { text: text }),
+      iconAnchor: [15, 40],
+      iconSize: [31, 37],
+      popupAnchor: [0, -35],
+    }),
+  };
+};
 
 // Define the Map Icons. The colour of the pin is defined by rhe CSS class
 const markerIcons = {
@@ -281,43 +313,65 @@ const markerIcons = {
   accesspoint: getIcons("dm-light-red", "A"),
   other: getIcons("dm-orange", ""),
   parking: getIcons("dm-blue", "P"),
-  default: getIcons("dm-black", "")
-}
+  default: getIcons("dm-black", ""),
+};
 
 const getMarkerIcon = (type) => {
   switch (type) {
-    case 1: return markerIcons.undefined;
-    case 2: return markerIcons.putin;
-    case 3: return markerIcons.takeout;
-    case 4: return markerIcons.accesspoint;
-    case 5: return markerIcons.parking;
-    default: return markerIcons.default;
+    case 1:
+      return markerIcons.undefined;
+    case 2:
+      return markerIcons.putin;
+    case 3:
+      return markerIcons.takeout;
+    case 4:
+      return markerIcons.accesspoint;
+    case 5:
+      return markerIcons.parking;
+    default:
+      return markerIcons.default;
   }
-}
+};
+
+const getLayerForType = (type, local = true) => {
+  if (local) {
+    switch (type) {
+      case 0:
+      case 1:
+      case 2:
+      case 3:
+      case 4:
+        return accessPointLayer;
+      case 5:
+        return additionalInfoLayer;
+      default:
+        return otherMarkerLayer;
+    }
+  } else {
+    return otherMarkerLayer;
+  }
+};
 
 function addMapMarker(point, local = true) {
-
   let popupContent = "";
-  let layerGroup = {};
-  let divIcon = {};
+  const layerGroup = getLayerForType(point.type, local);
+  const pins = getMarkerIcon(point.type);
 
   if (local) {
-    layerGroup = localMarkerLayer;
     popupContent = point.description;
-    divIcon = getMarkerIcon(point.type)
-
   } else {
-    layerGroup = otherMarkerLayer;
     popupContent =
       '<a href="/index.php?option=com_content&id=' +
       point.riverguide +
       '&view=article">' +
       point.description +
       "</a><br>";
-    divIcon = markerIcons.other;
   }
-  const marker = new L.marker([point.Y, point.X], { icon: divIcon.normal, draggable: local && props.editing });
-  marker.active = false
+  const marker = new L.marker([point.Y, point.X], {
+    icon: local ? pins.normal : pins.small,
+    draggable: local && props.editing,
+  });
+  marker.active = false;
   // If the marker is local add function to update the store with the new location of the marker when
   // the draging stops.
   if (local && props.canEdit) {
@@ -328,29 +382,29 @@ function addMapMarker(point, local = true) {
         X: latlng.lng,
         Y: latlng.lat,
       });
-    })
+    });
   }
-  marker.divIcon = divIcon
 
-  marker.on('mouseover', () => {
+  marker.activePin = local ? pins.active : pins.normal
+  marker.normalPin = local ? pins.normal : pins.small
+
+  marker.on("mouseover", () => {
     if (marker.active == false) {
-      marker.setIcon(marker.divIcon.active)
-      marker.active = true
+      marker.setIcon(marker.activePin);
+      marker.active = true;
     }
-  })
+  });
 
-  marker.on('mouseout', () => {
+  marker.on("mouseout", () => {
     if (marker.active == true) {
-      marker.setIcon(marker.divIcon.normal)
-      marker.active = false
+      marker.setIcon(marker.normalPin);
+      marker.active = false;
     }
-  })
+  });
 
-
-
-  // Add the marker to the layer 
+  // Add the marker to the layer
   marker.addTo(layerGroup).bindPopup(popupContent);
-  markers.push({ id: point.id, marker: marker, local: local }); // track the id to marker references 
+  markers.push({ id: point.id, marker: marker, local: local }); // track the id to marker references
 }
 
 // Control which zoom levels are available to authenticated and unauthenticated users, some
@@ -433,7 +487,6 @@ function getLayer(layerType, premium) {
   max-width: 1200px;
 }
 
-
 /* *Map Marker colours */
 .dm-red {
   fill: #e71010;
@@ -457,7 +510,7 @@ dm-black {
 
 /* Parking Blue circle with White Text*/
 .dm-blue {
-  fill: #0075BB;
+  fill: #0075bb;
 }
 
 .dm-blue text {
@@ -465,6 +518,6 @@ dm-black {
 }
 
 .dm-blue circle {
-  fill: #0075BB;
+  fill: #0075bb;
 }
 </style>
