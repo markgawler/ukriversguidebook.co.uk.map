@@ -99,7 +99,8 @@ const unsubscribe = store.subscribe((mutation) => {
           marker.setLatLng([pl.Y, pl.X])
         }
         if (pl.type != null) {
-          marker.setIcon(getMarkerIcon(pl.type).normal)
+          marker.divIcon = getMarkerIcon(pl.type)
+          marker.setIcon(marker.divIcon.normal)
         }
       }
       break;
@@ -276,7 +277,9 @@ const markerIcons = {
   putin: getIcons("dm-green","P"),
   takeout: getIcons("dm-red","T"),
   accesspoint: getIcons("dm-light-red","A"),
-  other: getIcons("dm-orange","")
+  other: getIcons("dm-orange",""),
+  parking: getIcons("dm-blue","P"),
+  default: getIcons("dm-black","")
 }
 
 const getMarkerIcon = (type) => {
@@ -285,6 +288,8 @@ const getMarkerIcon = (type) => {
       case 2 : return markerIcons.putin;
       case 3 : return markerIcons.takeout;
       case 4 : return markerIcons.accesspoint;
+      case 5 : return markerIcons.parking;
+      default: return markerIcons.default;
     }
 }
  
@@ -323,16 +328,18 @@ function addMapMarker(point, local = true) {
       });
     })
   }
+  marker.divIcon = divIcon
+
   marker.on('mouseover', () => {
     if (marker.active == false) {
-      marker.setIcon( divIcon.active)
+      marker.setIcon( marker.divIcon.active)
       marker.active = true
     }
   })
 
   marker.on('mouseout', () => {
     if (marker.active == true) {
-      marker.setIcon( divIcon.normal)
+      marker.setIcon( marker.divIcon.normal)
       marker.active = false
     }
   })
@@ -441,7 +448,8 @@ function getLayer(layerType, premium) {
   /* marker color */
 }
 
-.dm-blue {
+
+dm-black {
   fill: black;
   /* marker color */
 }
@@ -451,6 +459,10 @@ function getLayer(layerType, premium) {
   /* marker color */
 }
 
+.dm-blue {
+  fill: blue;
+  /* marker color */
+}
 .dm-blue text {
   fill: blue;
   /* text color */
