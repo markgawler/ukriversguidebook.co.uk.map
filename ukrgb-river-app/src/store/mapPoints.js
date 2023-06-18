@@ -78,7 +78,7 @@ const actions = {
       X: payload.X,
       Y: payload.Y,
       new: true,
-      type: 0,
+      type: 1,
       mapid: state.mapId,
       valid: false,
     });

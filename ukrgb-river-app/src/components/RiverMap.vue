@@ -318,8 +318,8 @@ const markerIcons = {
 
 const getMarkerIcon = (type) => {
   switch (type) {
-    case 1:
-      return markerIcons.undefined;
+    case 1: 
+      return markerIcons.default;
     case 2:
       return markerIcons.putin;
     case 3:
@@ -329,22 +329,22 @@ const getMarkerIcon = (type) => {
     case 5:
       return markerIcons.parking;
     default:
-      return markerIcons.default;
+      return markerIcons.undefined;
   }
 };
 
 const getLayerForType = (type, local = true) => {
   if (local) {
     switch (type) {
-      case 0:
-      case 1:
-      case 2:
-      case 3:
-      case 4:
+      case 0:  // Default / Initial value when created / Legacy map points 
+      case 1:  // Undefined - Not used? 
+      case 2:  // Putin
+      case 3:  // Takeout
+      case 4:  // Access Point
         return accessPointLayer;
-      case 5:
+      case 5:  // Parking
         return additionalInfoLayer;
-      default:
+      default: // Markers from othe guides
         return otherMarkerLayer;
     }
   } else {
