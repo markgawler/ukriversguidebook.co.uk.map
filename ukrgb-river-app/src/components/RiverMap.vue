@@ -79,8 +79,6 @@ const unsubscribe = store.subscribe((mutation) => {
     }
   }
 
-  console.log(mutation.type)
-
   switch (mutation.type) {
     case "mapPoints/deletePoint":
     case "mapPoints/hardDeletePointById":
@@ -277,6 +275,7 @@ function mapMovedOrZoomed() {
   });
 }
 
+// Icon reated here: https://codepen.io/Mark-Gawler/pen/wvQGadX
 const baseIcon =
   '<svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 149 190"><path stroke="#FFF" d="m126.3003,23l-6,-6a69,69 0 0 0 -46,-16a69,69 0 0 0 -51,22a70,70 0 0 0 -22,51c0,21 7.3003,38 22.3003,52l42.6997,47c6.3003,6.9009 11,6 16,0l48,-51c12,-13 18,-29 18,-48c0,-20 -8,-37 -22,-51z" stroke-miterlimit="10" stroke-width="6"/><circle r="62" cy="75" cx="74" fill="#FFF" /><text font-weight="bold" font-size="110" y="114" x="38">{text}</text></svg>';
 
@@ -502,12 +501,9 @@ function getLayer(layerType, premium) {
 }
 
 dm-black {
-  fill: black;
+  fill: rgba(0, 0, 0, 0.763);
 }
 
-.dm-orange {
-  fill: orange;
-}
 
 /* Parking Blue circle with White Text*/
 .dm-blue {
