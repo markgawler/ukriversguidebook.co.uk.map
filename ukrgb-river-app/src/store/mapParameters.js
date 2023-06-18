@@ -15,7 +15,7 @@ const getters = {
 };
 
 const actions = {
-  storeParameters({commit}, params) {
+  storeParameters({ commit }, params) {
     // Store the Map parameters and trigger a load of the MapPoints in the visable area
     commit("storeCenter", params.center);
     commit("storeRadius", params.radius);
@@ -35,7 +35,7 @@ const mutations = {
     state.radius = r;
   },
   // Dummy mutation which can be subscribed to to triger actions when Map paramters change
-  loadMap (){}
+  loadMap() {},
 };
 
 export default {

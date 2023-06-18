@@ -1,6 +1,5 @@
 <script setup>
-import AccessToken from './components/AccessToken.vue';
-
+import AccessToken from "./components/AccessToken.vue";
 </script>
 
 <template>

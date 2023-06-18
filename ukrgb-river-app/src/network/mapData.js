@@ -2,8 +2,11 @@ import axios from "axios";
 import { store } from "../store/store";
 
 /* Call API to get any map point that within a radius.
+ * Specifying the MapId calls a special form on the get by radius where the following is fetched:
+*  - Eveything for the Map 
+*  - Access point for other maps
  */
-function getPointsByRadius(center, radius) {
+function getPointsByRadius(center, radius, mapId) {
   const callbackUrl = store.state.mapAccess.callbackUrl;
   axios
     .get(callbackUrl, {
@@ -12,6 +15,7 @@ function getPointsByRadius(center, radius) {
         radius: radius,
         lat: center.lat,
         lng: center.lng,
+        mapid: mapId
       },
     })
     .then((response) => {
@@ -31,7 +35,7 @@ async function savePoints(points) {
     .post(callbackUrl + "&task=savemappoints", points, {
       headers: {
         "Content-Type": "multipart/form-data",
-        'X-CSRF-TOKEN': token,
+        "X-CSRF-TOKEN": token,
       },
     })
     .then(function () {

@@ -29,9 +29,12 @@ const getters = {
   getMapId: (state) => state.mapId,
 
   isSaveValid: (state) => {
-    // Save is valid when there is a modified, new or deleted point and all the points are valid. 
-    return state.modified && !state.points.some((p) => p.valid === false && !p.deleted) 
-  }
+    // Save is valid when there is a modified, new or deleted point and all the points are valid.
+    return (
+      state.modified &&
+      !state.points.some((p) => p.valid === false && !p.deleted)
+    );
+  },
 };
 
 const actions = {
@@ -40,6 +43,7 @@ const actions = {
     for (const p of pts) {
       // Check if the point exists
       if (!state.points.find((x) => x.id === p.id)) {
+        p.type = parseInt(p.type);
         commit("addPoint", p);
       }
     }
@@ -55,6 +59,7 @@ const actions = {
         }
         commit("setModified", true);
       }
+      // Only the value being updated and the ID are populated, other fields are Undefined.
       commit("updatePoint", {
         id: payload.id,
         X: payload.X,
@@ -73,7 +78,7 @@ const actions = {
       X: payload.X,
       Y: payload.Y,
       new: true,
-      type: 0,
+      type: 1,
       mapid: state.mapId,
       valid: false,
     });
@@ -163,7 +168,7 @@ const mutations = {
       }
       state.points[index].updated = !payload.restore; // If restoring the point clear the updated flag
       // Check if the point is valid enough to save to the DB
-      state.points[index].valid = validatePoint(state.points[index])
+      state.points[index].valid = validatePoint(state.points[index]);
     }
   },
 
