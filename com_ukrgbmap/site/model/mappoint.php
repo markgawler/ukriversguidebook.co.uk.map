@@ -40,12 +40,40 @@ class UkrgbmapModelMappoint extends JModelBase
         return $this->doQuery();
     }
 
+    /**
+     * Get everything in the radius
+     * @param $centreLat
+     * @param $centreLng
+     * @param $radius
+     * @return array|mixed|null
+     * @since 3.0.5
+     */
     public function getByRadius($centreLat, $centreLng, $radius)
     {
         // select points within a 'n' km radius of the point
         $this->query = $this->db->getQuery(true);
         $this->query->where('ST_Distance_Sphere(point, GeomFromText(' .
             $this->db->quote('POINT(' . $centreLng . ' ' . $centreLat . ')') . ')) < ' . $radius * 1000);
+        return $this->doQuery();
+    }
+
+    /**
+     * Get everything for the map in the radius, and access points for other maps
+     * @param $centreLat
+     * @param $centreLng
+     * @param $radius
+     * @param $mapId
+     * @return array|mixed|null
+     * @since 3.0.5
+     */
+    public function getAccessPointsByRadius($centreLat, $centreLng, $radius, $mapId)
+    {
+        // select points within a 'n' km radius of the point
+        // Only select point of type 0, 2, 3 & 4 (legacy, putin, takeout and access point)
+        $this->query = $this->db->getQuery(true);
+        $this->query->where('ST_Distance_Sphere(point, GeomFromText(' .
+            $this->db->quote('POINT(' . $centreLng . ' ' . $centreLat . ')') . ')) < ' . $radius * 1000 .
+            ' AND  ( type IN (0, 2, 3, 4) OR mapid = ' . $this->db->Quote($mapId) . ')');
         return $this->doQuery();
     }
 

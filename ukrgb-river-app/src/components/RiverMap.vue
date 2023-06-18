@@ -146,8 +146,9 @@ const unsubscribe = store.subscribe((mutation) => {
       {
         // Load any map point that would be visible on the map. Some points outside
         // the map bounds will be loaded as the area is calculated as a circle encompassing the whole map.
+        // Points for other maps than the ID specified are restricted to Access Point
         const p = store.getters["mapParameters/getCircleParams"];
-        getPointsByRadius(p.center, p.radius);
+        getPointsByRadius(p.center, p.radius, props.mapId);
       }
       break;
   }
