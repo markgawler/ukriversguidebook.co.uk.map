@@ -5,7 +5,7 @@ import MapPointItem from "./MapPointItem.vue";
 import { savePoints } from "../network/mapData";
 import AddMarkerButton from "./AddMarkerButton.vue";
 
-defineEmits(['edit-map-close'])
+defineEmits(["edit-map-close"]);
 
 const store = useStore();
 
@@ -17,9 +17,7 @@ const points = computed(() =>
   store.getters["mapPoints/getPointsByMapId"](props.mapId)
 );
 
-const canSave = computed(() =>
-  store.getters["mapPoints/isSaveValid"]
-)
+const canSave = computed(() => store.getters["mapPoints/isSaveValid"]);
 
 onMounted(() => {
   store.commit("mapPoints/storeMapId", props.mapId);
@@ -32,12 +30,13 @@ const cancelEdits = () => {
 const saveEdits = () => {
   store.dispatch("mapPoints/saveUpdates", savePoints);
 };
-
 </script>
 
 <template>
   <div class="mp-boarder">
-    <div class="mp-buttons-close"><button @click="$emit('edit-map-close')">X</button></div>
+    <div class="mp-buttons-close">
+      <button @click="$emit('edit-map-close')">X</button>
+    </div>
     <div class="mp-baseline">
       <div class="mp-row mp-baseline mp-grid">
         <div></div>
@@ -48,7 +47,6 @@ const saveEdits = () => {
         <MapPointItem :point="point" />
       </div>
       <AddMarkerButton />
-
     </div>
     <div class="mp-buttons">
       <div><button :disabled="!canSave" @click="saveEdits">Save</button></div>
@@ -91,8 +89,8 @@ const saveEdits = () => {
 .mp-row {
   display: grid;
   padding-bottom: 1px;
-  padding-right: 4px;;
-  padding-left: 2px;;
+  padding-right: 4px;
+  padding-left: 2px;
 }
 
 .mp-row input {
@@ -116,13 +114,13 @@ select:focus {
   grid-gap: 8px;
 }
 
-.mp-boarder select{
+.mp-boarder select {
   border: none;
   background: none;
   border-radius: 5px;
   padding: 3px;
   width: auto;
-  height:auto;
+  height: auto;
   margin: 0;
 }
 </style>

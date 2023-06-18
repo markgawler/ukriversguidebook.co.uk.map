@@ -8,7 +8,7 @@ export const store = createStore({
   modules: {
     mapPoints,
     mapAccess,
-    mapParameters
+    mapParameters,
   },
 });
 export default store;

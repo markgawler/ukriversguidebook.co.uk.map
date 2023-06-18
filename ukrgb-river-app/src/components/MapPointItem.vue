@@ -29,8 +29,7 @@ const type = computed({
       type: parseInt(type),
     });
   },
-})
-
+});
 
 const deletePoint = () => {
   store.dispatch("mapPoints/deletePoint", props.point.id);
@@ -44,19 +43,17 @@ const deletePoint = () => {
     </div>
     <div :class="{ mperror: type == 0 }">
       <select v-model="type">
-        <option disabled value=0>Select...</option>
-        <option value=1>Undefined</option>
-        <option value=2>Put-in</option>
-        <option value=3>Take-out</option>
-        <option value=4>Access Point</option>
-        <option value=5>Parking</option>
+        <option disabled value="0">Select...</option>
+        <option value="1">Undefined</option>
+        <option value="2">Put-in</option>
+        <option value="3">Take-out</option>
+        <option value="4">Access Point</option>
+        <option value="5">Parking</option>
       </select>
-
     </div>
     <div :class="{ mperror: description == '' }">
       <input v-model="description" />
     </div>
-
   </div>
 </template>
 

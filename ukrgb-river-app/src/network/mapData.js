@@ -31,7 +31,7 @@ async function savePoints(points) {
     .post(callbackUrl + "&task=savemappoints", points, {
       headers: {
         "Content-Type": "multipart/form-data",
-        'X-CSRF-TOKEN': token,
+        "X-CSRF-TOKEN": token,
       },
     })
     .then(function () {
