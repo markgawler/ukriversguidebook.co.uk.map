@@ -71,10 +71,8 @@ watch(
 const unsubscribe = store.subscribe((mutation) => {
   const findOldLayer = (mk) => {
     if (accessPointLayer.hasLayer(mk)) {
-      console.log('accessPointLayer')
       return accessPointLayer;
     } else {
-      console.log('additionalInfoLayer')
       return additionalInfoLayer
     }
   }

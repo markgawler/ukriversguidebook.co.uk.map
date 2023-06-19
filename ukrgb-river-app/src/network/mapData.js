@@ -15,7 +15,6 @@ function getPointsByRadius(center, radius, mapId, disableCache) {
     'Pragma': 'no-cache',
     'Expires': '0',
   } : {};
-  console.log (headders)
   axios
     .get(callbackUrl,
       {
