@@ -9,8 +9,14 @@ import { store } from "../store/store";
 function getPointsByRadius(center, radius, mapId) {
   const callbackUrl = store.state.mapAccess.callbackUrl;
   axios
-    .get(callbackUrl, {
-      params: {
+    .get(callbackUrl,
+      {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
+        params: {
         task: "mappoint",
         radius: radius,
         lat: center.lat,

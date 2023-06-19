@@ -307,7 +307,7 @@ const getIcons = (cssClass, text) => {
 
 // Define the Map Icons. The colour of the pin is defined by rhe CSS class
 const markerIcons = {
-  undefined: getIcons("dm-red", ""),
+  undefined: getIcons("dm-light-red-filled", ""),
   putin: getIcons("dm-green", "P"),
   takeout: getIcons("dm-red", "T"),
   accesspoint: getIcons("dm-light-red", "A"),
@@ -504,6 +504,12 @@ dm-black {
   fill: rgba(0, 0, 0, 0.763);
 }
 
+.dm-light-red-filled {
+  fill: #e710108d;
+}
+.dm-light-red-filled circle {
+  fill: #e710108d;
+}
 
 /* Parking Blue circle with White Text*/
 .dm-blue {

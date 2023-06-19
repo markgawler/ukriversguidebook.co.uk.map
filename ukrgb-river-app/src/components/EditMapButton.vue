@@ -4,7 +4,7 @@ defineEmits(["edit-map-open"]);
 
 <template>
   <div class="edit-map-button">
-    <button @click="$emit('edit-map-open')">Edit Map 2</button>
+    <button @click="$emit('edit-map-open')">Edit Map</button>
   </div>
 </template>
 
