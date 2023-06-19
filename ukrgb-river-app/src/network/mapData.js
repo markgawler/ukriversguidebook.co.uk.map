@@ -6,16 +6,20 @@ import { store } from "../store/store";
 *  - Eveything for the Map 
 *  - Access point for other maps
  */
-function getPointsByRadius(center, radius, mapId) {
+function getPointsByRadius(center, radius, mapId, disableCache) {
   const callbackUrl = store.state.mapAccess.callbackUrl;
+
+  // Disabling cacheing is required when editing
+  const headders = disableCache ? {
+    'Cache-Control': 'no-cache',
+    'Pragma': 'no-cache',
+    'Expires': '0',
+  } : {};
+  console.log (headders)
   axios
     .get(callbackUrl,
       {
-        headers: {
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache',
-          'Expires': '0',
-        },
+        headers: headders,
         params: {
         task: "mappoint",
         radius: radius,
