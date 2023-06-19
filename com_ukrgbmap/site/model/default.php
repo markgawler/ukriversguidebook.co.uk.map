@@ -16,7 +16,8 @@ class UkrgbmapModelDefault extends JModelItem
      * @var string message
      * @since 1.0
      */
-    protected string $message;
+    protected $message;
+    //protected string $message;
 
     /**
      * Get the message

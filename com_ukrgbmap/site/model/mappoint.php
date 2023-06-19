@@ -17,8 +17,10 @@ use Joomla\Utilities\ArrayHelper;
 
 class UkrgbmapModelMappoint extends JModelBase
 {
-    public ?JDatabaseDriver $db;
-    public string|JDatabaseQuery $query;
+    public $db;
+    //public string|JDatabaseQuery $query;
+    public  $query;
+    //public JDatabaseQuery $query;
 
     public function __construct(Registry $state = null)
     {
@@ -175,7 +177,7 @@ class UkrgbmapModelMappoint extends JModelBase
      * @param int $mapId
      * @since v3.0.5
      **/
-    public function addMapPointsFromMap($points, $mapId, )
+    public function addMapPointsFromMap($points, $mapId )
     {
         $mapModel = new UkrgbmapModelMap ;
 
