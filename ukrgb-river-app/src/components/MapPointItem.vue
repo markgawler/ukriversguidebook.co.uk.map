@@ -48,6 +48,7 @@ const deletePoint = () => {
         <option value="2">Put-in</option>
         <option value="3">Take-out</option>
         <option value="4">Access Point</option>
+        <option value="6">River Feature</option>
         <option value="5">Parking</option>
       </select>
     </div>

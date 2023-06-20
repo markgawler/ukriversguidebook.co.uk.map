@@ -313,6 +313,7 @@ const markerIcons = {
   other: getIcons("dm-orange", ""),
   parking: getIcons("dm-blue", "P"),
   default: getIcons("dm-black", ""),
+  feature: getIcons("dm-orange","~")
 };
 
 const getMarkerIcon = (type) => {
@@ -327,6 +328,9 @@ const getMarkerIcon = (type) => {
       return markerIcons.accesspoint;
     case 5:
       return markerIcons.parking;
+    case 6:
+      return markerIcons.feature;
+    
     default:
       return markerIcons.undefined;
   }
@@ -340,8 +344,10 @@ const getLayerForType = (type, local = true) => {
       case 2:  // Putin
       case 3:  // Takeout
       case 4:  // Access Point
+
         return accessPointLayer;
       case 5:  // Parking
+      case 6:  // Feature
         return additionalInfoLayer;
       default: // Markers from othe guides
         return otherMarkerLayer;
@@ -497,6 +503,10 @@ function getLayer(layerType, premium) {
 
 .dm-green {
   fill: rgb(2, 204, 2);
+}
+
+.dm-orange {
+  fill: orange;
 }
 
 dm-black {
