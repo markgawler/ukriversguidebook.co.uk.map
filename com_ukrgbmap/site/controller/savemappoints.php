@@ -78,6 +78,9 @@ class UkrgbmapControllerSaveMapPoints extends JControllerBase
         {
             header("HTTP/1.0 400 Bad Request");
         }
+        $points = $mapPointModel->getByMapId($mapId);
+        $bounds = $mapModel->calculateMapBounds($points);
+        $mapModel->updateMap($bounds["sw"], $bounds["ne"], $mapId, null );
         $app->close();
     }
 }

@@ -177,21 +177,21 @@ class UkrgbmapModelMap extends JModelBase
 	}
 
     /**
-     * @param int $type
      * @param object $sw
      * @param object $ne
      * @param int $mapId
+     * @param int| null $type
      * @return void
      * @throws Exception
      * @since 3.0.4
      */
-	public function updateMap($type, $sw ,$ne , $mapId)
+	public function updateMap($sw ,$ne , $mapId, $type)
 	{
 		/*
 		 * Update A Map
 		*/
         // Don't allow creation of Map type 0 as this is a legacy format which uses article/ guide id in the map points.
-        if ($type == 0 ) {
+        if ($type === 0 ) {
             throw new Exception(JText::_('COM_UKRGBMAP_INVALID_MAP_TYPE'), 500);
         }
 
@@ -201,9 +201,11 @@ class UkrgbmapModelMap extends JModelBase
 			
 		// Insert values.
 		$fields = array(
-				$db->quoteName('map_type').' = '.$db->quote($type),
 				$db->quoteName('sw_corner').' = '.'GeomFromText('.$db->quote('POINT('.$sw->x.' '.$sw->y.')').')',
 				$db->quoteName('ne_corner').' = '.'GeomFromText('.$db->quote('POINT('.$ne->x.' '.$ne->y.')').')');
+        if ($type > 0){
+            $fields[] = $db->quoteName('map_type').' = '.$db->quote($type);
+        }
 
 		// Prepare the insert query.
 		$query->update($db->quoteName('#__ukrgb_maps'))->set($fields)->where('id = '.$mapId);
@@ -239,6 +241,30 @@ class UkrgbmapModelMap extends JModelBase
             error_log($e);
         }
         return true;
+    }
+
+    /**
+     * @param integer  $mapId
+     * @return array
+     * @since 3.0.5
+     */
+    public function calculateMapBounds($points) {
+        $maxLng = -180;
+        $minLng = 180;
+        $maxLat = -180;
+        $minLat = 180;
+        foreach ($points as $pt) {
+            //if ($pt->x > $maxLng) { $maxLng = $pt->x; }
+            $maxLng = ($pt->X > $maxLng) ? $pt->X : $maxLng;
+            $minLng = ($pt->X < $minLng) ? $pt->X : $minLng;
+
+            $maxLat = ($pt->Y > $maxLat) ? $pt->Y : $maxLat;
+            $minLat = ($pt->Y < $minLat) ? $pt->Y : $minLat;
+        }
+        $ne = (object)["x"=> $maxLng, "y"=> $maxLat];
+        $sw = (object)["x"=> $minLng, "y"=> $minLat];
+
+        return ["ne" => $ne,"sw" => $sw];
     }
 }
 

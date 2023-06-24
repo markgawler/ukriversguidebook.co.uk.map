@@ -166,7 +166,7 @@ class UkrgbmapModelMappoint extends JModelBase
             $neDest = $proj4->transform($projOSGB36, $projWGS84, $neSrc);
 
             // Add the map or Update the boundaries.
-            $mapModel->updateMap(1, $swDest, $neDest, $mapId);
+            $mapModel->updateMap($swDest, $neDest, $mapId, 1);
         }
     }
 
