@@ -142,10 +142,8 @@ class UkrgbmapModelMap extends JModelBase
         if ($type == 0 ) {
             throw new Exception(JText::_('COM_UKRGBMAP_INVALID_MAP_TYPE'), 500);
         }
-		$db = JFactory::getDbo();
         $props = array(
             'map_type' => $type,
-            //'articleid' =>  $db->quote($articleId));
             'articleid' =>  $articleId);
         $result = $table->save($props);
         if ( $result && $table->id > 0) {
