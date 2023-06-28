@@ -126,54 +126,32 @@ class UkrgbmapModelMap extends JModelBase
     /**
      * Add a new Map to the database
      *
-     * @param int $type (0 = legacy, 1 = Auto generated, 2 = manual)
-     * @param object $sw  point South West corner of map
-     * @param object $ne  point North East corner of map
-     * @param int $articleId the content article the map is linked to
+     * @param integer $type (0 = legacy, 1 = Auto generated, 2 = manual)
+     * @param integer $articleId the content article the map is linked to
      * @return mixed
      * @throws Exception
      *
      * @since 3.0.4
      */
-	public function addMap($type, $articleId, $sw = null, $ne = null)
+	public function addMap($type, $articleId)
 	{
+        JTable::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_ukrgbmap/tables');
+        $table = JTable::getInstance('Map', 'UkrgbMapTable');
+
         // Don't allow creation of Map type 0 as this is a legacy format which uses article/ guide id in the map points.
         if ($type == 0 ) {
             throw new Exception(JText::_('COM_UKRGBMAP_INVALID_MAP_TYPE'), 500);
         }
-        $id = null;
 		$db = JFactory::getDbo();
-		$query = $db->getQuery(true);
-
-		// Insert values.
-        if ($sw != null && $ne != null) {
-            $columns = array('map_type', 'sw_corner', 'ne_corner', 'articleid');
-            $values = array(
-                $db->quote($type),
-                'GeomFromText(' . $db->quote('POINT(' . $sw->x . ' ' . $sw->y . ')') . ')',
-                'GeomFromText(' . $db->quote('POINT(' . $ne->x . ' ' . $ne->y . ')') . ')',
-                $db->quote($articleId));
-        } else {
-            // Dummy map as we don't know the bounds yet
-            $columns = array('map_type', 'articleid');
-            $values = array($db->quote($type), $db->quote($articleId));
+        $props = array(
+            'map_type' => $type,
+            //'articleid' =>  $db->quote($articleId));
+            'articleid' =>  $articleId);
+        $result = $table->save($props);
+        if ( $result && $table->id > 0) {
+            return $table->id;
         }
-
-		// Prepare the insert query.
-		$query->insert($db->quoteName('#__ukrgb_maps'))
-		->columns($db->quoteName($columns))
-		->values(implode(',', $values));
-		// Reset the query using our newly populated query object.
-
-		$db->setQuery($query);
-		try {
-			$db->query();
-            $id = $db->insertid();
-
-        } catch (Exception $e) {
-			error_log($e);
-		}
-        return $id;
+        return false;
 	}
 
     /**
