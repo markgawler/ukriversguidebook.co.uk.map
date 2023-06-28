@@ -21,7 +21,7 @@ class UkrgbMapViewMap extends JViewLegacy
     /**
      * View form
      *
-     * @var   form
+     * @var   $form
      * @since 3.0.1
      */
     protected $form = null;

@@ -87,6 +87,8 @@ class UkrgbMapModelMap extends JModelAdmin
 
     /**
      * Method to check if it's OK to delete a message. Overrides JModelAdmin::canDelete
+     * @param $record
+     * @since   3.0.1
      */
     protected function canDelete($record)
     {

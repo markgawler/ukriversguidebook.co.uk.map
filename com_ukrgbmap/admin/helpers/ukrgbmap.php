@@ -23,31 +23,29 @@ defined('_JEXEC') or die('Restricted access');
 abstract class UkrgbMapHelper extends JHelperContent
 {
     /**
-     * Configure the Linkbar.
+     * Configure the Link bar.
      *
-     * @return Bool
+     * @return void
      * @since 3.0.1
      */
 
-    public static function addSubmenu($submenu)
+    public static function addSubmenu($vName)
     {
         JHtmlSidebar::addEntry(
             JText::_('COM_UKRGBMAP_SUBMENU_MESSAGES'),
             'index.php?option=com_ukrgbmap',
-            $submenu == 'maps'
+            $vName == 'maps'
         );
 
         JHtmlSidebar::addEntry(
             JText::_('COM_UKRGBMAP_SUBMENU_CATEGORIES'),
             'index.php?option=com_categories&view=categories&extension=com_ukrgbmap',
-            $submenu == 'categories'
+            $vName == 'categories'
         );
 
         // Set some global property
         $document = JFactory::getDocument();
-        //$document->addStyleDeclaration('.icon-48-helloworld ' .
-        //    '{background-image: url(../media/com_helloworld/images/tux-48x48.png);}');
-        if ($submenu == 'categories')
+        if ($vName == 'categories')
         {
             $document->setTitle(JText::_('COM_UKRGBMAP_ADMINISTRATION_CATEGORIES'));
         }
