@@ -41,7 +41,7 @@ const deletePoint = () => {
     <div>
       <button @click="deletePoint">X</button>
     </div>
-    <div :class="{ mperror: type == 1 }">
+    <div :class="{ mperror: type == 1 || type == 0 }">
       <select v-model="type">
         <option disabled value="0">Select...</option>
 <!--        <option value="1">Undefined</option> -->
