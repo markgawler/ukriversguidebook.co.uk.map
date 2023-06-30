@@ -29,6 +29,7 @@ const cancelEdits = () => {
 
 const saveEdits = () => {
   store.dispatch("mapPoints/saveUpdates", savePoints);
+  store.dispatch("mapParameters/incrementVersion");
 };
 </script>
 

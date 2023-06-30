@@ -44,7 +44,6 @@ const deletePoint = () => {
     <div :class="{ mperror: type == 1 || type == 0 }">
       <select v-model="type">
         <option disabled value="0">Select...</option>
-<!--        <option value="1">Undefined</option> -->
         <option value="2">Put-in</option>
         <option value="3">Take-out</option>
         <option value="4">Access Point</option>

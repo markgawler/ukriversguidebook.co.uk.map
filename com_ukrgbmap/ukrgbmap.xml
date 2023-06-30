@@ -10,7 +10,7 @@
 	<copyright>Copyright Info</copyright>
 	<license>License Info</license>
 	<!-- The version string is recorded in the components table -->
-	<version>3.0.6</version>
+	<version>3.0.7</version>
 	<description>The UKRGB Map Joomla Extension.</description>
 
 	<scriptfile>script.php</scriptfile>

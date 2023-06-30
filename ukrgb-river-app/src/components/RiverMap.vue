@@ -144,8 +144,7 @@ const unsubscribe = store.subscribe((mutation) => {
         // the map bounds will be loaded as the area is calculated as a circle encompassing the whole map.
         // Points for other maps than the ID specified are restricted to Access Point
         const p = store.getters["mapParameters/getCircleParams"];
-        const disabeCache = props.editing; //When editing disable caching
-        getPointsByRadius(p.center, p.radius, props.mapId, disabeCache);
+        getPointsByRadius(p.center, p.radius, props.mapId, p.version);
       }
       break;
   }

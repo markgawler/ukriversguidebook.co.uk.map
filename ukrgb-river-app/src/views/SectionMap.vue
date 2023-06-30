@@ -3,6 +3,8 @@ import RiverMap from "@/components/RiverMap.vue";
 import EditMapButton from "@/components/EditMapButton.vue";
 import MapPoints from "@/components/MapPoints.vue";
 import { ref } from "vue";
+import { store } from "../store/store";
+
 const app = document.getElementById("app");
 const id = app.getAttribute("mapid");
 const mapId = id == null ? 0 : parseInt(id);
@@ -24,6 +26,9 @@ const initialBounds =
         [parseFloat(jbounds.n_lat), parseFloat(jbounds.w_lng)],
         [parseFloat(jbounds.s_lat), parseFloat(jbounds.e_lng)],
       ];
+const mapVersion = jbounds === undefined ? 0 : jbounds.version;
+store.dispatch("mapParameters/storeVersion",mapVersion);
+
 const editMap = () => {
   editing.value = !editing.value;
 };

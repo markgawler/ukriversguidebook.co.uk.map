@@ -27,7 +27,7 @@ class UkrgbmapModelMap extends JModelBase
 	{
 		$db = JFactory::getDbo();
 		$query = $db->getQuery(true);
-		$query->select(array('X(sw_corner)', 'Y(sw_corner)', 'X(ne_corner)', 'Y(ne_corner)' ,'map_type', 'articleid'));
+		$query->select(array('X(sw_corner)', 'Y(sw_corner)', 'X(ne_corner)', 'Y(ne_corner)' ,'map_type', 'articleid','version'));
 		$query->from('#__ukrgb_maps');
 		$query->where('id = ' . $db->Quote($mapid));
 		$db->setQuery($query);
@@ -39,7 +39,8 @@ class UkrgbmapModelMap extends JModelBase
 				"e_lng" => $result[2],
 				"n_lat" => $result[3],
 				"map_type" => $result[4],
-				"articleid" => $result[5]);
+				"articleid" => $result[5],
+                "version" => $result[6]);
 	}
 
     /**
@@ -124,11 +125,74 @@ class UkrgbmapModelMap extends JModelBase
     }
 
     /**
+     * Get the Version for the Map
+     * @param int $mapId
+     * @return mixed - Map ID or null if not found
+     * @since 3.0.7
+     */
+
+    private function getMapVersion($mapId) {
+        $db = JFactory::getDbo();
+        $query = $db->getQuery(true);
+        $query->select(array('version'));
+        $query->from('#__ukrgb_maps');
+        $query->where($db->quoteName('id') .' = '. $db->Quote($mapId));
+
+        $db->setQuery($query);
+        try {
+            $result = $db->loadObject();
+        } catch (Exception $e) {
+            // catch any database errors.
+            error_log($e);
+        }
+        return $result->version;
+    }
+
+//    /**
+//     * Increment the Version for the Map
+//     * @param int $mapId
+//     * @return mixed - Map ID or null if not found
+//     * @since 3.0.7
+//     */
+//
+//    public function incrementMapVersion($mapId)
+//    {
+//        $db = JFactory::getDbo();
+//        $version = $this->getMapVersion($mapId);
+//        if ($version !== null )
+//        {
+//            // Reset the query
+//            $query = $db->getQuery(true);
+//
+//            $version++;
+//            // Save the updated version
+//            $fields = array(
+//                $db->quoteName('version') . ' = ' . $db->quote($version),
+//            );
+//
+//            // Prepare the insert query.
+//            $query->update($db->quoteName('#__ukrgb_maps'))->set($fields)->where('id = ' . $mapId);
+//            $db->setQuery($query);
+//            try
+//            {
+//                $db->execute();
+//            }
+//            catch (Exception $e)
+//            {
+//                error_log($e);
+//            }
+//        }
+//        return $version;
+//    }
+
+
+
+    /**
      * Add a new Map to the database
      *
      * @param integer $type (0 = legacy, 1 = Auto generated, 2 = manual)
      * @param integer $articleId the content article the map is linked to
-     * @return mixed
+     * @return mixed ID of the created map
      * @throws Exception
      *
      * @since 3.0.4
@@ -163,13 +227,14 @@ class UkrgbmapModelMap extends JModelBase
      */
 	public function updateMap($sw ,$ne , $mapId, $type)
 	{
-		/*
-		 * Update A Map
-		*/
         // Don't allow creation of Map type 0 as this is a legacy format which uses article/ guide id in the map points.
         if ($type === 0 ) {
             throw new Exception(JText::_('COM_UKRGBMAP_INVALID_MAP_TYPE'), 500);
         }
+
+        // Increment Map version
+        $version = $this->getMapVersion($mapId);
+        $version++;
 
 		//TODO: Do we need to check the map exists?
 		$db = JFactory::getDbo();
@@ -182,6 +247,7 @@ class UkrgbmapModelMap extends JModelBase
         if ($type > 0){
             $fields[] = $db->quoteName('map_type').' = '.$db->quote($type);
         }
+        $fields[] =  $db->quoteName('version') . ' = ' . $db->quote($version);
 
 		// Prepare the insert query.
 		$query->update($db->quoteName('#__ukrgb_maps'))->set($fields)->where('id = '.$mapId);

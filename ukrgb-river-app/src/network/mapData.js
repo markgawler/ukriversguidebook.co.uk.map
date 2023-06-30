@@ -6,10 +6,10 @@ import { store } from "../store/store";
 *  - Eveything for the Map 
 *  - Access point for other maps
  */
-function getPointsByRadius(center, radius, mapId, disableCache) {
+function getPointsByRadius(center, radius, mapId, version, disableCache = false) {
   const callbackUrl = store.state.mapAccess.callbackUrl;
 
-  // Disabling cacheing is required when editing
+  // Disabling cacheing is required when debuging 
   const headders = disableCache ? {
     'Cache-Control': 'no-cache',
     'Pragma': 'no-cache',
@@ -24,7 +24,8 @@ function getPointsByRadius(center, radius, mapId, disableCache) {
         radius: radius,
         lat: center.lat,
         lng: center.lng,
-        mapid: mapId
+        mapid: mapId,
+        version: version
       },
     })
     .then((response) => {

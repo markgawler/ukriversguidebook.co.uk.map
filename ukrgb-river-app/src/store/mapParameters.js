@@ -3,6 +3,7 @@ const state = () => ({
   bounds: [],
   center: [],
   radius: 0,
+  version: 0
 });
 
 const getters = {
@@ -10,7 +11,10 @@ const getters = {
     return state.center;
   },
   getCircleParams: (state) => {
-    return { center: state.center, radius: state.radius };
+    return { center: state.center, radius: state.radius, version: state.version};
+  },
+  getVersion: (state) => {
+    return state.version;
   },
 };
 
@@ -22,6 +26,12 @@ const actions = {
     commit("storeBounds", params.bounds);
     commit("loadMap");
   },
+  incrementVersion({commit}) {
+    commit("incrementVersion");
+  },
+  storeVersion({commit}, version) {
+    commit("storeVersion",version);
+  }
 };
 
 const mutations = {
@@ -33,6 +43,12 @@ const mutations = {
   },
   storeRadius(state, r) {
     state.radius = r;
+  },
+  storeVersion(state, v) {
+    state.version = v;
+  },
+  incrementVersion(state) {
+    state.version++;
   },
   // Dummy mutation which can be subscribed to to triger actions when Map paramters change
   loadMap() {},
