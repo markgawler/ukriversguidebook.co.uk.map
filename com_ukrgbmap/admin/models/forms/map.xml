@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form addrulepath="/administrator/components/com_ukrgbmap/models/rules" >
+
+    <fieldset name="title">
+        <field
+            name="title"
+            type="text"
+            label="JGLOBAL_TITLE"
+            description="JFIELD_TITLE_DESC"
+            id="title"
+            class="inputbox"
+            size="30"
+            required="true"
+        />
+    </fieldset>
+
+
+    <fieldset name="details" label="COM_UKRGBMAP_UKRGBMAP_DETAILS">
+        <field
+                name="id"
+                type="hidden"
+        />
+
+        <field name="map_type" type="list" default="" required="true" label="COM_UKRGBMAP_TYPE_LABEL"
+               description="COM_UKRGBMAP_TYPE_LABEL_DEC">
+            <option value="">COM_UKRGBMAP_MAP_TYPE_SELECT</option>
+            <option value="0">COM_UKRGBMAP_MAP_TYPE_0</option>
+            <option value="1">COM_UKRGBMAP_MAP_TYPE_1</option>
+            <option value="2">COM_UKRGBMAP_MAP_TYPE_2</option>
+            <option value="2">COM_UKRGBMAP_MAP_TYPE_3</option>
+        </field>
+        <field
+                name="catid"
+                type="category"
+                extension="com_ukrgbmap"
+                class="inputbox"
+                default=""
+                label="COM_UKRGBMAP_MAP_FIELD_CATID_LABEL"
+                description="COM_UKRGBMAP_MAP_FIELD_CATID_DESC"
+                required="true"
+        >
+            <option value="0">JOPTION_SELECT_CATEGORY</option>
+        </field>
+    </fieldset>
+
+    <fields name="params">
+        <fieldset
+                name="params"
+                label="JGLOBAL_FIELDSET_DISPLAY_OPTIONS"
+        >
+            <field
+                    name="show_category"
+                    type="list"
+                    label="COM_UKRGBMAP_MAP_FIELD_SHOW_CATEGORY_LABEL"
+                    description="COM_UKRGBMAP_MAP_FIELD_SHOW_CATEGORY_DESC"
+                    default=""
+            >
+                <option value="">JGLOBAL_USE_GLOBAL</option>
+                <option value="0">JHIDE</option>
+                <option value="1">JSHOW</option>
+            </field>
+        </fieldset>
+    </fields>
+    <fieldset
+            name="accesscontrol"
+            label="COM_UKRGBMAP_FIELDSET_RULES"
+    >
+        <field
+                name="asset_id"
+                type="hidden"
+                filter="unset"
+        />
+        <field
+                name="rules"
+                type="rules"
+                label="JFIELD_RULES_LABEL"
+                filter="rules"
+                validate="rules"
+                component="com_ukrgbmap"
+                section="map"
+        />
+    </fieldset>
+
+
+
+</form>

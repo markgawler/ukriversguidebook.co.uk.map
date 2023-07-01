@@ -1,43 +1,22 @@
 <?php
+
 /**
- * @package     Joomla.Administrator
- * @subpackage  com_ukrgbmap
+ * UKRGB Map
+ * @package  com_ukrgbmap Administrator
  *
- * @copyright   Copyright (C) 2005 - 2014 Mark Gawler, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright  (C) 2023 Mark Gawler. <https://github.com/markgawler>
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die;
 
-/**
- * Ukrgb  Controller
- *
- * @package     Joomla.Administrator
- * @subpackage  com_ukrgbmap
- *
- */
-class UkrgbmapController extends JControllerLegacy
+
+class UkrgbMapController extends JControllerLegacy
 {
 	/**
 	 * @var		string	The default view.
+     * @since 1.0
 	 */
-	protected $default_view = 'main';
+    protected $default_view = 'maps';
 
-	/**
-	 * Method to display a view.
-	 *
-	 * @param   boolean			$cachable	If true, the view output will be cached
-	 * @param   array  $urlparams	An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
-	 *
-	 * @return  JController		This object to support chaining.
-
-	 */
-	public function display($cachable = false, $urlparams = false)
-	{
-		
-
-		parent::display();
-
-		return $this;
-	}
 }

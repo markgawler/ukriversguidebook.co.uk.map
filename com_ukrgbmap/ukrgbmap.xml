@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="3.2.0" method="upgrade">
+<extension type="component" version="3.2.5" method="upgrade">
 
 	<name>UKRGBMAP</name>
-	<!-- The following elements are optional and free of formatting conttraints -->
+	<!-- The following elements are optional and free of formatting constraints -->
 	<creationDate>December 2013</creationDate>
 	<author>Mark Gawler</author>
 	<authorEmail>markg@wler.co.uk</authorEmail>
@@ -10,9 +10,10 @@
 	<copyright>Copyright Info</copyright>
 	<license>License Info</license>
 	<!-- The version string is recorded in the components table -->
-	<version>0.1.1</version>
-	<description>The UKRGB Map Joomal Extention.</description>
+	<version>3.0.7</version>
+	<description>The UKRGB Map Joomla Extension.</description>
 
+	<scriptfile>script.php</scriptfile>
 
 	<install> <!-- Runs on install -->
 		<sql>
@@ -49,7 +50,6 @@
 		<menu>UK Rivers Guidebook</menu>
 		<submenu>
 			<menu link="option=com_ukrgbmap" view="map" alt="UKRGBMAP/Maps">Maps</menu>
-
 		</submenu>
 
 		<files folder="admin">

@@ -1,10 +1,12 @@
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, computed } from "vue";
+import { useStore } from "vuex";
 import axios from "axios";
 
-let tokenExpiresIn = 0; // Inital length of validity of access token (seconds)
+const store = useStore();
+let tokenExpiresIn = 0; // Initial length of validity of access token (seconds)
 
-const callbackURL = document.getElementById("app").getAttribute("callback");
+const callbackUrl = computed(() => store.state.mapAccess.callbackUrl);
 let cancelPolling = false;
 
 async function doTokenPolling() {
@@ -22,28 +24,24 @@ onMounted(() => {
 function getAccessToken() {
   // Get the access token and the users authentication status (logged in or not)
   return axios
-    .get(callbackURL, {
+    .get(callbackUrl.value, {
       params: {
         task: "authenticate",
         cb: Date.now(),
       },
     })
     .then((response) => {
-      authenticated.value = response.data.userId > 0; // Authenticated user if userId > 0
       tokenExpiresIn = response.data.expiresIn;
-      accessToken.value = response.data.accessToken;
+      store.commit("mapAccess/updateAccessToken", response.data.accessToken);
+      store.commit("mapAccess/setUserId", response.data.userId);
     })
     .catch((error) => {
-      authenticated.value = false;
+      store.commit("mapAccess/setUserId", 0);
+      store.commit("mapAccess/updateAccessToken", "");
       console.log(error);
-      cancelPolling = true
+      cancelPolling = true;
     });
 }
 </script>
-<script>
-import { ref } from "vue";
 
-export const accessToken = ref("");
-export const authenticated = ref(false);
-</script>
 <template><div></div></template>

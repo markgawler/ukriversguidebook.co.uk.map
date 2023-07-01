@@ -1,21 +1,32 @@
-<?php 
+<?php
 /**
- * @package     Joomla.Administrator
- * @subpackage  com_ukrgbmap
+ * UKRGB Map
+ * @package  com_ukrgbmap Administrator
  *
- * @copyright   Copyright (C) 2005 - 2014 Mark Gawler, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright  (C) 2023 Mark Gawler. <https://github.com/markgawler>
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-defined('_JEXEC') or die;
-JHtml::_('behavior.tabstate');
+defined('_JEXEC') or die('Restricted access');
 
+
+// Set some global property
+$document = JFactory::getDocument();
+//$document->addStyleDeclaration('.icon-helloworld {background-image: url(../media/com_helloworld/images/Tux-16x16.png);}');
 
 if (!JFactory::getUser()->authorise('core.manage', 'com_ukrgbmap'))
 {
-	return JError::raiseWarning(404, JText::_('JERROR_ALERTNOAUTHOR'));
+    throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'));
 }
 
-$controller	= JControllerLegacy::getInstance('Ukrgbmap');
+
+// Require helper file
+JLoader::register('UkrgbMapHelper', JPATH_COMPONENT . '/helpers/ukrgbmap.php');
+
+$controller	= JControllerLegacy::getInstance('UkrgbMap');
+
+// Perform the Request task
 $controller->execute(JFactory::getApplication()->input->get('task'));
+
+// Redirect if set by the controller
 $controller->redirect();
