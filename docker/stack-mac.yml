@@ -1,0 +1,25 @@
+services:
+  joomla:
+    image: joomla
+    restart: always
+    links:
+      - joomladb:mysql
+    ports:
+      - 8080:80
+    
+    environment:
+      JOOMLA_DB_HOST: joomladb
+      JOOMLA_DB_USER: root
+      JOOMLA_DB_PASSWORD: example
+      JOOMLA_DB_NAME: joomla_db
+      JOOMLA_SITE_NAME: UKRGB Test
+      JOOMLA_ADMIN_USER: Mark G
+      JOOMLA_ADMIN_USERNAME: MarkG
+      JOOMLA_ADMIN_PASSWORD: xxxxxxxxxxxxx
+      JOOMLA_ADMIN_EMAIL: example@wler.co.uk
+
+  joomladb:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
