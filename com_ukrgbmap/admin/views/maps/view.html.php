@@ -8,6 +8,8 @@
  */
 
 // No direct access to this file
+use Joomla\CMS\Document\Document;
+
 defined('_JEXEC') or die('Restricted access');
 
 // import Joomla view library
@@ -21,19 +23,21 @@ defined('_JEXEC') or die('Restricted access');
 class UkrgbMapViewMaps extends JViewLegacy
 {
 	//protected $form;
-	
-	/**
-	 * Ukrgb view display method
+
+    /**
+     * Ukrgb view display method
      *
      * @param string $tpl The name of the template
-	 * @return void
+     * @return void
      *
+     * @throws Exception
      * @since 1.0
-	 */
+     */
 	function display($tpl = null)
 	{
         // Get application
         $app = JFactory::getApplication();
+        $document = JFactory::getDocument();
         $context = "ukrgbmap.list.admin.map";
 		// Get data from the model
 		$this->items = $this->get('Items');
@@ -64,7 +68,7 @@ class UkrgbMapViewMaps extends JViewLegacy
 		parent::display($tpl);
 
         // Set the document
-        $this->setDocument();
+        $this->setDocument($document);
 	}
 	
 	/**
@@ -105,12 +109,13 @@ class UkrgbMapViewMaps extends JViewLegacy
     /**
      * Method to set up the document properties
      *
+     * @param Document $document
      * @return void
      * @since 3.0.1
      */
-    protected function setDocument()
+    public function setDocument(Document $document): void
     {
-        $document = JFactory::getDocument();
+
         $document->setTitle(JText::_('COM_UKRGBMAP_ADMINISTRATION'));
     }
 }
