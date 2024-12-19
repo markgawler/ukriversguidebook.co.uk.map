@@ -6,7 +6,9 @@ services:
       - joomladb:mysql
     ports:
       - 8080:80
-    
+    volumes:
+      - "./www:/var/www/html"
+      
     environment:
       JOOMLA_DB_HOST: joomladb
       JOOMLA_DB_USER: root
@@ -15,8 +17,8 @@ services:
       JOOMLA_SITE_NAME: UKRGB Test
       JOOMLA_ADMIN_USER: Mark G
       JOOMLA_ADMIN_USERNAME: MarkG
-      JOOMLA_ADMIN_PASSWORD: xxxxxxxxxxxxx
-      JOOMLA_ADMIN_EMAIL: example@wler.co.uk
+      JOOMLA_ADMIN_PASSWORD: Magimix1000!!
+      JOOMLA_ADMIN_EMAIL: mrfg@wler.co.uk
 
   joomladb:
     image: mysql:8.0

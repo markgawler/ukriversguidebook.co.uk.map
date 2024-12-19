@@ -17,6 +17,9 @@
 		},
 		{
 			"path": "test-server"
+		},
+		{
+			"path": "ukrgb-test-app"
 		}
 	],
 	"settings": {
@@ -34,6 +37,14 @@
 				"username": "root",
 				"password": "example"
 			}
+		],
+		"cSpell.words": [
+			"joomla",
+			"joomladb",
+			"packagefiles",
+			"ukrgb",
+			"ukrgbgeo",
+			"ukrgbmap"
 		]
 	}
 }
