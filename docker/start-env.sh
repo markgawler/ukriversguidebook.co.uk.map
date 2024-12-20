@@ -2,11 +2,11 @@
 
 docker-compose -f stack-mac.yml up
 
-# To connect to image for debuging
+# To connect to image for debugging
 #
-# $ docker exec -it docker_joomladb_1 bash
+# $ docker exec -it docker-joomladb-1 bash
 # or
-# $ docker exec -it docker_joomla_1 bash
+# $ docker exec -it docker-joomla-1 bash
 
 # Debug:
 # # Build the Image including xdebug
