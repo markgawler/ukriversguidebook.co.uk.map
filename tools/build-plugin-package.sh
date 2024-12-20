@@ -11,11 +11,11 @@ plugin_dir=$PROJECT_ROOT/plg_ukrgbmap
 function get_ids
 {
     path=$1
-    sufix=$2
+    suffix=$2
 
     local index_id
-    for f in "$path"/*."$sufix" ;do
-        file=$(basename "$f" ."$sufix")
+    for f in "$path"/*."$suffix" ;do
+        file=$(basename "$f" ."$suffix")
         case $file in
         index-*)
             if [ -n "$index_id" ]; then
@@ -36,7 +36,7 @@ function set_var_value
     local var=$1
     local value=$2
     local file=$3
-    sed -i "/^\W*\$$var\W*=/ s/\"[0-9a-z]*\"/\"$value\"/" "$file"
+    sed -i '' "/^\W*\$$var\W*=/ s/\"[0-9a-z]*\"/\"$value\"/" "$file"
 }
 # Build the Vue distribution
 cd "$PROJECT_ROOT/ukrgb-river-app" || exit
@@ -53,7 +53,7 @@ val=${res##* }  # trim leading spaces
 set_var_value "index_js" "$val" "$plugin_file"
 
 
-# Make the .zip packa
+# Make the .zip package
 cd "$temp_dir" || exit
 zip -qr "$PROJECT_ROOT/packagefiles/plg_ukrgbmap" .
 rm -rf "$temp_dir"
