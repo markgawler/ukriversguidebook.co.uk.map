@@ -20,6 +20,9 @@
 		},
 		{
 			"path": "ukrgb-test-app"
+		},
+		{
+			"path": "plg_ukrgbtest"
 		}
 	],
 	"settings": {
