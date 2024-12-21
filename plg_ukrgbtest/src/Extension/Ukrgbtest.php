@@ -13,11 +13,9 @@ namespace UKRGB\Plugin\Content\Ukrgbtest\Extension;
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\WebAsset\WebAssetManager;
 use Joomla\Event\Event;
 use Joomla\Event\SubscriberInterface;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Event\Result\ResultAwareInterface;
 
 class Ukrgbtest extends CMSPlugin implements SubscriberInterface
 {
@@ -42,22 +40,28 @@ class Ukrgbtest extends CMSPlugin implements SubscriberInterface
         ];
     }
 
-    public function insertMap(Event $event)
+    /** @noinspection PhpUnused */
+    public function insertMap(Event $event): bool
     {
         if (!$this->getApplication()->isClient('site')) {
             return false;
         }
 
-
         [$context, $article, $params, $page] = array_values($event->getArguments());
-        if ($context !== "com_content.article" && $context !== "com_content.featured") return;
+        
+        if ($context !== "com_content.article" && $context !== "com_content.featured") return false;
 
-        $text = $article->text . "hello"; // text of the article
+        /** @var WebAssetManager $wa */
+        /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+        $wa = $this->getApplication()->getDocument()->getWebAssetManager();
+        $wr = $wa->getRegistry();
+        $wr->addRegistryFile('/media/com_ukrgbmap/joomla.asset.json');
 
-        // now update the article text with the processed text
-        $article->text = $text;
+        $wa->useScript('com_ukrgbmap.mapjs');
+        $wa->useStyle('com_ukrgbmap.mapcss');
+        $mapDiv = "<div id=\"app\"></div>";
+        $pattern = "/{map}/i";
+        $article->text = preg_replace($pattern, $mapDiv, $article->text);
         return true;
     }
 }
-
-?>
