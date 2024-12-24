@@ -8,7 +8,7 @@
     {
       "name": "com_ukrgbmap.mapjs",
       "type": "script",
-      "uri": "com_ukrgbmap/index-BljY3W2m.js",
+      "uri": "com_ukrgbmap/.js",
       "attributes": {
         "crossorigin": true,
         "type": "module"
@@ -17,7 +17,7 @@
     {
       "name": "com_ukrgbmap.mapcss",
       "type": "style",
-      "uri": "com_ukrgbmap/index-CrXw9O2d.css"
+      "uri": "com_ukrgbmap/.css"
     }
   ]
 }

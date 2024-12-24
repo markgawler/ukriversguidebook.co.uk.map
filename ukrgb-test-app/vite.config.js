@@ -15,4 +15,13 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  build: {
+    manifest: true,
+    rollupOptions: {
+      output: {
+        assetFileNames: 'assets/ukrgbtest-[name]-[hash][extname]',
+        entryFileNames: 'assets/ukrgbtest-[name]-[hash].js'
+      }
+    }
+  }
 })

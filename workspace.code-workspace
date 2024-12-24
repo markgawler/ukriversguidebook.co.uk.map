@@ -46,10 +46,12 @@
 			"joomladb",
 			"mapcss",
 			"mapjs",
+			"mktemp",
 			"packagefiles",
 			"ukrgb",
 			"ukrgbgeo",
-			"ukrgbmap"
+			"ukrgbmap",
+			"vite"
 		]
 	}
 }
