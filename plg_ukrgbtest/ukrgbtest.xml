@@ -7,7 +7,7 @@
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>admin@ukrgb.co.uk</authorEmail>
 	<authorUrl>https://github.com/markgawler</authorUrl>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<description>PLG_CONTENT_UKRGBTEST_DESCRIPTION</description>
 	<namespace path="src">UKRGB\Plugin\Content\Ukrgbtest</namespace>
 	<files>

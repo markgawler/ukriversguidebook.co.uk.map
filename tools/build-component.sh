@@ -43,19 +43,23 @@ for a in $(jq -c '."assets".[]' "$media/joomla.asset.json") ;do
     name=$(jq -r '."name"' <<< "$a")
     case $name in
     #com_ukrgbmap.mapjs
-    "$COMPONENT.mapjs")
+    "$COMPONENT/mapjs")
         tmp=$(mktemp)
-         jq '."assets".['$index'].uri = "'"$js"'"' "$media/joomla.asset.json" > "$tmp"
-         mv "$tmp" "$media/joomla.asset.json"
+        uri="$COMPONENT/"$(basename "$js")
+        jq '."assets".['$index'].uri = "'"$uri"'"' "$media/joomla.asset.json" > "$tmp"
+        mv "$tmp" "$media/joomla.asset.json"
     ;;
-    "$COMPONENT.mapcss")
-         tmp=$(mktemp)
-         jq '."assets".['$index'].uri = "'"$css"'"' "$media/joomla.asset.json" > "$tmp"
-         mv "$tmp" "$media/joomla.asset.json"
+    "$COMPONENT/mapcss")
+        tmp=$(mktemp)
+        uri="$COMPONENT/"$(basename "$css")
+        jq '."assets".['$index'].uri = "'"$uri"'"' "$media/joomla.asset.json" > "$tmp"
+        mv "$tmp" "$media/joomla.asset.json"
     ;;
     esac
     ((index++))
 done
+
+rm "$PROJECT_ROOT"/packagefiles/*.zip
 
 # Make the Component .zip package
 echo "Component, Creating Zip..."
@@ -68,9 +72,16 @@ echo "Library Creating Zip..."
 cd "$PROJECT_ROOT"/lib_ukrgbgeo || exit
 zip -qr ../packagefiles/lib_ukrgbgeo .
 
-# Make the .zip package
-echo "Plugin Creating Zip..."
-cd "$PROJECT_ROOT"/plg_ukrgbmap || exit
-zip -qr "$PROJECT_ROOT/packagefiles/plg_ukrgbmap" .
+# Make the Plugin .zip package
+
+if [ "$APP_NAME" == "river" ]; then
+    echo "Plugin Creating Zip..."
+    cd "$PROJECT_ROOT"/plg_ukrgbmap || exit
+    zip -qr "$PROJECT_ROOT/packagefiles/plg_ukrgbmap" .
+else
+    echo "Test Plugin Creating Zip..."
+    cd "$PROJECT_ROOT"/plg_ukrgbtest || exit
+    zip -qr "$PROJECT_ROOT/packagefiles/plg_ukrgbtest" .
+fi
 
 echo "Done."

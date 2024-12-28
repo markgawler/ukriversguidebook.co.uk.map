@@ -6,7 +6,7 @@
   "license": "GPL-2.0+",
   "assets": [
     {
-      "name": "com_ukrgbmap.mapjs",
+      "name": "com_ukrgbmap/mapjs",
       "type": "script",
       "uri": "com_ukrgbmap/.js",
       "attributes": {
@@ -15,7 +15,7 @@
       }
     },
     {
-      "name": "com_ukrgbmap.mapcss",
+      "name": "com_ukrgbmap/mapcss",
       "type": "style",
       "uri": "com_ukrgbmap/.css"
     }

@@ -57,8 +57,8 @@ class Ukrgbtest extends CMSPlugin implements SubscriberInterface
         $wr = $wa->getRegistry();
         $wr->addRegistryFile('/media/com_ukrgbmap/joomla.asset.json');
 
-        $wa->useScript('com_ukrgbmap.mapjs');
-        $wa->useStyle('com_ukrgbmap.mapcss');
+        $wa->useScript('com_ukrgbmap/mapjs');
+        $wa->useStyle('com_ukrgbmap/mapcss');
         $mapDiv = "<div id=\"app\"></div>";
         $pattern = "/{map}/i";
         $article->text = preg_replace($pattern, $mapDiv, $article->text);
