@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="content" method="upgrade">
+	<name>PLG_CONTENT_UKRGBTEST</name>
+	<author>Mark Gawler</author>
+	<creationDate>December 2024</creationDate>
+	<copyright>Copyright (C) 2024 UKRGB.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>admin@ukrgb.co.uk</authorEmail>
+	<authorUrl>https://github.com/markgawler</authorUrl>
+	<version>1.0.1</version>
+	<description>PLG_CONTENT_UKRGBTEST_DESCRIPTION</description>
+	<namespace path="src">UKRGB\Plugin\Content\Ukrgbtest</namespace>
+	<files>
+		<folder plugin="ukrgbtest">services</folder>
+		<folder>src</folder>
+	</files>
+	<languages>
+		<language tag="en-GB">language/en-GB/plg_content_ukrgbtest.sys.ini</language>
+		<language tag="en-GB">language/en-GB/plg_content_ukrgbtest.ini</language>
+	</languages>
+</extension>
+

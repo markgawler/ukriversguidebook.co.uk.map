@@ -1,0 +1,23 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "com_ukrgbmap",
+  "version": "1.0.0",
+  "description": "UKRGB Map Extension joomla.asset.json file",
+  "license": "GPL-2.0+",
+  "assets": [
+    {
+      "name": "com_ukrgbmap/mapjs",
+      "type": "script",
+      "uri": "com_ukrgbmap/.js",
+      "attributes": {
+        "crossorigin": true,
+        "type": "module"
+      }
+    },
+    {
+      "name": "com_ukrgbmap/mapcss",
+      "type": "style",
+      "uri": "com_ukrgbmap/.css"
+    }
+  ]
+}

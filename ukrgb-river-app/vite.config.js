@@ -12,4 +12,13 @@ export default defineConfig({
     },
   },
   base: "./",
+  build: {
+    manifest: true,
+    rollupOptions: {
+      output: {
+        assetFileNames: 'assets/ukrgbmap-[name]-[hash][extname]',
+        entryFileNames: 'assets/ukrgbmap-[name]-[hash].js'
+      }
+    }
+  }
 });

@@ -32,13 +32,18 @@
 		</schemas>
 	</update>
 
+	<media destination="com_ukrgbmap" folder="media">
+		<file>joomla.asset.json</file>
+		<folder>css</folder>
+		<folder>js</folder>
+	</media>
+
 	<files folder="site">
 		<filename>index.html</filename>
 		<filename>ukrgbmap.php</filename>
 		<folder>controller</folder>
 		<folder>view</folder>
 		<folder>model</folder>
-
 	</files>
 
 	<languages folder="site">
